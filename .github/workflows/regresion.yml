@@ -1,0 +1,53 @@
+name: AMV Travel Preprod Suite
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: 
+
+jobs:
+  test-suite:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Instalar dependencias
+        run: |
+          pip install -r requirements.txt
+
+      - name: Ejecutar Test Web AMV
+        env:
+          AMV_USER: ${{ secrets.AMV_USER }}
+          AMV_PASS: ${{ secrets.AMV_PASS }}
+          AMV_AGENCIA_USER: ${{ secrets.AMV_AGENCIA_USER }}
+          BO_PASS: ${{ secrets.BO_PASS }}
+          BO_USER: ${{ secrets.BO_USER }}
+
+        run: |
+         pytest web/inicio/login_admin.py web/inicio/login_agencia.py web/inicio/hoteles.py web/inicio/servicios.py web/inicio/ofertas.py web/tarifario/paquetes.py web/tarifario/excursiones.py web/tarifario/t_hoteles.py web/tarifario/traslados.py web/tarifario/cenashow.py web/tarifario/cruceros.py web/tarifario/t_ofertas.py web/multidestino/multidestino.py bo/bo_login_admin.py bo/login_noadmin.py bo/cotizaciones.py bo/generar_file.py bo/reservas.py bo/crear_oc.py --alluredir=allure-results || true
+
+      - name: Generar carpeta con Fecha y Hora
+        run: |
+          echo "REPORT_DATE=$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_ENV
+
+      - name: Generar Reporte Allure
+        uses: simple-elf/allure-report-action@master
+        if: always()
+        with:
+          allure_results: allure-results
+          allure_history: allure-history
+          keep_histories: 1
+
+      - name: Desplegar a GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
