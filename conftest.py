@@ -34,7 +34,7 @@ def logged_in_driver(driver):
         pytest.fail("Faltan las credenciales en las variables de entorno para el login silencioso")
 
     # Navegación y Login rápido por detrás
-    driver.get("https://qa.amv.travel/")
+    driver.get("https://preprod.amv.travel/")
     wait.until(EC.element_to_be_clickable((By.ID, "lnkLogin"))).click()
     
     input_user = wait.until(EC.presence_of_element_located((By.ID, "txtUser")))
@@ -75,5 +75,5 @@ def pytest_sessionfinish(session, exitstatus):
     with open(env_file, "w", encoding="utf-8") as f:
         f.write("Entorno=QA\n")
         f.write("Navegador=Chrome (Headless)\n")
-        f.write("URL_Frontend=https://qa.amv.travel/\n")
+        f.write("URL_Frontend=https://preprod.amv.travel/\n")
         f.write("Framework=Pytest+Selenium\n")
