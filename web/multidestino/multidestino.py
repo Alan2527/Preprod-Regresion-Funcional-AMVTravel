@@ -86,22 +86,17 @@ def test_reserva_multidestino(logged_in_driver):
         # 7. CONFIGURACIÓN DE FECHA Y PASAJEROS
         # ==========================================
         with allure.step("7. Configurar Fecha (Hoy + 7 días) y Pasajeros"):
-            # Calculamos la fecha
             fecha_futura = (datetime.now() + timedelta(days=7)).strftime("%d/%m/%Y")
             
-            # Ingresamos fecha usando JS para evitar bloqueos del datepicker
             input_fecha = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input.coustomtour-form-date")))
             driver.execute_script(f"arguments[0].value = '{fecha_futura}';", input_fecha)
-            # Forzamos el evento change por si dispara lógica AJAX
             driver.execute_script("arguments[0].dispatchEvent(new Event('change'));", input_fecha)
             time.sleep(1)
 
-            # Seleccionamos pax y distribución
             Select(wait.until(EC.presence_of_element_located((By.ID, "ctl00_cphMain_ddPax")))).select_by_value("6")
             time.sleep(1)
             Select(wait.until(EC.presence_of_element_located((By.ID, "ctl00_cphMain_ddSGL")))).select_by_value("1")
             Select(wait.until(EC.presence_of_element_located((By.ID, "ctl00_cphMain_ddDBL")))).select_by_value("1")
-            # Usamos CSS con finalización por si el ID tiene prefijos del asp.net
             Select(wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "select[id$='ddTPL']")))).select_by_value("1")
             
             allure.attach(driver.get_screenshot_as_png(), name="5_Configuracion_Pasajeros", attachment_type=allure.attachment_type.PNG)
@@ -119,41 +114,31 @@ def test_reserva_multidestino(logged_in_driver):
         # 9. QUITAR SERVICIOS "NO DISPONIBLE" (DINÁMICO)
         # ==========================================
         with allure.step("9. Quitar dinámicamente todos los servicios 'No disponible'"):
-            # Usamos un mecanismo de seguridad para evitar un bucle infinito si algo falla en el clic
             intentos_maximos = 15 
             intentos = 0
             
             while intentos < intentos_maximos:
-                # 1. Buscamos todos los H6 que tengan el texto "No disponible" (case-insensitive por seguridad)
                 xpath_no_disp = "//h6[contains(@class, 'serviceTotalh6') and contains(translate(text(), 'NO DISPONIBLE', 'no disponible'), 'no disponible')]"
                 servicios_no_disp = driver.find_elements(By.XPATH, xpath_no_disp)
                 
-                # Si la lista está vacía, significa que ya no quedan servicios no disponibles. ¡Salimos del bucle!
                 if len(servicios_no_disp) == 0:
                     break
                 
-                # 2. Tomamos el PRIMERO de la lista actual
                 h6_element = servicios_no_disp[0]
                 driver.execute_script("arguments[0].scrollIntoView({block:'center'});", h6_element)
                 
-                # 3. Magia de XPath: Desde el h6, subimos por el HTML (ancestor) hasta encontrar el 
-                # primer contenedor padre que tenga el botón de eliminar (lnkRemove), y agarramos ese botón.
                 xpath_btn_remove = "./ancestor::*[.//a[contains(@id, 'lnkRemove')]][1]//a[contains(@id, 'lnkRemove')]"
                 btn_remove = h6_element.find_element(By.XPATH, xpath_btn_remove)
                 
-                # 4. Clickeamos el botón de eliminar
                 wait.until(EC.element_to_be_clickable(btn_remove))
                 driver.execute_script("arguments[0].click();", btn_remove)
                 
-                # 5. Esperamos que el UpdatePanel (AJAX) termine de cargar
                 esperar_fin_de_carga()
-                time.sleep(1)  # Pequeña pausa estabilizadora del DOM
+                time.sleep(1) 
                 
                 intentos += 1
             
-            # Validación de seguridad por si el bucle iteró demasiadas veces sin éxito
             assert intentos < intentos_maximos, "Se alcanzó el límite de intentos borrando servicios. El script se detuvo para evitar un bucle infinito."
-            
             allure.attach(driver.get_screenshot_as_png(), name="7_Servicios_No_Disponibles_Quitados", attachment_type=allure.attachment_type.PNG)
 
         # ==========================================
@@ -165,7 +150,6 @@ def test_reserva_multidestino(logged_in_driver):
             driver.execute_script("arguments[0].click();", btn_add)
             esperar_fin_de_carga()
 
-            # Validar que apareció en la tabla
             tabla_servicios = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="updData"]/div[4]/div[6]/table')))
             driver.execute_script("arguments[0].scrollIntoView({block:'center'});", tabla_servicios)
             assert "Delta Premium » Excursión" in tabla_servicios.text, "El servicio opcional no se agregó correctamente a la tabla."
@@ -173,23 +157,27 @@ def test_reserva_multidestino(logged_in_driver):
             allure.attach(driver.get_screenshot_as_png(), name="8_Servicio_Agregado", attachment_type=allure.attachment_type.PNG)
 
         # ==========================================
-        # 11. CAMBIAR IDIOMA Y VALIDAR RECARGO (USD 672 -> USD 804)
+        # 11. CAMBIAR IDIOMA Y VALIDAR RECARGO MODIFICADO (USD 600 -> USD 720)
         # ==========================================
         with allure.step("11. Cambiar idioma a Inglés y validar recargo de precio"):
-            # Validamos el precio inicial (672)
-            h6_precio = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "h6.h6style.serviceTotalh6")))
+            # CORRECCIÓN: Capturamos estrictamente el TERCER h6 de precio usando un XPath indexado
+            xpath_tercer_precio = "(//h6[contains(@class, 'h6style') and contains(@class, 'serviceTotalh6')])[3]"
+            
+            h6_precio = wait.until(EC.presence_of_element_located((By.XPATH, xpath_tercer_precio)))
+            driver.execute_script("arguments[0].scrollIntoView({block:'center'});", h6_precio)
+            
             precio_inicial = h6_precio.text
-            assert "672" in precio_inicial, f"El precio inicial esperado era USD 672, pero se encontró: {precio_inicial}"
+            assert "600" in precio_inicial, f"El precio inicial esperado en la 3er fila era USD 600, pero se encontró: {precio_inicial}"
 
             # Cambiamos idioma a Inglés (Texto visible)
             select_idioma = Select(wait.until(EC.presence_of_element_located((By.ID, "ctl00_cphMain_lvDestinations_ctrl0_lvServices_ctrl0_ddServiceLanguage"))))
             select_idioma.select_by_visible_text("Inglés")
             esperar_fin_de_carga()
 
-            # Validamos el recargo por idioma (804)
-            h6_precio_actualizado = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "h6.h6style.serviceTotalh6")))
+            # CORRECCIÓN: Validamos la actualización del precio en la misma 3er celda indexada (esperado 720)
+            h6_precio_actualizado = wait.until(EC.presence_of_element_located((By.XPATH, xpath_tercer_precio)))
             precio_final = h6_precio_actualizado.text
-            assert "804" in precio_final, f"El precio no se actualizó correctamente tras aplicar el recargo de idioma. Actual: {precio_final}"
+            assert "720" in precio_final, f"El precio del 3er servicio no se actualizó a USD 720 tras aplicar Inglés. Actual: {precio_final}"
             
             allure.attach(driver.get_screenshot_as_png(), name="9_Recargo_Idioma_Aplicado", attachment_type=allure.attachment_type.PNG)
 
@@ -203,7 +191,6 @@ def test_reserva_multidestino(logged_in_driver):
             driver.execute_script("arguments[0].click();", btn_reservar)
             esperar_fin_de_carga()
             
-            # Validamos que llegamos a la pantalla de reserva (ej: buscando un elemento clásico de esa vista)
             wait.until(EC.presence_of_element_located((By.NAME, "ctl00$cphMain$btnSaveBook")))
             allure.attach(driver.get_screenshot_as_png(), name="10_Pantalla_Reserva", attachment_type=allure.attachment_type.PNG)
 
@@ -236,7 +223,6 @@ def test_reserva_multidestino(logged_in_driver):
             input_apellido = driver.find_element(By.NAME, "ctl00$cphMain$lvPassengersData$ctrl0$txtSurname")
             input_apellido.send_keys("Test Automático")
 
-            # Checkbox T&C
             chk_terminos = wait.until(EC.presence_of_element_located((By.ID, "ctl00_cphMain_cbxTermsAndConditions")))
             driver.execute_script("arguments[0].scrollIntoView({block:'center'});", chk_terminos)
             driver.execute_script("arguments[0].click();", chk_terminos)
@@ -251,7 +237,6 @@ def test_reserva_multidestino(logged_in_driver):
             driver.execute_script("arguments[0].click();", btn_save)
             esperar_fin_de_carga()
 
-            # Validar en la tabla de resultados/reservas buscando el <p> dentro del <td>
             xpath_pasajero = "//table[@id='tableTab2']//tbody//tr//td[contains(@class, 'center')]/p[contains(text(), 'Alan Test Automático')]"
             
             elemento_pasajero = wait.until(EC.visibility_of_element_located((By.XPATH, xpath_pasajero)))
