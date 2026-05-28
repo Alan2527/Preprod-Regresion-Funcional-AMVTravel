@@ -73,7 +73,7 @@ def test_reserva_servicio_flujo_completo(logged_in_driver):
             # a. Validar que exista la card
             assert driver.find_elements(By.CSS_SELECTOR, "div.panelShadow.col-sm-6"), "No se encontró ningún div con la clase 'panelShadow col-sm-6'"
 
-            # b, c, d, e, f. Validar componentes internos de la card
+            # b, c, d, e, f. Validar components internos de la card
             assert driver.find_elements(By.CSS_SELECTOR, "img[style*='width: 450px']"), "Falta la imagen de 450x323px en la card"
             assert driver.find_elements(By.CSS_SELECTOR, "h4.h4Span"), "Falta el nombre del servicio (h4Span)"
             assert driver.find_elements(By.CSS_SELECTOR, "table[style*='text-align:center'], table[style*='text-align: center']"), "Falta la tabla de precios/tipo centrada"
@@ -119,6 +119,9 @@ def test_reserva_servicio_flujo_completo(logged_in_driver):
             allure.attach(driver.get_screenshot_as_png(), name="Fallo_Paso_9_a_10", attachment_type=allure.attachment_type.PNG)
             pytest.fail(f"Error al seleccionar la cantidad de pasajeros. Detalle: {str(e)}")
 
+    # =========================================================================
+    # PASO 11 Y 12 CORREGIDO: Blindado contra StaleElementReferenceException
+    # =========================================================================
     with allure.step("11 y 12. Confirmar reserva y validar incremento en el carrito"):
         try:
             # 1. Obtener el valor actual del carrito ANTES de reservar
@@ -127,18 +130,28 @@ def test_reserva_servicio_flujo_completo(logged_in_driver):
             initial_cart_count = int(initial_cart_text) if initial_cart_text.isdigit() else 0
             expected_count = initial_cart_count + 4
 
-            # 2. Hacer clic en el botón de Reservar final
-            btn_reservar = wait.until(EC.element_to_be_clickable((By.ID, "ctl00_cphMainSlider_lnkBookService")), message="No se encontró el botón de Reservar Servicio")
+            # 2. Captura del botón con reintentos para absorber el refresco asincrónico (UpdatePanel)
+            btn_reservar = None
+            for _ in range(5):
+                try:
+                    btn_reservar = wait.until(EC.element_to_be_clickable((By.ID, "ctl00_cphMainSlider_lnkBookService")))
+                    break
+                except Exception:
+                    time.sleep(1) # Pausa estabilizadora si el DOM sigue mutando
+
+            if not btn_reservar:
+                pytest.fail("No se pudo interactuar con el botón de reservar por inestabilidad en el postback del DOM.")
+            
             btn_reservar.click()
 
-            # 3. Manejar el alert si es que el sistema tira uno al confirmar
+            # 3. Manejar el alert si existe
             try:
                 alert = WebDriverWait(driver, 5).until(EC.alert_is_present())
                 alert.accept()
             except:
                 pass 
 
-            # 4. Validar que el contador sumó 4
+            # 4. Validar asincrónicamente el incremento dinámico (+4)
             wait.until(
                 lambda d: int(d.find_element(By.ID, "lblCartCount").text.strip() or 0) == expected_count,
                 message=f"La reserva falló: El carrito no se actualizó al valor esperado ({expected_count})"
@@ -166,7 +179,6 @@ def test_reserva_servicio_flujo_completo(logged_in_driver):
         try:
             wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "table.table.table-bordered.table-striped")))
 
-            # Usamos la variable unificada declarada arriba
             driver.find_element(By.NAME, "ctl00$cphMain$txtReference").send_keys(texto_referencia)
 
             fecha_hoy = datetime.now().strftime("%d/%m/%Y")
@@ -222,7 +234,7 @@ def test_reserva_servicio_flujo_completo(logged_in_driver):
             pytest.fail(f"Error al cargar datos del pasajero: {str(e)}")
 
     # =========================================================================
-    # PASO 16 CORREGIDO: Buscar el <p> dentro de un <td> de la primera fila
+    # PASO 16: Buscar el <p> dentro de un <td> de la primera fila
     # =========================================================================
     with allure.step("16. Validación final de éxito en pestaña Booking"):
         try:
@@ -242,7 +254,7 @@ def test_reserva_servicio_flujo_completo(logged_in_driver):
                 message="El checkout terminó pero no se encontró la tabla de control con id='tableTab1'"
             )
 
-            # 3. XPATH ULTRA PRECISO: Se planta en el primer tr de la tabla, busca el td y valida el tag <p> con tu referencia
+            # 3. XPATH ULTRA PRECISO: Primer tr -> td -> p conteniendo tu referencia variable
             xpath_p_primera_fila = f"//table[@id='tableTab1']//tr[1]//td/p[contains(text(), '{texto_referencia}')]"
             
             wait_largo.until(
