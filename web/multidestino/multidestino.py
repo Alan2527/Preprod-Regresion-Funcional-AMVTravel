@@ -29,7 +29,7 @@ def test_reserva_multidestino(logged_in_driver):
     def esperar_fin_de_carga():
         try:
             wait.until(EC.invisibility_of_element_located((
-                By.開PATH,
+                By.XPATH,
                 "//*[contains(translate(text(), 'CARGANDO', 'cargando'), 'cargando') or contains(@class, 'loader') or contains(@class, 'spinner') or @id='UpdateProgress1']"
             )))
             time.sleep(1) # Breve pausa estabilizadora
@@ -169,7 +169,7 @@ def test_reserva_multidestino(logged_in_driver):
             precio_inicial = h6_precio.text
             assert "600" in precio_inicial, f"El precio inicial esperado en la 3er fila era USD 600, pero se encontró: {precio_inicial}"
 
-            # CORRECCIÓN DEFINITIVA: Apuntamos dinámicamente al TERCER dropdown de idioma de la pantalla
+            # Apuntamos dinámicamente al TERCER dropdown de idioma de la pantalla
             xpath_tercer_idioma = "(//select[contains(@id, 'ddServiceLanguage')])[3]"
             dropdown_elemento = wait.until(EC.presence_of_element_located((By.XPATH, xpath_tercer_idioma)))
             
