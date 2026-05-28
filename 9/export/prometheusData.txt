@@ -1,0 +1,15 @@
+launch_status_failed 9
+launch_status_broken 2
+launch_status_passed 8
+launch_status_skipped 0
+launch_status_unknown 0
+launch_time_duration 503456
+launch_time_min_duration 2547
+launch_time_max_duration 62159
+launch_time_sum_duration 424271
+launch_time_start 1779973613217
+launch_time_stop 1779974116673
+launch_problems_product_defects 9
+launch_problems_test_defects 2
+launch_retries_retries 0
+launch_retries_run 19
