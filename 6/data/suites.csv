@@ -1,0 +1,2 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","9517","test_login_admin","web.inicio","Thu May 28 11:52:43 UTC 2026","passed","Thu May 28 11:52:53 UTC 2026","","login_admin","",""
