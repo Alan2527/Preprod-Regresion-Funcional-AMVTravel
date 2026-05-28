@@ -144,7 +144,7 @@ def test_reserva_multidestino(logged_in_driver):
         # ==========================================
         # 10. AGREGAR SERVICIO OPCIONAL
         # ==========================================
-        with allure.step("10. Agregar servicio opcional (Delta Premium)"):
+        with allure.step("10. Agarregar servicio opcional (Delta Premium)"):
             btn_add = wait.until(EC.element_to_be_clickable((By.ID, "ctl00_cphMain_lvDestinations_ctrl0_lvServicesAdd_ctrl0_lnkAddServiceDefinitivo")))
             driver.execute_script("arguments[0].scrollIntoView({block:'center'});", btn_add)
             driver.execute_script("arguments[0].click();", btn_add)
@@ -160,7 +160,6 @@ def test_reserva_multidestino(logged_in_driver):
         # 11. CAMBIAR IDIOMA Y VALIDAR RECARGO (USD 600 -> USD 720)
         # ==========================================
         with allure.step("11. Cambiar idioma a Inglés en la 3er fila y validar recargo"):
-            # Localizamos el TERCER h6 de precio en el itinerario
             xpath_tercer_precio = "(//h6[contains(@class, 'h6style') and contains(@class, 'serviceTotalh6')])[3]"
             
             h6_precio = wait.until(EC.presence_of_element_located((By.XPATH, xpath_tercer_precio)))
@@ -169,7 +168,6 @@ def test_reserva_multidestino(logged_in_driver):
             precio_inicial = h6_precio.text
             assert "600" in precio_inicial, f"El precio inicial esperado en la 3er fila era USD 600, pero se encontró: {precio_inicial}"
 
-            # Apuntamos dinámicamente al TERCER dropdown de idioma de la pantalla
             xpath_tercer_idioma = "(//select[contains(@id, 'ddServiceLanguage')])[3]"
             dropdown_elemento = wait.until(EC.presence_of_element_located((By.XPATH, xpath_tercer_idioma)))
             
@@ -177,7 +175,6 @@ def test_reserva_multidestino(logged_in_driver):
             select_idioma.select_by_visible_text("Inglés")
             esperar_fin_de_carga()
 
-            # Validamos que impacte el recargo de idioma en esa misma tercera celda (esperado 720)
             h6_precio_actualizado = wait.until(EC.presence_of_element_located((By.XPATH, xpath_tercer_precio)))
             precio_final = h6_precio_actualizado.text
             assert "720" in precio_final, f"El precio del 3er servicio no se actualizó a USD 720 tras aplicar Inglés. Actual: {precio_final}"
@@ -198,32 +195,34 @@ def test_reserva_multidestino(logged_in_driver):
             allure.attach(driver.get_screenshot_as_png(), name="10_Pantalla_Reserva", attachment_type=allure.attachment_type.PNG)
 
         # ==========================================
-        # 14. DATOS DEL VUELO
+        # 14. DATOS DEL VUELO (BLINDADO CON XPATH PARCIAL)
         # ==========================================
         with allure.step("14. Llenar datos de vuelo y observaciones"):
             dia_hoy = datetime.now().strftime("%d")
             
-            input_vuelo = wait.until(EC.visibility_of_element_located((By.NAME, "ctl00$cphMain$lvDestinations$ctrl0$lvServices$ctrl1$txtNumFlightData")))
+            # REFACTORIZADO: Usamos XPath parcial para ignorar los contenedores dinámicos del backend
+            input_vuelo = wait.until(EC.visibility_of_element_located((By.XPATH, "//input[contains(@name, 'txtNumFlightData')]")))
             driver.execute_script("arguments[0].scrollIntoView({block:'center'});", input_vuelo)
             input_vuelo.send_keys(f"TEST{dia_hoy}")
 
-            input_hora = driver.find_element(By.NAME, "ctl00$cphMain$lvDestinations$ctrl0$lvServices$ctrl1$txtDepartureTimeData")
+            input_hora = driver.find_element(By.XPATH, "//input[contains(@name, 'txtDepartureTimeData')]")
             input_hora.send_keys("10:30")
 
-            input_obs = driver.find_element(By.NAME, "ctl00$cphMain$lvDestinations$ctrl0$lvServices$ctrl1$txtCommentData")
+            input_obs = driver.find_element(By.XPATH, "//input[contains(@name, 'txtCommentData')]")
             input_obs.send_keys("Test automático")
             
             allure.attach(driver.get_screenshot_as_png(), name="11_Datos_Vuelo", attachment_type=allure.attachment_type.PNG)
 
         # ==========================================
-        # 15. DATOS PASAJEROS Y TÉRMINOS
+        # 15. DATOS PASAJEROS Y TÉRMINOS (BLINDADO CON XPATH PARCIAL)
         # ==========================================
         with allure.step("15. Llenar datos de pasajero y aceptar términos"):
-            input_nombre = wait.until(EC.visibility_of_element_located((By.NAME, "ctl00$cphMain$lvPassengersData$ctrl0$txtName")))
+            # REFACTORIZADO: Misma protección para que no rompa por reordenamiento de pasajeros
+            input_nombre = wait.until(EC.visibility_of_element_located((By.XPATH, "//input[contains(@name, 'txtName')]")))
             driver.execute_script("arguments[0].scrollIntoView({block:'center'});", input_nombre)
             input_nombre.send_keys("Alan")
 
-            input_apellido = driver.find_element(By.NAME, "ctl00$cphMain$lvPassengersData$ctrl0$txtSurname")
+            input_apellido = driver.find_element(By.XPATH, "//input[contains(@name, 'txtSurname') or contains(@name, 'txtSurName')]")
             input_apellido.send_keys("Test Automático")
 
             chk_terminos = wait.until(EC.presence_of_element_located((By.ID, "ctl00_cphMain_cbxTermsAndConditions")))
