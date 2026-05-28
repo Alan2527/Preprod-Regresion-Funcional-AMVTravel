@@ -29,7 +29,7 @@ def test_reserva_multidestino(logged_in_driver):
     def esperar_fin_de_carga():
         try:
             wait.until(EC.invisibility_of_element_located((
-                By.XPATH,
+                By.開PATH,
                 "//*[contains(translate(text(), 'CARGANDO', 'cargando'), 'cargando') or contains(@class, 'loader') or contains(@class, 'spinner') or @id='UpdateProgress1']"
             )))
             time.sleep(1) # Breve pausa estabilizadora
@@ -157,10 +157,10 @@ def test_reserva_multidestino(logged_in_driver):
             allure.attach(driver.get_screenshot_as_png(), name="8_Servicio_Agregado", attachment_type=allure.attachment_type.PNG)
 
         # ==========================================
-        # 11. CAMBIAR IDIOMA Y VALIDAR RECARGO MODIFICADO (USD 600 -> USD 720)
+        # 11. CAMBIAR IDIOMA Y VALIDAR RECARGO (USD 600 -> USD 720)
         # ==========================================
-        with allure.step("11. Cambiar idioma a Inglés y validar recargo de precio"):
-            # CORRECCIÓN: Capturamos estrictamente el TERCER h6 de precio usando un XPath indexado
+        with allure.step("11. Cambiar idioma a Inglés en la 3er fila y validar recargo"):
+            # Localizamos el TERCER h6 de precio en el itinerario
             xpath_tercer_precio = "(//h6[contains(@class, 'h6style') and contains(@class, 'serviceTotalh6')])[3]"
             
             h6_precio = wait.until(EC.presence_of_element_located((By.XPATH, xpath_tercer_precio)))
@@ -169,12 +169,15 @@ def test_reserva_multidestino(logged_in_driver):
             precio_inicial = h6_precio.text
             assert "600" in precio_inicial, f"El precio inicial esperado en la 3er fila era USD 600, pero se encontró: {precio_inicial}"
 
-            # Cambiamos idioma a Inglés (Texto visible)
-            select_idioma = Select(wait.until(EC.presence_of_element_located((By.ID, "ctl00_cphMain_lvDestinations_ctrl0_lvServices_ctrl0_ddServiceLanguage"))))
+            # CORRECCIÓN DEFINITIVA: Apuntamos dinámicamente al TERCER dropdown de idioma de la pantalla
+            xpath_tercer_idioma = "(//select[contains(@id, 'ddServiceLanguage')])[3]"
+            dropdown_elemento = wait.until(EC.presence_of_element_located((By.XPATH, xpath_tercer_idioma)))
+            
+            select_idioma = Select(dropdown_elemento)
             select_idioma.select_by_visible_text("Inglés")
             esperar_fin_de_carga()
 
-            # CORRECCIÓN: Validamos la actualización del precio en la misma 3er celda indexada (esperado 720)
+            # Validamos que impacte el recargo de idioma en esa misma tercera celda (esperado 720)
             h6_precio_actualizado = wait.until(EC.presence_of_element_located((By.XPATH, xpath_tercer_precio)))
             precio_final = h6_precio_actualizado.text
             assert "720" in precio_final, f"El precio del 3er servicio no se actualizó a USD 720 tras aplicar Inglés. Actual: {precio_final}"
