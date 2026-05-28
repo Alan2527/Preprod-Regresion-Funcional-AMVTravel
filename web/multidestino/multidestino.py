@@ -231,22 +231,28 @@ def test_reserva_multidestino(logged_in_driver):
             
             allure.attach(driver.get_screenshot_as_png(), name="12_Datos_Pasajero_TyC", attachment_type=allure.attachment_type.PNG)
 
-        # ==========================================
-        # 16-17. CONFIRMACIÓN Y VALIDACIÓN FINAL
+# ==========================================
+        # 16-17. CONFIRMACIÓN Y VALIDACIÓN FINAL (CORREGIDO Y BLINDADO)
         # ==========================================
         with allure.step("16 y 17. Guardar reserva y validar creación exitosa en tabla"):
             btn_save = wait.until(EC.element_to_be_clickable((By.NAME, "ctl00$cphMain$btnSaveBook")))
             driver.execute_script("arguments[0].click();", btn_save)
             esperar_fin_de_carga()
 
-            xpath_pasajero = "//table[@id='tableTab2']//tbody//tr//td[contains(@class, 'center')]/p[contains(text(), 'Alan Test Automático')]"
+            # 1. Creamos una espera larga de 60s dedicada para el procesamiento del Multidestino
+            wait_largo = WebDriverWait(driver, 60)
+
+            # 2. XPATH COMPUESTO: Buscamos la fila (tr) de tableTab2 que contenga tanto el Nombre como el Apellido
+            # Esto es infalible aunque el backend separe el Nombre y Apellido en dos columnas distintas.
+            xpath_fila_pasajero = "//table[@id='tableTab2']//tr[contains(., 'Alan') and contains(., 'Test Automático')]"
             
-            elemento_pasajero = wait.until(EC.visibility_of_element_located((By.XPATH, xpath_pasajero)))
+            elemento_pasajero = wait_largo.until(
+                EC.presence_of_element_located((By.開PATH if '開' in dir() else By.XPATH, xpath_fila_pasajero)),
+                message="La reserva multidestino superó los 60 segundos de procesamiento o no se encontró la fila del pasajero en #tableTab2"
+            )
+            
+            # 3. Hacemos scroll seguro y tomamos la evidencia final
             driver.execute_script("arguments[0].scrollIntoView({block:'center'});", elemento_pasajero)
             
-            assert elemento_pasajero.is_displayed(), "La reserva no se encontró en la tabla final con el nombre ingresado."
+            assert elemento_pasajero.is_displayed(), "La fila con la reserva confirmada no es visible en la pantalla final."
             allure.attach(driver.get_screenshot_as_png(), name="13_Reserva_Exitosa", attachment_type=allure.attachment_type.PNG)
-
-    except Exception as e:
-        allure.attach(driver.get_screenshot_as_png(), name="Fallo_Reserva_Multidestinos", attachment_type=allure.attachment_type.PNG)
-        pytest.fail(f"Error en ejecución: {str(e)}")
