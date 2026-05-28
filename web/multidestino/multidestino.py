@@ -144,7 +144,7 @@ def test_reserva_multidestino(logged_in_driver):
         # ==========================================
         # 10. AGREGAR SERVICIO OPCIONAL
         # ==========================================
-        with allure.step("10. Agarregar servicio opcional (Delta Premium)"):
+        with allure.step("10. Agregar servicio opcional (Delta Premium)"):
             btn_add = wait.until(EC.element_to_be_clickable((By.ID, "ctl00_cphMain_lvDestinations_ctrl0_lvServicesAdd_ctrl0_lnkAddServiceDefinitivo")))
             driver.execute_script("arguments[0].scrollIntoView({block:'center'});", btn_add)
             driver.execute_script("arguments[0].click();", btn_add)
@@ -200,7 +200,6 @@ def test_reserva_multidestino(logged_in_driver):
         with allure.step("14. Llenar datos de vuelo y observaciones"):
             dia_hoy = datetime.now().strftime("%d")
             
-            # REFACTORIZADO: Usamos XPath parcial para ignorar los contenedores dinámicos del backend
             input_vuelo = wait.until(EC.visibility_of_element_located((By.XPATH, "//input[contains(@name, 'txtNumFlightData')]")))
             driver.execute_script("arguments[0].scrollIntoView({block:'center'});", input_vuelo)
             input_vuelo.send_keys(f"TEST{dia_hoy}")
@@ -217,7 +216,6 @@ def test_reserva_multidestino(logged_in_driver):
         # 15. DATOS PASAJEROS Y TÉRMINOS (BLINDADO CON XPATH PARCIAL)
         # ==========================================
         with allure.step("15. Llenar datos de pasajero y aceptar términos"):
-            # REFACTORIZADO: Misma protección para que no rompa por reordenamiento de pasajeros
             input_nombre = wait.until(EC.visibility_of_element_located((By.XPATH, "//input[contains(@name, 'txtName')]")))
             driver.execute_script("arguments[0].scrollIntoView({block:'center'});", input_nombre)
             input_nombre.send_keys("Alan")
@@ -231,28 +229,29 @@ def test_reserva_multidestino(logged_in_driver):
             
             allure.attach(driver.get_screenshot_as_png(), name="12_Datos_Pasajero_TyC", attachment_type=allure.attachment_type.PNG)
 
-# ==========================================
-        # 16-17. CONFIRMACIÓN Y VALIDACIÓN FINAL (CORREGIDO Y BLINDADO)
+        # ==========================================
+        # 16-17. CONFIRMACIÓN Y VALIDACIÓN FINAL
         # ==========================================
         with allure.step("16 y 17. Guardar reserva y validar creación exitosa en tabla"):
             btn_save = wait.until(EC.element_to_be_clickable((By.NAME, "ctl00$cphMain$btnSaveBook")))
             driver.execute_script("arguments[0].click();", btn_save)
             esperar_fin_de_carga()
 
-            # 1. Creamos una espera larga de 60s dedicada para el procesamiento del Multidestino
+            # Espera larga de 60s dedicada para la base de datos de Multidestinos
             wait_largo = WebDriverWait(driver, 60)
 
-            # 2. XPATH COMPUESTO: Buscamos la fila (tr) de tableTab2 que contenga tanto el Nombre como el Apellido
-            # Esto es infalible aunque el backend separe el Nombre y Apellido en dos columnas distintas.
+            # Buscamos la fila entera que contenga ambos strings de control
             xpath_fila_pasajero = "//table[@id='tableTab2']//tr[contains(., 'Alan') and contains(., 'Test Automático')]"
             
             elemento_pasajero = wait_largo.until(
-                EC.presence_of_element_located((By.開PATH if '開' in dir() else By.XPATH, xpath_fila_pasajero)),
+                EC.presence_of_element_located((By.XPATH, xpath_fila_pasajero)),
                 message="La reserva multidestino superó los 60 segundos de procesamiento o no se encontró la fila del pasajero en #tableTab2"
             )
             
-            # 3. Hacemos scroll seguro y tomamos la evidencia final
             driver.execute_script("arguments[0].scrollIntoView({block:'center'});", elemento_pasajero)
-            
             assert elemento_pasajero.is_displayed(), "La fila con la reserva confirmada no es visible en la pantalla final."
             allure.attach(driver.get_screenshot_as_png(), name="13_Reserva_Exitosa", attachment_type=allure.attachment_type.PNG)
+
+    except Exception as e:
+        allure.attach(driver.get_screenshot_as_png(), name="Fallo_Reserva_Multidestinos", attachment_type=allure.attachment_type.PNG)
+        pytest.fail(f"Error en ejecución: {str(e)}")
