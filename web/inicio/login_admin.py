@@ -13,7 +13,7 @@ def test_login_admin(driver):
     wait = WebDriverWait(driver, 20)
 
     with allure.step("1. Ingresar a preprod.amv.travel"):
-        driver.get("https://preprod.amv.travel/Login.aspx")
+        driver.get("https://preprod.amv.travel/LoginHTML.aspx")
 
     with allure.step("2. Escribir credenciales"):
         usuario = os.environ.get("AMV_USER")
