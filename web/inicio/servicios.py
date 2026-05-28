@@ -222,13 +222,13 @@ def test_reserva_servicio_flujo_completo(logged_in_driver):
             pytest.fail(f"Error al cargar datos del pasajero: {str(e)}")
 
     # =========================================================================
-    # PASO 16 REFACTORIZADO SEGÚN REQUERIMIENTO NUEVO
+    # PASO 16 CORREGIDO: Buscar el <p> dentro de un <td> de la primera fila
     # =========================================================================
     with allure.step("16. Validación final de éxito en pestaña Booking"):
         try:
             wait_largo = WebDriverWait(driver, 60)
             
-            # 1. Esperamos y hacemos click por JS en la pestaña con href="#tabBooking" para saltear bloqueos headless
+            # 1. Esperamos y hacemos click por JS en la pestaña con href="#tabBooking"
             tab_booking = wait_largo.until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, "a[href='#tabBooking']")), 
                 message="No se encontró o no fue clickeable la pestaña a[href='#tabBooking']"
@@ -242,12 +242,12 @@ def test_reserva_servicio_flujo_completo(logged_in_driver):
                 message="El checkout terminó pero no se encontró la tabla de control con id='tableTab1'"
             )
 
-            # 3. Construimos el XPath dinámico para buscar el td que tenga exactamente el string de la referencia
-            xpath_td_referencia = f"//table[@id='tableTab1']//td[contains(text(), '{texto_referencia}')]"
+            # 3. XPATH ULTRA PRECISO: Se planta en el primer tr de la tabla, busca el td y valida el tag <p> con tu referencia
+            xpath_p_primera_fila = f"//table[@id='tableTab1']//tr[1]//td/p[contains(text(), '{texto_referencia}')]"
             
             wait_largo.until(
-                EC.presence_of_element_located((By.XPATH, xpath_td_referencia)),
-                message=f"Fallo de datos: No se encontró ningún td conteniendo la referencia '{texto_referencia}' dentro de #tableTab1"
+                EC.presence_of_element_located((By.XPATH, xpath_p_primera_fila)),
+                message=f"Fallo de datos: No se encontró el tag <p> con la referencia '{texto_referencia}' dentro de la primera fila de #tableTab1"
             )
 
             allure.attach(driver.get_screenshot_as_png(), name="Reserva_Finalizada_Exito", attachment_type=allure.attachment_type.PNG)
