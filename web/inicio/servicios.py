@@ -25,6 +25,9 @@ def test_reserva_servicio_flujo_completo(logged_in_driver):
     driver = logged_in_driver
     wait = WebDriverWait(driver, 15)
     actions = ActionChains(driver)
+    
+    # Declaramos la variable de control al inicio para reutilizarla en las validaciones
+    texto_referencia = "Test Automático"
 
     with allure.step("1 a 5. Seleccionar pestaña Servicios, ingresar destino, tipo y buscar"):
         try:
@@ -121,7 +124,6 @@ def test_reserva_servicio_flujo_completo(logged_in_driver):
             # 1. Obtener el valor actual del carrito ANTES de reservar
             cart_element = wait.until(EC.presence_of_element_located((By.ID, "lblCartCount")), message="No se encontró el contador del carrito")
             initial_cart_text = cart_element.text.strip()
-            # Si está vacío, lo tomamos como 0
             initial_cart_count = int(initial_cart_text) if initial_cart_text.isdigit() else 0
             expected_count = initial_cart_count + 4
 
@@ -134,7 +136,7 @@ def test_reserva_servicio_flujo_completo(logged_in_driver):
                 alert = WebDriverWait(driver, 5).until(EC.alert_is_present())
                 alert.accept()
             except:
-                pass # Si no hay alert, seguimos de largo
+                pass 
 
             # 4. Validar que el contador sumó 4
             wait.until(
@@ -142,16 +144,10 @@ def test_reserva_servicio_flujo_completo(logged_in_driver):
                 message=f"La reserva falló: El carrito no se actualizó al valor esperado ({expected_count})"
             )
 
-            # 5. Captura de éxito
             allure.attach(driver.get_screenshot_as_png(), name="Reserva_Exitosa_Carrito_Actualizado", attachment_type=allure.attachment_type.PNG)
-
         except Exception as e:
             allure.attach(driver.get_screenshot_as_png(), name="Fallo_Validacion_Carrito", attachment_type=allure.attachment_type.PNG)
             pytest.fail(f"Ocurrió un error al validar el carrito. Detalle: {str(e)}")
-
-    # =========================================================================
-    # NUEVOS PASOS (CHECKOUT Y DATOS PASAJEROS)
-    # =========================================================================
 
     with allure.step("13. Ir al carrito y Finalizar"):
         try:
@@ -170,7 +166,8 @@ def test_reserva_servicio_flujo_completo(logged_in_driver):
         try:
             wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "table.table.table-bordered.table-striped")))
 
-            driver.find_element(By.NAME, "ctl00$cphMain$txtReference").send_keys("Test Automático")
+            # Usamos la variable unificada declarada arriba
+            driver.find_element(By.NAME, "ctl00$cphMain$txtReference").send_keys(texto_referencia)
 
             fecha_hoy = datetime.now().strftime("%d/%m/%Y")
             driver.find_element(By.NAME, "ctl00$cphMain$txtComment").send_keys(f"Este es un test autómatico ejecutado el día {fecha_hoy}")
@@ -210,32 +207,50 @@ def test_reserva_servicio_flujo_completo(logged_in_driver):
             allure.attach(driver.get_screenshot_as_png(), name="Datos_Pasajeros_Completos", attachment_type=allure.attachment_type.PNG)
 
             # === SCROLL EXTREMO Y CLICK ===
-            # Simular tecla "FIN" en el body para bajar la pantalla globalmente
             driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.END)
-            # Refuerzo extra de scroll hacia el final
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             time.sleep(2) 
 
-            # Buscar el botón con tu combinación exacta de datos
             btn_guardar = wait.until(EC.presence_of_element_located((
                 By.XPATH, "//input[@id='ctl00_cphMain_btnSaveBook' and @type='button' and @value='Confirmar reserva']"
             )))
             
-            # Forzamos el click a nivel de JavaScript ignorando capas frontales
             driver.execute_script("arguments[0].click();", btn_guardar)
-            # ==============================
             
         except Exception as e:
             allure.attach(driver.get_screenshot_as_png(), name="Fallo_Datos_Pasajeros", attachment_type=allure.attachment_type.PNG)
             pytest.fail(f"Error al cargar datos del pasajero: {str(e)}")
 
-    with allure.step("16. Validación final de éxito"):
+    # =========================================================================
+    # PASO 16 REFACTORIZADO SEGÚN REQUERIMIENTO NUEVO
+    # =========================================================================
+    with allure.step("16. Validación final de éxito en pestaña Booking"):
         try:
             wait_largo = WebDriverWait(driver, 60)
-            wait_largo.until(EC.presence_of_element_located((By.CSS_SELECTOR, "table.table.table-bordered.table-striped")))
-            wait_largo.until(EC.presence_of_element_located((By.ID, "tableTab2")))
+            
+            # 1. Esperamos y hacemos click por JS en la pestaña con href="#tabBooking" para saltear bloqueos headless
+            tab_booking = wait_largo.until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "a[href='#tabBooking']")), 
+                message="No se encontró o no fue clickeable la pestaña a[href='#tabBooking']"
+            )
+            driver.execute_script("arguments[0].click();", tab_booking)
+            time.sleep(2)
+
+            # 2. Validamos la existencia física de la tabla requerida
+            wait_largo.until(
+                EC.presence_of_element_located((By.ID, "tableTab1")), 
+                message="El checkout terminó pero no se encontró la tabla de control con id='tableTab1'"
+            )
+
+            # 3. Construimos el XPath dinámico para buscar el td que tenga exactamente el string de la referencia
+            xpath_td_referencia = f"//table[@id='tableTab1']//td[contains(text(), '{texto_referencia}')]"
+            
+            wait_largo.until(
+                EC.presence_of_element_located((By.XPATH, xpath_td_referencia)),
+                message=f"Fallo de datos: No se encontró ningún td conteniendo la referencia '{texto_referencia}' dentro de #tableTab1"
+            )
 
             allure.attach(driver.get_screenshot_as_png(), name="Reserva_Finalizada_Exito", attachment_type=allure.attachment_type.PNG)
         except Exception as e:
             allure.attach(driver.get_screenshot_as_png(), name="Fallo_Validacion_Final", attachment_type=allure.attachment_type.PNG)
-            pytest.fail(f"Error en validación final: {str(e)}")
+            pytest.fail(f"Error en validación final en la pestaña Booking. Detalle: {str(e)}")
