@@ -12,7 +12,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 @allure.severity(allure.severity_level.CRITICAL)
 @allure.description("""
 Este caso de prueba cubre el flujo completo de Tarifario - Traslados:
-1. Navegación y búsqueda con destino Cachi.
+1. Navegación y búsqueda con destino Buenos Aires.
 2. Validación de estados del botón Ver/Cerrar Tarifario con capturas.
 3. Validación de modal Proveedores (usando selector btn-download-word).
 4. Validación de modal Detalle (idéntico a Hoteles).
@@ -73,8 +73,8 @@ def test_tarifario_traslados(logged_in_driver):
             driver.execute_script("arguments[0].click();", btn_traslados)
             esperar_fin_de_carga()
 
-        with allure.step("3. Cambiar destino a Cachi y buscar"):
-            cambiar_destino("Buenos Aires", "Cachi")
+        with allure.step("3. Cambiar destino a Buenos Aires y buscar"):
+            cambiar_destino("Buenos Aires", "Buenos Aires")
             btn_buscar = wait.until(EC.presence_of_element_located((
                 By.ID, "ctl00_cphMainSlider_ctrlTariffFilterControl_lnkView"
             )))
