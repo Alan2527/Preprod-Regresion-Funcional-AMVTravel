@@ -175,21 +175,19 @@ def test_crear_orden_pago(driver):
         safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtDetail"), "Test automático")
         allure.attach(driver.get_screenshot_as_png(), "13_Detalle", allure.attachment_type.PNG)
 
-    # ==========================================
+# ==========================================
     # 14. GUARDAR
     # ==========================================
     with allure.step("14. Guardar Orden de Pago"):
-        boton_guardar = wait.until(EC.presence_of_element_located((
-            By.XPATH, 
-            "//input[@name='ctl00$cphMain$btnSave' and @value='Guardar']"
-        )))
-        driver.execute_script("arguments[0].click();", boton_guardar)
+        # Cambiamos a safe_click para que realice la acción nativa del botón y gatille el submit real
+        safe_click(wait, (By.XPATH, "//input[@name='ctl00$cphMain$btnSave' and @value='Guardar']"))
         allure.attach(driver.get_screenshot_as_png(), "14_Click_Guardar", allure.attachment_type.PNG)
 
     # ==========================================
     # 15. ESPERAR CARGA
     # ==========================================
     with allure.step("15. Esperar que la pantalla cargue"):
+        # Esperamos a que la página procese y vuelva a estar estable el body
         time.sleep(5)
         wait.until(EC.presence_of_element_located((By.XPATH, "//body")))
         allure.attach(driver.get_screenshot_as_png(), "15_Pantalla_Cargada", allure.attachment_type.PNG)
@@ -203,10 +201,11 @@ def test_crear_orden_pago(driver):
         allure.attach(driver.get_screenshot_as_png(), "16_Fecha_Ingresada", allure.attachment_type.PNG)
 
     # ==========================================
-    # 17. SCROLL A TABLA IMPUTACIÓN
+    # 17. SCROLL A TABLA IMPUTACIÓN (Con selector parcial más tolerante)
     # ==========================================
     with allure.step("17. Scroll hasta tabla de imputación de facturas"):
-        tabla = wait.until(EC.presence_of_element_located((By.ID, "tblAllocationSupplierInvoices")))
+        # Usamos un selector CSS parcial ($=) que busca cualquier ID que termine en tblAllocationSupplierInvoices
+        tabla = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "table[id$='tblAllocationSupplierInvoices']")))
         driver.execute_script("arguments[0].scrollIntoView(true);", tabla)
         time.sleep(2)
         allure.attach(driver.get_screenshot_as_png(), "17_Scroll_Tabla", allure.attachment_type.PNG)
@@ -217,7 +216,7 @@ def test_crear_orden_pago(driver):
     with allure.step("18. Click en el primer check de imputación"):
         primer_check = wait.until(EC.presence_of_element_located((
             By.CSS_SELECTOR, 
-            "#tblAllocationSupplierInvoices i.icon-check"
+            "table[id$='tblAllocationSupplierInvoices'] i.icon-check"
         )))
         driver.execute_script("arguments[0].click();", primer_check)
         time.sleep(5)
