@@ -140,15 +140,9 @@ def test_crear_orden_pago(driver):
             .select_by_value("10")
         allure.attach(driver.get_screenshot_as_png(), "9_Currency", allure.attachment_type.PNG)
 
-    # ==========================================
-    # 10. NÚMERO DE DOCUMENTO
-    # ==========================================
-    with allure.step("10. Escribir número de documento"):
-        safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtDocNumber"), "123456789")
-        allure.attach(driver.get_screenshot_as_png(), "10_DocNumber", allure.attachment_type.PNG)
 
     # ==========================================
-    # 11. CAJA (CashFlow Value='8')
+    # 10. CAJA (CashFlow Value='8')
     # ==========================================
     with allure.step("11. Seleccionar Caja (Value='8')"):
         Select(wait.until(EC.element_to_be_clickable((By.NAME, "ctl00$cphMain$ddCashFlow1"))))\
@@ -156,28 +150,28 @@ def test_crear_orden_pago(driver):
         allure.attach(driver.get_screenshot_as_png(), "11_CashFlow", allure.attachment_type.PNG)
 
     # ==========================================
-    # 12. MONTO
+    # 11. MONTO
     # ==========================================
     with allure.step("12. Ingresar Monto"):
         safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtAmount1"), "900000")
         allure.attach(driver.get_screenshot_as_png(), "12_Monto", allure.attachment_type.PNG)
 
     # ==========================================
-    # 13. DETALLE
+    # 12. DETALLE
     # ==========================================
     with allure.step("13. Ingresar Detalle"):
         safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtDetail"), "Test automático")
         allure.attach(driver.get_screenshot_as_png(), "13_Detalle", allure.attachment_type.PNG)
 
     # ==========================================
-    # 14. GUARDAR
+    # 13. GUARDAR
     # ==========================================
     with allure.step("14. Guardar Orden de Pago"):
         safe_click(wait, (By.XPATH, "//input[@name='ctl00$cphMain$btnSave' and @value='Guardar']"))
         allure.attach(driver.get_screenshot_as_png(), "14_Click_Guardar", allure.attachment_type.PNG)
 
     # ==========================================
-    # 15. ESPERAR CARGA POST-GUARDADO
+    # 14. ESPERAR CARGA POST-GUARDADO
     # ==========================================
     with allure.step("15. Esperar que la pantalla cargue"):
         time.sleep(8)
@@ -188,7 +182,7 @@ def test_crear_orden_pago(driver):
         allure.attach(driver.get_screenshot_as_png(), "15_Pantalla_Cargada", allure.attachment_type.PNG)
 
     # ==========================================
-    # 16. INGRESAR FECHA ACTUAL
+    # 15. INGRESAR FECHA ACTUAL
     # ==========================================
     with allure.step("16. Ingresar fecha del día"):
         fecha_hoy = datetime.now().strftime("%d/%m/%Y")
@@ -196,7 +190,7 @@ def test_crear_orden_pago(driver):
         allure.attach(driver.get_screenshot_as_png(), "16_Fecha_Ingresada", allure.attachment_type.PNG)
 
     # ==========================================
-    # 17. SCROLL A TABLA IMPUTACIÓN
+    # 16. SCROLL A TABLA IMPUTACIÓN
     # ==========================================
     with allure.step("17. Scroll hasta tabla de imputación de facturas"):
         wait_tabla = WebDriverWait(driver, 90)
@@ -210,7 +204,7 @@ def test_crear_orden_pago(driver):
         allure.attach(driver.get_screenshot_as_png(), "17_Scroll_Tabla", allure.attachment_type.PNG)
 
     # ==========================================
-    # 18. CLICK EN IMPUTAR (Primer icon-check)
+    # 17. CLICK EN IMPUTAR (Primer icon-check)
     # ==========================================
     with allure.step("18. Click en el primer check de imputación"):
         primer_check = wait.until(EC.presence_of_element_located((
@@ -222,7 +216,7 @@ def test_crear_orden_pago(driver):
         allure.attach(driver.get_screenshot_as_png(), "18_Click_Check", allure.attachment_type.PNG)
 
     # ==========================================
-    # 19. VALIDAR TABLA INTERNA Y FORZAR VISIBILIDAD EN CAPTURA
+    # 18. VALIDAR TABLA INTERNA Y FORZAR VISIBILIDAD EN CAPTURA
     # ==========================================
     with allure.step("19. Validar existencia de celda en tabla interna"):
         celda_tabla = wait.until(EC.presence_of_element_located((
@@ -235,7 +229,7 @@ def test_crear_orden_pago(driver):
         allure.attach(driver.get_screenshot_as_png(), "19_Tabla_Interna_Validada", allure.attachment_type.PNG)
 
     # ==========================================
-    # 20. SCROLL Y CLICKEAR APROBAR
+    # 19. SCROLL Y CLICKEAR APROBAR
     # ==========================================
     with allure.step("20. Scroll arriba y aprobar recibo"):
         boton_aprobar = wait.until(EC.presence_of_element_located((
@@ -249,7 +243,7 @@ def test_crear_orden_pago(driver):
         allure.attach(driver.get_screenshot_as_png(), "20_Click_Aprobar", allure.attachment_type.PNG)
 
     # ==========================================
-    # 21. VALIDAR DESAPARICIÓN DEL BOTÓN
+    # 20. VALIDAR DESAPARICIÓN DEL BOTÓN
     # ==========================================
     with allure.step("21. Validar que el botón de aprobación desapareció"):
         wait.until(EC.invisibility_of_element_located((
