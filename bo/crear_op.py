@@ -157,11 +157,8 @@ def test_crear_orden_pago(driver):
     # 9. GUARDAR + 8s Sleep
     # ==========================================
     with allure.step("9. Guardar Registro"):
-        boton_guardar = wait.until(EC.presence_of_element_located((
-            By.XPATH, 
-            "//input[@type='submit' and @name='ctl00$cphMain$btnSave']"
-        )))
-        driver.execute_script("arguments[0].click();", boton_guardar)
+        # Cambiado a safe_click nativo para que procese las validaciones de cliente y realice el submit real
+        safe_click(wait, (By.XPATH, "//input[@type='submit' and @name='ctl00$cphMain$btnSave']"))
         time.sleep(8)  # Espera de 8 segundos solicitada para procesamiento completo
         allure.attach(driver.get_screenshot_as_png(), "9_Guardado", allure.attachment_type.PNG)
 
