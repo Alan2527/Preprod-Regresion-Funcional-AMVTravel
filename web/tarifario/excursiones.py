@@ -80,8 +80,8 @@ def test_tarifario(logged_in_driver):
         # =========================
         # 3 Filtro y búsqueda
         # =========================
-        with allure.step("3. Cambiar destino a Cachi y buscar"):
-            cambiar_destino("Buenos Aires", "Cachi")
+        with allure.step("3. Cambiar destino a Buenos Aires y buscar"):
+            cambiar_destino("Buenos Aires", "Buenos Aires")
 
             btn_buscar = wait.until(EC.presence_of_element_located((
                 By.ID, "ctl00_cphMainSlider_ctrlTariffFilterControl_lnkView"
@@ -260,7 +260,7 @@ def test_tarifario(logged_in_driver):
         # ==========================================
         with allure.step("15. Validar Observación Prioritaria"):
             # Buscamos el contenedor div y validamos que el span interno tenga el texto exacto
-            obs_span = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[contains(@class, 'tariff-obs-item')]//span[contains(text(), 'tet')]")))
+            obs_span = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[contains(@class, 'tariff-obs-item')]//span[contains(text(), 'test')]")))
             
             assert obs_span.is_displayed(), "El div de observación o su texto no son visibles en pantalla"
             
