@@ -202,7 +202,7 @@ def test_crear_orden_pago(driver):
         safe_send_keys(wait, (By.ID, "txtReceiptDate"), fecha_hoy)
         allure.attach(driver.get_screenshot_as_png(), "16_Fecha_Ingresada", allure.attachment_type.PNG)
 
-    # ==========================================
+# ==========================================
     # 17. SCROLL A TABLA IMPUTACIÓN
     # ==========================================
     with allure.step("17. Scroll hasta tabla de imputación de facturas"):
@@ -224,13 +224,21 @@ def test_crear_orden_pago(driver):
         allure.attach(driver.get_screenshot_as_png(), "18_Click_Check", allure.attachment_type.PNG)
 
     # ==========================================
-    # 19. VALIDAR TABLA INTERNA
+    # 19. VALIDAR TABLA INTERNA y FORZAR VISIBILIDAD EN CAPTURA
     # ==========================================
     with allure.step("19. Validar existencia de celda en tabla interna"):
-        wait.until(EC.presence_of_element_located((
+        # 1. Esperamos que la celda de la tabla interna esté presente en el DOM
+        celda_tabla = wait.until(EC.presence_of_element_located((
             By.CSS_SELECTOR,
             ".table.table-striped.table-bordered.table-hover.table-condensed.text-center.m-b-0 td.text-center"
         )))
+        
+        # 2. 🔥 Forzamos un scroll extra hacia abajo para centrar la tabla en la pantalla
+        driver.execute_script("arguments[0].scrollIntoView(false);", celda_tabla)
+        driver.execute_script("window.scrollBy(0, 150);")
+        time.sleep(1)
+        
+        # 3. Tomamos la captura donde ahora sí se apreciará la grilla con los datos imputados
         allure.attach(driver.get_screenshot_as_png(), "19_Tabla_Interna_Validada", allure.attachment_type.PNG)
 
     # ==========================================
