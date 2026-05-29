@@ -73,8 +73,8 @@ def test_tarifario_cenashow(logged_in_driver):
             driver.execute_script("arguments[0].click();", btn_cenashow)
             esperar_fin_de_carga()
 
-        with allure.step("3. Cambiar destino a Cachi y buscar"):
-            cambiar_destino("Buenos Aires", "Cachi")
+        with allure.step("3. Cambiar destino a Buenos Aires y buscar"):
+            cambiar_destino("Buenos Aires", "Buenos Aires")
             btn_buscar = wait.until(EC.presence_of_element_located((
                 By.ID, "ctl00_cphMainSlider_ctrlTariffFilterControl_lnkView"
             )))
