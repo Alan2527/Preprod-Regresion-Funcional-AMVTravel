@@ -159,6 +159,7 @@ def test_crear_orden_pago(driver):
     with allure.step("9. Guardar Registro"):
         safe_click(wait, (By.XPATH, "//input[@type='submit' and @name='ctl00$cphMain$btnSave']"))
         time.sleep(8)  # Espera de 8 segundos para procesamiento completo
+         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         allure.attach(driver.get_screenshot_as_png(), "9_Guardado", allure.attachment_type.PNG)
 
     # ==========================================
