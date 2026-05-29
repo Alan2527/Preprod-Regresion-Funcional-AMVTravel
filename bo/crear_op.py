@@ -185,33 +185,31 @@ def test_crear_orden_pago(driver):
         safe_click(wait, (By.XPATH, "//input[@name='ctl00$cphMain$btnSave' and @value='Guardar']"))
         allure.attach(driver.get_screenshot_as_png(), "14_Click_Guardar", allure.attachment_type.PNG)
 
-    # ==========================================
-    # 15. ESPERAR CARGA POST-GUARDADO
-    # ==========================================
-    with allure.step("15. Esperar que la pantalla cargue"):
-        # ⏱️ Aumentado a 8 segundos para dar tiempo a la recarga y procesamiento del guardado en BD
-        time.sleep(8)  
-        wait.until(EC.presence_of_element_located((By.XPATH, "//body")))
-        allure.attach(driver.get_screenshot_as_png(), "15_Pantalla_Cargada", allure.attachment_type.PNG)
+# ==========================================
+# 15. ESPERAR CARGA POST-GUARDADO
+# ==========================================
+with allure.step("15. Esperar que la pantalla cargue"):
+    time.sleep(8)
+    # Validar que la URL cambió a una OP con ID (no /0)
+    wait.until(EC.url_matches(r".*/payorder/\d+"))
+    # Validar que el código de la OP apareció en pantalla
+    wait.until(EC.presence_of_element_located((By.ID, "txtCode")))
+    allure.attach(driver.get_screenshot_as_png(), "15_Pantalla_Cargada", allure.attachment_type.PNG)
 
-    # ==========================================
-    # 16. INGRESAR FECHA ACTUAL
-    # ==========================================
-    with allure.step("16. Ingresar fecha del día"):
-        fecha_hoy = datetime.now().strftime("%d/%m/%Y")
-        safe_send_keys(wait, (By.ID, "txtReceiptDate"), fecha_hoy)
-        allure.attach(driver.get_screenshot_as_png(), "16_Fecha_Ingresada", allure.attachment_type.PNG)
-
-    # ==========================================
-    # 17. SCROLL A TABLA IMPUTACIÓN
-    # ==========================================
-    with allure.step("17. Scroll hasta tabla de imputación de facturas"):
-        # Buscador CSS tolerante por si cambian los prefijos dinámicos
-        tabla = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "table[id$='tblAllocationSupplierInvoices']")))
-        driver.execute_script("arguments[0].scrollIntoView(true);", tabla)
-        # ⏱️ Más holgura para el render de la grilla
-        time.sleep(4)  
-        allure.attach(driver.get_screenshot_as_png(), "17_Scroll_Tabla", allure.attachment_type.PNG)
+# ==========================================
+# 17. SCROLL A TABLA IMPUTACIÓN
+# ==========================================
+with allure.step("17. Scroll hasta tabla de imputación de facturas"):
+    # Usar un wait dedicado con más tiempo para este elemento lento
+    wait_tabla = WebDriverWait(driver, 90)
+    tabla = wait_tabla.until(
+        EC.presence_of_element_located(
+            (By.ID, "tblAllocationSupplierInvoices")  # ID exacto, sin $=
+        )
+    )
+    driver.execute_script("arguments[0].scrollIntoView(true);", tabla)
+    time.sleep(4)
+    allure.attach(driver.get_screenshot_as_png(), "17_Scroll_Tabla", allure.attachment_type.PNG)
 
     # ==========================================
     # 18. CLICK EN IMPUTAR (Primer icon-check)
