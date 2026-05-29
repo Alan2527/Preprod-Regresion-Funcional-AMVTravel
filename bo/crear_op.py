@@ -163,21 +163,29 @@ def test_crear_orden_pago(driver):
         allure.attach(driver.get_screenshot_as_png(), "9_Guardado", allure.attachment_type.PNG)
 
     # ==========================================
-    # 10. BUSCAR TABLA IMPUTACIÓN
+    # 10. BUSCAR TABLA IMPUTACIÓN (Selector blindado)
     # ==========================================
     with allure.step("10. Buscar tabla de imputación"):
-        tabla_imputacion = wait.until(EC.presence_of_element_located((By.ID, "tblAllocationSupplierInvoices")))
+        # Usamos un selector CSS parcial ($=) que busca cualquier tabla cuyo ID termine con 'tblAllocationSupplierInvoices' y tenga role='grid'
+        tabla_imputacion = wait.until(EC.presence_of_element_located((
+            By.CSS_SELECTOR, 
+            "table[id$='tblAllocationSupplierInvoices'][role='grid']"
+        )))
         driver.execute_script("arguments[0].scrollIntoView(true);", tabla_imputacion)
-        time.sleep(2)
+        time.sleep(3)  # Margen extra para que el scroll e interfaz se estabilicen
         allure.attach(driver.get_screenshot_as_png(), "10_Tabla_Imputacion", allure.attachment_type.PNG)
 
     # ==========================================
     # 11. CLICK ASIGNAR TOTAL
     # ==========================================
     with allure.step("11. Click en Asignar Total"):
-        btn_asignar_total = wait.until(EC.presence_of_element_located((By.ID, "lnkAsignarTotal")))
+        # Anclamos el botón de asignación directamente dentro de nuestra tabla específica para evitar falsos positivos
+        btn_asignar_total = wait.until(EC.presence_of_element_located((
+            By.CSS_SELECTOR, 
+            "table[id$='tblAllocationSupplierInvoices'][role='grid'] #lnkAsignarTotal, [id$='tblAllocationSupplierInvoices'] a[id$='lnkAsignarTotal']"
+        )))
         driver.execute_script("arguments[0].click();", btn_asignar_total)
-        time.sleep(4)  # Margen para el recalculo de la grilla interna
+        time.sleep(5)  # Tiempo para que impacten los cálculos de la grilla interna
         allure.attach(driver.get_screenshot_as_png(), "11_Asignar_Total_Clickeado", allure.attachment_type.PNG)
 
     # ==========================================
