@@ -20,7 +20,7 @@ def safe_click(wait, locator):
             elem.click()
             return
         except StaleElementReferenceException:
-            time.sleep(1)
+            time.sleep(2)  # Aumentado el tiempo entre reintentos de click
     raise Exception(f"No se pudo hacer click: {locator}")
 
 
@@ -31,7 +31,7 @@ def safe_send_keys(wait, locator, value):
 
             # Scroll al elemento
             wait._driver.execute_script("arguments[0].scrollIntoView(true);", elem)
-            time.sleep(0.5)
+            time.sleep(1)  # Más tiempo para asegurar que el scroll terminó
 
             elem.clear()
             elem.send_keys(value)
@@ -44,7 +44,7 @@ def safe_send_keys(wait, locator, value):
                 wait._driver.execute_script("arguments[0].value = arguments[1];", elem, value)
                 return
             except:
-                time.sleep(1)
+                time.sleep(2)
 
     raise Exception(f"No se pudo escribir en: {locator}")
 
@@ -62,7 +62,8 @@ def wait_table_rows(wait, table_id):
 @allure.severity(allure.severity_level.CRITICAL)
 def test_crear_orden_pago(driver):
 
-    wait = WebDriverWait(driver, 25)
+    # 🔥 Se aumenta el tiempo límite de espera explícita a 45 segundos por lentitud del backend
+    wait = WebDriverWait(driver, 45)
 
     # ==========================================
     # 1. LOGIN
@@ -127,7 +128,8 @@ def test_crear_orden_pago(driver):
     with allure.step("7. Seleccionar fila del proveedor"):
         fila_proveedor = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "sorting_1")))
         driver.execute_script("arguments[0].click();", fila_proveedor)
-        time.sleep(3)  # Esperamos a que impacte el PostBack y cargue la sucursal por defecto
+        # ⏱️ Aumentado a 6 segundos para garantizar que el PostBack del proveedor impacte del todo
+        time.sleep(6)  
         allure.attach(driver.get_screenshot_as_png(), "7_Proveedor_Seleccionado", allure.attachment_type.PNG)
 
     # ==========================================
@@ -175,20 +177,20 @@ def test_crear_orden_pago(driver):
         safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtDetail"), "Test automático")
         allure.attach(driver.get_screenshot_as_png(), "13_Detalle", allure.attachment_type.PNG)
 
-# ==========================================
+    # ==========================================
     # 14. GUARDAR
     # ==========================================
     with allure.step("14. Guardar Orden de Pago"):
-        # Cambiamos a safe_click para que realice la acción nativa del botón y gatille el submit real
+        # Usamos safe_click nativo para asegurar la persistencia del submit
         safe_click(wait, (By.XPATH, "//input[@name='ctl00$cphMain$btnSave' and @value='Guardar']"))
         allure.attach(driver.get_screenshot_as_png(), "14_Click_Guardar", allure.attachment_type.PNG)
 
     # ==========================================
-    # 15. ESPERAR CARGA
+    # 15. ESPERAR CARGA POST-GUARDADO
     # ==========================================
     with allure.step("15. Esperar que la pantalla cargue"):
-        # Esperamos a que la página procese y vuelva a estar estable el body
-        time.sleep(5)
+        # ⏱️ Aumentado a 8 segundos para dar tiempo a la recarga y procesamiento del guardado en BD
+        time.sleep(8)  
         wait.until(EC.presence_of_element_located((By.XPATH, "//body")))
         allure.attach(driver.get_screenshot_as_png(), "15_Pantalla_Cargada", allure.attachment_type.PNG)
 
@@ -201,13 +203,14 @@ def test_crear_orden_pago(driver):
         allure.attach(driver.get_screenshot_as_png(), "16_Fecha_Ingresada", allure.attachment_type.PNG)
 
     # ==========================================
-    # 17. SCROLL A TABLA IMPUTACIÓN (Con selector parcial más tolerante)
+    # 17. SCROLL A TABLA IMPUTACIÓN
     # ==========================================
     with allure.step("17. Scroll hasta tabla de imputación de facturas"):
-        # Usamos un selector CSS parcial ($=) que busca cualquier ID que termine en tblAllocationSupplierInvoices
+        # Buscador CSS tolerante por si cambian los prefijos dinámicos
         tabla = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "table[id$='tblAllocationSupplierInvoices']")))
         driver.execute_script("arguments[0].scrollIntoView(true);", tabla)
-        time.sleep(2)
+        # ⏱️ Más holgura para el render de la grilla
+        time.sleep(4)  
         allure.attach(driver.get_screenshot_as_png(), "17_Scroll_Tabla", allure.attachment_type.PNG)
 
     # ==========================================
@@ -219,17 +222,23 @@ def test_crear_orden_pago(driver):
             "table[id$='tblAllocationSupplierInvoices'] i.icon-check"
         )))
         driver.execute_script("arguments[0].click();", primer_check)
-        time.sleep(5)
+        # ⏱️ Aumentado a 8 segundos para que calcule los totales e imputaciones en segundo plano sin prisa
+        time.sleep(8)  
         allure.attach(driver.get_screenshot_as_png(), "18_Click_Check", allure.attachment_type.PNG)
 
     # ==========================================
-    # 19. VALIDAR TABLA INTERNA
+    # 19. VALIDAR TABLA INTERNA Y FORZAR VISIBILIDAD EN CAPTURA
     # ==========================================
     with allure.step("19. Validar existencia de celda en tabla interna"):
-        wait.until(EC.presence_of_element_located((
+        celda_tabla = wait.until(EC.presence_of_element_located((
             By.CSS_SELECTOR,
             ".table.table-striped.table-bordered.table-hover.table-condensed.text-center.m-b-0 td.text-center"
         )))
+        
+        driver.execute_script("arguments[0].scrollIntoView(false);", celda_tabla)
+        driver.execute_script("window.scrollBy(0, 150);")
+        time.sleep(2)
+        
         allure.attach(driver.get_screenshot_as_png(), "19_Tabla_Interna_Validada", allure.attachment_type.PNG)
 
     # ==========================================
@@ -241,9 +250,10 @@ def test_crear_orden_pago(driver):
             "//input[@value='Aprobar & Aplicar Recibo']"
         )))
         driver.execute_script("arguments[0].scrollIntoView(true);", boton_aprobar)
-        time.sleep(0.5)
+        time.sleep(1)
         driver.execute_script("arguments[0].click();", boton_aprobar)
-        time.sleep(5)
+        # ⏱️ Aumentado a 8 segundos. La aprobación suele ser el proceso de backend más pesado
+        time.sleep(8)  
         allure.attach(driver.get_screenshot_as_png(), "20_Click_Aprobar", allure.attachment_type.PNG)
 
     # ==========================================
