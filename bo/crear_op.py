@@ -87,7 +87,6 @@ def test_crear_orden_pago(driver):
     # 2. NAVEGACIÓN (Administración)
     # ==========================================
     with allure.step("2. Click en Administración"):
-        # Buscamos el span que contiene exactamente el texto "Administración"
         safe_click(wait, (By.XPATH, "//span[contains(text(), 'Administración')]"))
         allure.attach(driver.get_screenshot_as_png(), "2_Administracion", allure.attachment_type.PNG)
 
@@ -152,98 +151,101 @@ def test_crear_orden_pago(driver):
         allure.attach(driver.get_screenshot_as_png(), "10_Monto", allure.attachment_type.PNG)
 
     # ==========================================
-    # 11. ABRIR MODAL PROVEEDOR
+    # 11. DETALLE (¡NUEVO PASO AGREGADO!)
     # ==========================================
-    with allure.step("11. Abrir modal proveedor"):
-        safe_click(wait, (By.ID, "btnSupplier"))
-        # Espera a que el input de búsqueda dentro del modal sea visible para confirmar la apertura
-        wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[type='search']")))
-        allure.attach(driver.get_screenshot_as_png(), "11_Modal_Proveedor", allure.attachment_type.PNG)
+    with allure.step("11. Ingresar Detalle"):
+        safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtDetail"), "Test automático")
+        allure.attach(driver.get_screenshot_as_png(), "11_Detalle", allure.attachment_type.PNG)
 
     # ==========================================
-    # 12. BUSCAR PROVEEDOR
+    # 12. ABRIR MODAL PROVEEDOR
     # ==========================================
-    with allure.step("12. Buscar MAX BAIRES"):
+    with allure.step("12. Abrir modal proveedor"):
+        safe_click(wait, (By.ID, "btnSupplier"))
+        wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[type='search']")))
+        allure.attach(driver.get_screenshot_as_png(), "12_Modal_Proveedor", allure.attachment_type.PNG)
+
+    # ==========================================
+    # 13. BUSCAR PROVEEDOR
+    # ==========================================
+    with allure.step("13. Buscar MAX BAIRES"):
         search = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[type='search']")))
         search.clear()
         search.send_keys("MAX BAIRES")
-        allure.attach(driver.get_screenshot_as_png(), "12_Busqueda_Proveedor", allure.attachment_type.PNG)
+        allure.attach(driver.get_screenshot_as_png(), "13_Busqueda_Proveedor", allure.attachment_type.PNG)
 
     # ==========================================
-    # 13. SELECCIONAR PROVEEDOR
+    # 14. SELECCIONAR PROVEEDOR
     # ==========================================
-    with allure.step("13. Seleccionar fila del proveedor"):
-        # Clickeamos el td class="sorting_1" que coincida con la búsqueda
+    with allure.step("14. Seleccionar fila del proveedor"):
         fila_proveedor = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "sorting_1")))
         driver.execute_script("arguments[0].click();", fila_proveedor)
-        
-        # Pequeña pausa para asegurar la carga tras seleccionar
         time.sleep(2)
-        allure.attach(driver.get_screenshot_as_png(), "13_Proveedor_Seleccionado", allure.attachment_type.PNG)
+        allure.attach(driver.get_screenshot_as_png(), "14_Proveedor_Seleccionado", allure.attachment_type.PNG)
 
     # ==========================================
-    # 14. GUARDAR
+    # 15. GUARDAR
     # ==========================================
-    with allure.step("14. Guardar Orden de Pago"):
+    with allure.step("15. Guardar Orden de Pago"):
         boton_guardar = wait.until(EC.presence_of_element_located((
             By.XPATH, 
             "//input[@name='ctl00$cphMain$btnSave' and @value='Guardar']"
         )))
         driver.execute_script("arguments[0].click();", boton_guardar)
-        allure.attach(driver.get_screenshot_as_png(), "14_Click_Guardar", allure.attachment_type.PNG)
+        allure.attach(driver.get_screenshot_as_png(), "15_Click_Guardar", allure.attachment_type.PNG)
 
     # ==========================================
-    # 15. ESPERAR CARGA
+    # 16. ESPERAR CARGA
     # ==========================================
-    with allure.step("15. Esperar que la pantalla cargue"):
-        # Esperamos a que vuelva a aparecer el input de fecha para garantizar el renderizado post-guardado
-        wait.until(EC.presence_of_element_located((By.NAME, "ctl00$cphMain$txtReceiptDate")))
-        time.sleep(3)
-        allure.attach(driver.get_screenshot_as_png(), "15_Pantalla_Cargada", allure.attachment_type.PNG)
+    with allure.step("16. Esperar que la pantalla cargue"):
+        # Modificado para tolerar la recarga de página de forma segura
+        time.sleep(4)
+        wait.until(EC.presence_of_element_located((By.XPATH, "//body")))
+        allure.attach(driver.get_screenshot_as_png(), "16_Pantalla_Cargada", allure.attachment_type.PNG)
 
     # ==========================================
-    # 16. INGRESAR FECHA ACTUAL
+    # 17. INGRESAR FECHA ACTUAL
     # ==========================================
-    with allure.step("16. Ingresar fecha del día"):
+    with allure.step("17. Ingresar fecha del día"):
         fecha_hoy = datetime.now().strftime("%d/%m/%Y")
         safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtReceiptDate"), fecha_hoy)
-        allure.attach(driver.get_screenshot_as_png(), "16_Fecha_Ingresada", allure.attachment_type.PNG)
+        allure.attach(driver.get_screenshot_as_png(), "17_Fecha_Ingresada", allure.attachment_type.PNG)
 
     # ==========================================
-    # 17. SCROLL A TABLA IMPUTACIÓN
+    # 18. SCROLL A TABLA IMPUTACIÓN
     # ==========================================
-    with allure.step("17. Scroll hasta tabla de imputación de facturas"):
+    with allure.step("18. Scroll hasta tabla de imputación de facturas"):
         tabla = wait.until(EC.presence_of_element_located((By.ID, "tblAllocationSupplierInvoices")))
         driver.execute_script("arguments[0].scrollIntoView(true);", tabla)
         time.sleep(2)
-        allure.attach(driver.get_screenshot_as_png(), "17_Scroll_Tabla", allure.attachment_type.PNG)
+        allure.attach(driver.get_screenshot_as_png(), "18_Scroll_Tabla", allure.attachment_type.PNG)
 
     # ==========================================
-    # 18. CLICK EN IMPUTAR (Primer icon-check)
+    # 19. CLICK EN IMPUTAR (Primer icon-check)
     # ==========================================
-    with allure.step("18. Click en el primer check de imputación"):
+    with allure.step("19. Click en el primer check de imputación"):
         primer_check = wait.until(EC.presence_of_element_located((
             By.CSS_SELECTOR, 
             "#tblAllocationSupplierInvoices i.icon-check"
         )))
         driver.execute_script("arguments[0].click();", primer_check)
-        time.sleep(4)  # Espera para que procese el cálculo interno
-        allure.attach(driver.get_screenshot_as_png(), "18_Click_Check", allure.attachment_type.PNG)
+        time.sleep(4)
+        allure.attach(driver.get_screenshot_as_png(), "19_Click_Check", allure.attachment_type.PNG)
 
     # ==========================================
-    # 19. VALIDAR TABLA INTERNA
+    # 20. VALIDAR TABLA INTERNA
     # ==========================================
-    with allure.step("19. Validar existencia de celda en tabla interna"):
+    with allure.step("20. Validar existencia de celda en tabla interna"):
         wait.until(EC.presence_of_element_located((
             By.CSS_SELECTOR,
             ".table.table-striped.table-bordered.table-hover.table-condensed.text-center.m-b-0 td.text-center"
         )))
-        allure.attach(driver.get_screenshot_as_png(), "19_Tabla_Interna_Validada", allure.attachment_type.PNG)
+        allure.attach(driver.get_screenshot_as_png(), "20_Tabla_Interna_Validada", allure.attachment_type.PNG)
 
     # ==========================================
-    # 20. SCROLL Y CLICKEAR APROBAR
+    # 21. SCROLL Y CLICKEAR APROBAR
     # ==========================================
-    with allure.step("20. Scroll arriba y aprobar recibo"):
+    with allure.step("21. Scroll arriba y aprobar recibo"):
         boton_aprobar = wait.until(EC.presence_of_element_located((
             By.XPATH,
             "//input[@value='Aprobar & Aplicar Recibo']"
@@ -251,15 +253,15 @@ def test_crear_orden_pago(driver):
         driver.execute_script("arguments[0].scrollIntoView(true);", boton_aprobar)
         time.sleep(0.5)
         driver.execute_script("arguments[0].click();", boton_aprobar)
-        time.sleep(4)  # Esperar procesamiento
-        allure.attach(driver.get_screenshot_as_png(), "20_Click_Aprobar", allure.attachment_type.PNG)
+        time.sleep(4)
+        allure.attach(driver.get_screenshot_as_png(), "21_Click_Aprobar", allure.attachment_type.PNG)
 
     # ==========================================
-    # 21. VALIDAR DESAPARICIÓN DEL BOTÓN
+    # 22. VALIDAR DESAPARICIÓN DEL BOTÓN
     # ==========================================
-    with allure.step("21. Validar que el botón de aprobación desapareció"):
+    with allure.step("22. Validar que el botón de aprobación desapareció"):
         wait.until(EC.invisibility_of_element_located((
             By.XPATH,
             "//input[@value='Aprobar & Aplicar Recibo']"
         )))
-        allure.attach(driver.get_screenshot_as_png(), "21_Fin_Test", allure.attachment_type.PNG)
+        allure.attach(driver.get_screenshot_as_png(), "22_Fin_Test", allure.attachment_type.PNG)
