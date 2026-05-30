@@ -153,26 +153,25 @@ def test_crear_orden_pago(driver):
         safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtAmount1"), "900000")
         allure.attach(driver.get_screenshot_as_png(), "8_Monto", allure.attachment_type.PNG)
 
-# ==========================================
+    # ==========================================
     # 9. GUARDAR + 8s Sleep
     # ==========================================
     with allure.step("9. Guardar Registro"):
         safe_click(wait, (By.XPATH, "//input[@type='submit' and @name='ctl00$cphMain$btnSave']"))
         time.sleep(8)  # Espera de 8 segundos para procesamiento completo
-         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         allure.attach(driver.get_screenshot_as_png(), "9_Guardado", allure.attachment_type.PNG)
 
     # ==========================================
     # 10. SCROLL FORZADO ABAJO Y BUSCAR TABLA IMPUTACIÓN
     # ==========================================
     with allure.step("10. Buscar tabla de imputación"):
-        # 🔥 Aplicamos tu solución: forzamos un scroll masivo hacia el fondo de la pantalla
+        # Forzamos un scroll masivo hacia el fondo de la pantalla
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(2)  # Le damos un segundo para que termine de acomodarse el scroll
 
         # Ahora sí, buscamos la tabla con un selector flexible
         tabla_imputacion = wait.until(EC.presence_of_element_located((
-            By.CSS_SELECTOR, 
+            By.CSS_SELECTOR,
             "table[id$='tblAllocationSupplierInvoices'], #tblAllocationSupplierInvoices"
         )))
 
@@ -186,7 +185,7 @@ def test_crear_orden_pago(driver):
     # ==========================================
     with allure.step("11. Click en Asignar Total"):
         btn_asignar_total = wait.until(EC.presence_of_element_located((
-            By.CSS_SELECTOR, 
+            By.CSS_SELECTOR,
             "a[id$='lnkAsignarTotal'], #lnkAsignarTotal"
         )))
         driver.execute_script("arguments[0].click();", btn_asignar_total)
