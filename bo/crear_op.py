@@ -162,32 +162,30 @@ def test_crear_orden_pago(driver):
         allure.attach(driver.get_screenshot_as_png(), "9_Guardado", allure.attachment_type.PNG)
 
     # ==========================================
-    # 10. SCROLL FORZADO ABAJO Y BUSCAR TABLA IMPUTACIÓN
+    # 10. ESPERAR REDIRECCIÓN Y SCROLL A ZONA DE IMPUTACIÓN
     # ==========================================
-    with allure.step("10. Buscar tabla de imputación"):
-        # Forzamos un scroll masivo hacia el fondo de la pantalla
+    with allure.step("10. Esperar redirección a la OP creada"):
+        # Tras Guardar, el sitio redirige a /administration/payorder/{id}.
+        # El ancla real NO es la tabla, sino el link de imputar (lnkAsignarTotal),
+        # que es el elemento que Katalon confirma que aparece en el flujo.
+        wait.until(EC.url_contains("/administration/payorder/"))
+
+        # Forzamos scroll al fondo para que la zona de imputación quede en viewport
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(2)  # Le damos un segundo para que termine de acomodarse el scroll
-
-        # Ahora sí, buscamos la tabla con un selector flexible
-        tabla_imputacion = wait.until(EC.presence_of_element_located((
-            By.CSS_SELECTOR,
-            "table[id$='tblAllocationSupplierInvoices'], #tblAllocationSupplierInvoices"
-        )))
-
-        # Volvemos a asegurar que quede bien encuadrada
-        driver.execute_script("arguments[0].scrollIntoView(true);", tabla_imputacion)
-        time.sleep(1)
-        allure.attach(driver.get_screenshot_as_png(), "10_Tabla_Imputacion", allure.attachment_type.PNG)
+        time.sleep(2)
+        allure.attach(driver.get_screenshot_as_png(), "10_Pagina_OP_Creada", allure.attachment_type.PNG)
 
     # ==========================================
     # 11. CLICK ASIGNAR TOTAL
     # ==========================================
     with allure.step("11. Click en Asignar Total"):
+        # Esperamos directamente el link de imputar (id exacto según Katalon: lnkAsignarTotal)
         btn_asignar_total = wait.until(EC.presence_of_element_located((
             By.CSS_SELECTOR,
             "a[id$='lnkAsignarTotal'], #lnkAsignarTotal"
         )))
+        driver.execute_script("arguments[0].scrollIntoView(true);", btn_asignar_total)
+        time.sleep(1)
         driver.execute_script("arguments[0].click();", btn_asignar_total)
         time.sleep(5)
         allure.attach(driver.get_screenshot_as_png(), "11_Asignar_Total_Clickeado", allure.attachment_type.PNG)
