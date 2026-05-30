@@ -39,7 +39,6 @@ def safe_send_keys(wait, locator, value):
 
         except (StaleElementReferenceException, ElementNotInteractableException):
             try:
-                # Fallback JS nativo si se bloquea
                 elem = wait.until(EC.presence_of_element_located(locator))
                 wait._driver.execute_script("arguments[0].value = arguments[1];", elem, value)
                 return
@@ -58,11 +57,10 @@ def safe_send_keys(wait, locator, value):
 @allure.severity(allure.severity_level.CRITICAL)
 def test_crear_orden_pago(driver):
 
-    # Timeout holgado de 45 segundos para servidores lentos de preprod
     wait = WebDriverWait(driver, 45)
 
     # ==========================================
-    # 1. LOGIN (Igual a crear_oc.py)
+    # 1. LOGIN
     # ==========================================
     with allure.step("1. Login"):
         driver.get("https://preprod.bo.amv.travel/login")
@@ -81,163 +79,143 @@ def test_crear_orden_pago(driver):
         allure.attach(driver.get_screenshot_as_png(), "1_Login", allure.attachment_type.PNG)
 
     # ==========================================
-    # 2. NAVEGACIÓN Y APERTURA DEL FORMULARIO
+    # 2. NAVEGACIÓN
     # ==========================================
-    with allure.step("2. Click en Administración (Menú Lateral)"):
-        # Clickeamos el menú principal para desplegar las opciones
+    with allure.step("2. Click en Administración"):
         safe_click(wait, (By.XPATH, "//span[contains(text(), 'Administración')]"))
-        allure.attach(driver.get_screenshot_as_png(), "2_Menu_Administracion_Desplegado", allure.attachment_type.PNG)
+        allure.attach(driver.get_screenshot_as_png(), "2_Menu_Administracion", allure.attachment_type.PNG)
 
-    with allure.step("2.1 Ir a sección PayOrders"):
-        # Click en el submenú de Órdenes de Pago
+    with allure.step("2.1 Ir a PayOrders"):
         safe_click(wait, (By.XPATH, "//a[contains(@href, '/administration/payorders')]"))
-        allure.attach(driver.get_screenshot_as_png(), "2_1_Listado_PayOrders", allure.attachment_type.PNG)
+        allure.attach(driver.get_screenshot_as_png(), "2_1_Listado", allure.attachment_type.PNG)
 
-    with allure.step("2.2 Click en Crear Orden de Pago (Nuevo Registro)"):
-        # Buscamos y clickeamos el botón específico usando la clase provista
+    with allure.step("2.2 Nuevo Registro"):
         safe_click(wait, (By.CSS_SELECTOR, "a.btn.btn-sm.btn-info.btn-icon.m-t4.usepreload"))
         time.sleep(4)
-        allure.attach(driver.get_screenshot_as_png(), "2_2_Nuevo_Formulario", allure.attachment_type.PNG)
+        allure.attach(driver.get_screenshot_as_png(), "2_2_Form", allure.attachment_type.PNG)
 
     # ==========================================
-    # 3. SELECCIONAR PROVEEDOR MAX BAIRES
+    # 3. PROVEEDOR
     # ==========================================
-    with allure.step("3. Buscar y Seleccionar Proveedor MAX BAIRES"):
+    with allure.step("3. Seleccionar proveedor"):
         safe_click(wait, (By.ID, "btnSupplier"))
         search = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[type='search']")))
         search.clear()
         search.send_keys("MAX BAIRES")
-        
-        fila_proveedor = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "sorting_1")))
-        driver.execute_script("arguments[0].click();", fila_proveedor)
-        time.sleep(5)  # Espera prudencial para que cargue la info heredada por el PostBack del proveedor
-        allure.attach(driver.get_screenshot_as_png(), "3_Proveedor_Seleccionado", allure.attachment_type.PNG)
+
+        fila = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "sorting_1")))
+        driver.execute_script("arguments[0].click();", fila)
+
+        time.sleep(5)
+        allure.attach(driver.get_screenshot_as_png(), "3_Proveedor", allure.attachment_type.PNG)
 
     # ==========================================
-    # 4. REFERENCIA DE PAGO (Value='40')
+    # 4. REFERENCIA
     # ==========================================
-    with allure.step("4. Seleccionar Referencia de Pago (Value='40')"):
+    with allure.step("4. PaymentRef"):
         Select(wait.until(EC.element_to_be_clickable((By.NAME, "ctl00$cphMain$ddPaymentRefs"))))\
             .select_by_value("40")
-        allure.attach(driver.get_screenshot_as_png(), "4_PaymentRef", allure.attachment_type.PNG)
 
     # ==========================================
     # 5. DETALLE
     # ==========================================
-    with allure.step("5. Ingresar Detalle"):
+    with allure.step("5. Detalle"):
         safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtDetail"), "Test Automático")
-        allure.attach(driver.get_screenshot_as_png(), "5_Detalle", allure.attachment_type.PNG)
 
     # ==========================================
-    # 6. MONEDA (Value='10') + 5s Sleep
+    # 6. MONEDA
     # ==========================================
-    with allure.step("6. Seleccionar Moneda (Value='10')"):
+    with allure.step("6. Moneda"):
         Select(wait.until(EC.element_to_be_clickable((By.NAME, "ctl00$cphMain$ddCurrency"))))\
             .select_by_value("10")
-        time.sleep(5)  # Espera de 5 segundos solicitada por carga
-        allure.attach(driver.get_screenshot_as_png(), "6_Currency", allure.attachment_type.PNG)
+        time.sleep(5)
 
     # ==========================================
-    # 7. CAJA (Value='8') + 5s Sleep
+    # 7. CAJA
     # ==========================================
-    with allure.step("7. Seleccionar Caja (Value='8')"):
+    with allure.step("7. Caja"):
         Select(wait.until(EC.element_to_be_clickable((By.NAME, "ctl00$cphMain$ddCashFlow1"))))\
             .select_by_value("8")
-        time.sleep(5)  # Espera de 5 segundos solicitada por carga
-        allure.attach(driver.get_screenshot_as_png(), "7_CashFlow", allure.attachment_type.PNG)
+        time.sleep(5)
 
     # ==========================================
     # 8. MONTO
     # ==========================================
-    with allure.step("8. Ingresar Monto"):
+    with allure.step("8. Monto"):
         safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtAmount1"), "900000")
-        allure.attach(driver.get_screenshot_as_png(), "8_Monto", allure.attachment_type.PNG)
 
-# ==========================================
-    # 9. GUARDAR + 8s Sleep
     # ==========================================
-    with allure.step("9. Guardar Registro"):
+    # 9. GUARDAR
+    # ==========================================
+    with allure.step("9. Guardar"):
         safe_click(wait, (By.XPATH, "//input[@type='submit' and @name='ctl00$cphMain$btnSave']"))
-        time.sleep(8)  # Espera de 8 segundos para procesamiento completo
-         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(8)
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         allure.attach(driver.get_screenshot_as_png(), "9_Guardado", allure.attachment_type.PNG)
 
     # ==========================================
-    # 10. SCROLL FORZADO Y BUSCAR TABLA IMPUTACIÓN
+    # 10. TABLA IMPUTACIÓN
     # ==========================================
-    with allure.step("10. Buscar tabla de imputación"):
-        # 1. Tu idea: Scroll masivo hacia el fondo para obligar a la página a renderizar todo lo que falte
+    with allure.step("10. Tabla imputación"):
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(2)
-        
-        # 2. Esperamos la presencia física en el DOM con el selector flexible
-        tabla_imputacion = wait.until(EC.presence_of_element_located((
-            By.CSS_SELECTOR, 
+
+        tabla = wait.until(EC.presence_of_element_located((
+            By.CSS_SELECTOR,
             "table[id$='tblAllocationSupplierInvoices'], #tblAllocationSupplierInvoices"
         )))
-        
-        # 3. Centramos la pantalla justo sobre la tabla para la foto perfecta
-        driver.execute_script("arguments[0].scrollIntoView({block: 'center', inline: 'nearest'});", tabla_imputacion)
+
+        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", tabla)
         time.sleep(2)
-        allure.attach(driver.get_screenshot_as_png(), "10_Tabla_Imputacion", allure.attachment_type.PNG)
 
     # ==========================================
-    # 11. CLICK ASIGNAR TOTAL
+    # 11. ASIGNAR TOTAL
     # ==========================================
-    with allure.step("11. Click en Asignar Total"):
-        btn_asignar_total = wait.until(EC.presence_of_element_located((
-            By.CSS_SELECTOR, 
+    with allure.step("11. Asignar total"):
+        btn = wait.until(EC.presence_of_element_located((
+            By.CSS_SELECTOR,
             "a[id$='lnkAsignarTotal'], #lnkAsignarTotal"
         )))
-        driver.execute_script("arguments[0].click();", btn_asignar_total)
+        driver.execute_script("arguments[0].click();", btn)
         time.sleep(5)
-        allure.attach(driver.get_screenshot_as_png(), "11_Asignar_Total_Clickeado", allure.attachment_type.PNG)
-        
+
     # ==========================================
-    # 12 y 13. VALIDAR TABLA INTERNA Y ENCUADRE
+    # 12. VALIDAR TABLA
     # ==========================================
-    with allure.step("12 y 13. Validar existencia de celda en tabla interna"):
-        # Buscamos la grilla interna que contenga datos
-        celda_tabla = wait.until(EC.presence_of_element_located((
+    with allure.step("12. Validar tabla"):
+        celda = wait.until(EC.presence_of_element_located((
             By.CSS_SELECTOR,
             ".table.table-striped.table-bordered.table-hover.table-condensed.text-center.m-b-0 td.text-center"
         )))
-        
-        # Scroll extra controlado para forzar visibilidad total en Allure
-        driver.execute_script("arguments[0].scrollIntoView(false);", celda_tabla)
+
+        driver.execute_script("arguments[0].scrollIntoView(false);", celda)
         driver.execute_script("window.scrollBy(0, 150);")
         time.sleep(2)
-        allure.attach(driver.get_screenshot_as_png(), "13_Tabla_Interna_Con_Datos", allure.attachment_type.PNG)
 
     # ==========================================
-    # 14. INGRESAR FECHA ACTUAL + 5s Sleep
+    # 13. FECHA
     # ==========================================
-    with allure.step("14. Ingresar fecha actual"):
-        fecha_hoy = datetime.now().strftime("%d/%m/%Y")
-        safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtReceiptDate"), fecha_hoy)
-        time.sleep(5)  # Espera de 5 segundos solicitada por carga
-        allure.attach(driver.get_screenshot_as_png(), "14_Fecha_Ingresada", allure.attachment_type.PNG)
+    with allure.step("13. Fecha"):
+        fecha = datetime.now().strftime("%d/%m/%Y")
+        safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtReceiptDate"), fecha)
+        time.sleep(5)
 
     # ==========================================
-    # 15. APROBAR + 8s Sleep
+    # 14. APROBAR
     # ==========================================
-    with allure.step("15. Click en Aprobar Orden de Pago"):
-        boton_aprobar = wait.until(EC.presence_of_element_located((
+    with allure.step("14. Aprobar"):
+        btn = wait.until(EC.presence_of_element_located((
             By.XPATH,
             "//input[@type='submit' and @name='ctl00$cphMain$btnApprove']"
         )))
-        driver.execute_script("arguments[0].scrollIntoView(true);", boton_aprobar)
-        time.sleep(0.5)
-        driver.execute_script("arguments[0].click();", boton_aprobar)
-        time.sleep(8)  # Espera de 8 segundos solicitada para que procese el backend pesado de aprobación
-        allure.attach(driver.get_screenshot_as_png(), "15_Click_Aprobar", allure.attachment_type.PNG)
+        driver.execute_script("arguments[0].click();", btn)
+        time.sleep(8)
 
     # ==========================================
-    # 16. VALIDAR DESAPARICIÓN DEL BOTÓN
+    # 15. VALIDACIÓN FINAL
     # ==========================================
-    with allure.step("16. Validar que el botón Aprobar ya no exista"):
+    with allure.step("15. Validar fin"):
         wait.until(EC.invisibility_of_element_located((
             By.XPATH,
             "//input[@type='submit' and @name='ctl00$cphMain$btnApprove']"
         )))
-        allure.attach(driver.get_screenshot_as_png(), "16_Fin_Test_Exitoso", allure.attachment_type.PNG)
