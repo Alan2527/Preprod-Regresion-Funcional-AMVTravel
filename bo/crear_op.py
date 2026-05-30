@@ -117,47 +117,43 @@ def test_crear_orden_pago(driver):
 
     safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtAmount1"), "900000")
 
-    # ==========================================
-    # 9. GUARDAR (FIX REAL)
-    # ==========================================
-    with allure.step("9. Guardar"):
-        safe_click(wait, (By.XPATH, "//input[@type='submit' and @name='ctl00$cphMain$btnSave']"))
+# ==========================================
+# 9. GUARDAR + REDIRECCIÓN REAL
+# ==========================================
+with allure.step("9. Guardar"):
+    safe_click(wait, (By.XPATH, "//input[@type='submit' and @name='ctl00$cphMain$btnSave']"))
 
-        # esperar fin de postback / loaders
-        try:
-            WebDriverWait(driver, 60).until_not(
-                EC.presence_of_element_located((By.CSS_SELECTOR, ".loading, .spinner, .overlay"))
-            )
-        except:
-            pass  # por si no hay loader visible
+    # 🔥 ESTE ES EL FIX REAL
+    WebDriverWait(driver, 60).until(
+        EC.url_matches(r".*/payorder/\d+")
+    )
 
-        time.sleep(3)  # pequeño buffer realista
+    # opcional debug
+    print("URL actual:", driver.current_url)
 
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    time.sleep(2)
 
-    # ==========================================
-    # 10. TABLA IMPUTACIÓN (FIX REAL)
-    # ==========================================
-    with allure.step("10. Tabla imputación"):
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
-        tabla = WebDriverWait(driver, 60).until(
-            EC.visibility_of_element_located((
-                By.CSS_SELECTOR,
-                "table[id*='tblAllocationSupplierInvoices']"
-            ))
-        )
+# ==========================================
+# 10. TABLA IMPUTACIÓN (EN LA NUEVA PÁGINA)
+# ==========================================
+with allure.step("10. Tabla imputación"):
 
-        # validar que tenga filas
-        WebDriverWait(driver, 60).until(
-            EC.presence_of_element_located((
-                By.CSS_SELECTOR,
-                "table[id*='tblAllocationSupplierInvoices'] tbody tr"
-            ))
-        )
+    tabla = WebDriverWait(driver, 60).until(
+        EC.visibility_of_element_located((
+            By.ID,
+            "tblAllocationSupplierInvoices"
+        ))
+    )
 
-        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", tabla)
-
+    # validar filas reales
+    WebDriverWait(driver, 60).until(
+        EC.presence_of_element_located((
+            By.CSS_SELECTOR,
+            "#tblAllocationSupplierInvoices tbody tr"
+        ))
+    )
+    
     # ==========================================
     # 11. ASIGNAR TOTAL
     # ==========================================
