@@ -163,22 +163,22 @@ def test_crear_orden_pago(driver):
         allure.attach(driver.get_screenshot_as_png(), "9_Guardado", allure.attachment_type.PNG)
 
     # ==========================================
-    # 10. SCROLL FORZADO ABAJO Y BUSCAR TABLA IMPUTACIÓN
+    # 10. SCROLL FORZADO Y BUSCAR TABLA IMPUTACIÓN
     # ==========================================
     with allure.step("10. Buscar tabla de imputación"):
-        # 🔥 Aplicamos tu solución: forzamos un scroll masivo hacia el fondo de la pantalla
+        # 1. Tu idea: Scroll masivo hacia el fondo para obligar a la página a renderizar todo lo que falte
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(2)  # Le damos un segundo para que termine de acomodarse el scroll
+        time.sleep(2)
         
-        # Ahora sí, buscamos la tabla con un selector flexible
+        # 2. Esperamos la presencia física en el DOM con el selector flexible
         tabla_imputacion = wait.until(EC.presence_of_element_located((
             By.CSS_SELECTOR, 
             "table[id$='tblAllocationSupplierInvoices'], #tblAllocationSupplierInvoices"
         )))
         
-        # Volvemos a asegurar que quede bien encuadrada
-        driver.execute_script("arguments[0].scrollIntoView(true);", tabla_imputacion)
-        time.sleep(1)
+        # 3. Centramos la pantalla justo sobre la tabla para la foto perfecta
+        driver.execute_script("arguments[0].scrollIntoView({block: 'center', inline: 'nearest'});", tabla_imputacion)
+        time.sleep(2)
         allure.attach(driver.get_screenshot_as_png(), "10_Tabla_Imputacion", allure.attachment_type.PNG)
 
     # ==========================================
