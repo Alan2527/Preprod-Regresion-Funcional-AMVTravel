@@ -157,19 +157,35 @@ def test_crear_orden_pago(driver):
     # 9. GUARDAR + 8s Sleep
     # ==========================================
     with allure.step("9. Guardar Registro"):
+        url_antes_de_guardar = driver.current_url
         safe_click(wait, (By.XPATH, "//input[@type='submit' and @name='ctl00$cphMain$btnSave']"))
         time.sleep(8)  # Espera de 8 segundos para procesamiento completo
         allure.attach(driver.get_screenshot_as_png(), "9_Guardado", allure.attachment_type.PNG)
 
-    # ==========================================
-    # 10. ESPERAR REDIRECCIÓN Y SCROLL A ZONA DE IMPUTACIÓN
-    # ==========================================
-    with allure.step("10. Esperar redirección a la OP creada"):
-        # Tras Guardar, el sitio redirige a /administration/payorder/{id}.
-        # El ancla real NO es la tabla, sino el link de imputar (lnkAsignarTotal),
-        # que es el elemento que Katalon confirma que aparece en el flujo.
-        wait.until(EC.url_contains("/administration/payorder/"))
+        # DIAGNÓSTICO: dejamos registro de la URL para saber si el Guardar redirigió
+        allure.attach(
+            f"URL antes de Guardar: {url_antes_de_guardar}\nURL después de Guardar: {driver.current_url}",
+            "9_URLs",
+            allure.attachment_type.TEXT,
+        )
 
+        # DIAGNÓSTICO: buscamos mensajes de validación / error que bloqueen el guardado
+        errores = driver.find_elements(
+            By.CSS_SELECTOR,
+            ".validation-summary-errors, .field-validation-error, .alert-danger, span[id*='Error'], .text-danger"
+        )
+        textos_error = [e.text.strip() for e in errores if e.text.strip()]
+        if textos_error:
+            allure.attach(
+                "\n".join(textos_error),
+                "9_Mensajes_de_validacion",
+                allure.attachment_type.TEXT,
+            )
+
+    # ==========================================
+    # 10. SCROLL A ZONA DE IMPUTACIÓN
+    # ==========================================
+    with allure.step("10. Scroll a zona de imputación"):
         # Forzamos scroll al fondo para que la zona de imputación quede en viewport
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(2)
@@ -179,11 +195,33 @@ def test_crear_orden_pago(driver):
     # 11. CLICK ASIGNAR TOTAL
     # ==========================================
     with allure.step("11. Click en Asignar Total"):
-        # Esperamos directamente el link de imputar (id exacto según Katalon: lnkAsignarTotal)
-        btn_asignar_total = wait.until(EC.presence_of_element_located((
-            By.CSS_SELECTOR,
-            "a[id$='lnkAsignarTotal'], #lnkAsignarTotal"
-        )))
+        # Esperamos el link de imputar (id según Katalon: lnkAsignarTotal).
+        # Si no aparece, adjuntamos diagnóstico ANTES de fallar para poder ver
+        # qué hay realmente en la página (URL, screenshot y si la grilla existe).
+        try:
+            btn_asignar_total = wait.until(EC.presence_of_element_located((
+                By.CSS_SELECTOR,
+                "a[id$='lnkAsignarTotal'], #lnkAsignarTotal"
+            )))
+        except Exception:
+            allure.attach(driver.get_screenshot_as_png(), "ERROR_11_sin_link_imputar", allure.attachment_type.PNG)
+            allure.attach(f"URL actual: {driver.current_url}", "ERROR_11_URL", allure.attachment_type.TEXT)
+
+            # ¿Existe alguna tabla/link con id parecido? Listamos para descubrir el id real.
+            candidatos = driver.find_elements(By.CSS_SELECTOR, "a[id*='Asignar'], a[id*='asignar'], a[id*='lnk']")
+            ids = [c.get_attribute("id") for c in candidatos if c.get_attribute("id")]
+            allure.attach(
+                "Links con id parecido encontrados en la página:\n" + ("\n".join(ids) if ids else "NINGUNO"),
+                "ERROR_11_links_candidatos",
+                allure.attachment_type.TEXT,
+            )
+            pytest.fail(
+                "No apareció el link de imputar (lnkAsignarTotal). "
+                f"URL actual: {driver.current_url}. "
+                "Revisar adjuntos: probablemente el Guardar falló por validación "
+                "o no hay comprobantes para imputar con esa combinación proveedor/moneda/caja."
+            )
+
         driver.execute_script("arguments[0].scrollIntoView(true);", btn_asignar_total)
         time.sleep(1)
         driver.execute_script("arguments[0].click();", btn_asignar_total)
