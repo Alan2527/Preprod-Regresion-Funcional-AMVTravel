@@ -72,7 +72,6 @@ def test_crear_orden_pago(driver):
         safe_click(wait, (By.ID, "btnLogin"))
 
         wait.until(EC.url_contains("/main"))
-        allure.attach(driver.get_screenshot_as_png(), "1_Login", allure.attachment_type.PNG)
 
     # ==========================================
     # 2. NAVEGACIÓN
@@ -117,43 +116,37 @@ def test_crear_orden_pago(driver):
 
     safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtAmount1"), "900000")
 
-# ==========================================
-# 9. GUARDAR + REDIRECCIÓN REAL
-# ==========================================
-with allure.step("9. Guardar"):
-    safe_click(wait, (By.XPATH, "//input[@type='submit' and @name='ctl00$cphMain$btnSave']"))
+    # ==========================================
+    # 9. GUARDAR (FIX CLAVE)
+    # ==========================================
+    with allure.step("9. Guardar y esperar redirección"):
+        safe_click(wait, (By.XPATH, "//input[@type='submit' and @name='ctl00$cphMain$btnSave']"))
 
-    # 🔥 ESTE ES EL FIX REAL
-    WebDriverWait(driver, 60).until(
-        EC.url_matches(r".*/payorder/\d+")
-    )
+        # 🔥 Esperar URL con ID (como hace Katalon)
+        WebDriverWait(driver, 60).until(
+            EC.url_matches(r".*/payorder/\d+")
+        )
 
-    # opcional debug
-    print("URL actual:", driver.current_url)
+        print("URL actual:", driver.current_url)
+        time.sleep(2)
 
-    time.sleep(2)
+    # ==========================================
+    # 10. TABLA IMPUTACIÓN (EN NUEVA PÁGINA)
+    # ==========================================
+    with allure.step("10. Tabla imputación"):
+        tabla = WebDriverWait(driver, 60).until(
+            EC.visibility_of_element_located((By.ID, "tblAllocationSupplierInvoices"))
+        )
 
+        WebDriverWait(driver, 60).until(
+            EC.presence_of_element_located((
+                By.CSS_SELECTOR,
+                "#tblAllocationSupplierInvoices tbody tr"
+            ))
+        )
 
-# ==========================================
-# 10. TABLA IMPUTACIÓN (EN LA NUEVA PÁGINA)
-# ==========================================
-with allure.step("10. Tabla imputación"):
+        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", tabla)
 
-    tabla = WebDriverWait(driver, 60).until(
-        EC.visibility_of_element_located((
-            By.ID,
-            "tblAllocationSupplierInvoices"
-        ))
-    )
-
-    # validar filas reales
-    WebDriverWait(driver, 60).until(
-        EC.presence_of_element_located((
-            By.CSS_SELECTOR,
-            "#tblAllocationSupplierInvoices tbody tr"
-        ))
-    )
-    
     # ==========================================
     # 11. ASIGNAR TOTAL
     # ==========================================
@@ -171,9 +164,8 @@ with allure.step("10. Tabla imputación"):
     with allure.step("12. Validar tabla"):
         celda = wait.until(EC.presence_of_element_located((
             By.CSS_SELECTOR,
-            ".table.table-striped td"
+            "#tblAllocationSupplierInvoices td"
         )))
-
         driver.execute_script("arguments[0].scrollIntoView(false);", celda)
         time.sleep(2)
 
@@ -192,7 +184,6 @@ with allure.step("10. Tabla imputación"):
             "//input[@name='ctl00$cphMain$btnApprove']"
         )))
         driver.execute_script("arguments[0].click();", btn)
-
         time.sleep(8)
 
     # ==========================================
