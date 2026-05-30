@@ -10,7 +10,7 @@ from selenium.common.exceptions import StaleElementReferenceException, ElementNo
 
 
 # =========================
-# HELPERS ROBUSTOS
+# HELPERS
 # =========================
 
 def safe_click(wait, locator):
@@ -28,15 +28,11 @@ def safe_send_keys(wait, locator, value):
     for _ in range(5):
         try:
             elem = wait.until(EC.visibility_of_element_located(locator))
-
-            # Scroll al elemento
             wait._driver.execute_script("arguments[0].scrollIntoView(true);", elem)
             time.sleep(1)
-
             elem.clear()
             elem.send_keys(value)
             return
-
         except (StaleElementReferenceException, ElementNotInteractableException):
             try:
                 elem = wait.until(EC.presence_of_element_located(locator))
@@ -81,24 +77,22 @@ def test_crear_orden_pago(driver):
     # ==========================================
     # 2. NAVEGACIÓN
     # ==========================================
-    with allure.step("2. Click en Administración"):
+    with allure.step("2. Administración"):
         safe_click(wait, (By.XPATH, "//span[contains(text(), 'Administración')]"))
-        allure.attach(driver.get_screenshot_as_png(), "2_Menu_Administracion", allure.attachment_type.PNG)
 
-    with allure.step("2.1 Ir a PayOrders"):
+    with allure.step("2.1 PayOrders"):
         safe_click(wait, (By.XPATH, "//a[contains(@href, '/administration/payorders')]"))
-        allure.attach(driver.get_screenshot_as_png(), "2_1_Listado", allure.attachment_type.PNG)
 
-    with allure.step("2.2 Nuevo Registro"):
+    with allure.step("2.2 Nuevo"):
         safe_click(wait, (By.CSS_SELECTOR, "a.btn.btn-sm.btn-info.btn-icon.m-t4.usepreload"))
         time.sleep(4)
-        allure.attach(driver.get_screenshot_as_png(), "2_2_Form", allure.attachment_type.PNG)
 
     # ==========================================
     # 3. PROVEEDOR
     # ==========================================
-    with allure.step("3. Seleccionar proveedor"):
+    with allure.step("3. Proveedor"):
         safe_click(wait, (By.ID, "btnSupplier"))
+
         search = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[type='search']")))
         search.clear()
         search.send_keys("MAX BAIRES")
@@ -107,66 +101,62 @@ def test_crear_orden_pago(driver):
         driver.execute_script("arguments[0].click();", fila)
 
         time.sleep(5)
-        allure.attach(driver.get_screenshot_as_png(), "3_Proveedor", allure.attachment_type.PNG)
 
     # ==========================================
-    # 4. REFERENCIA
+    # 4-8 CAMPOS
     # ==========================================
-    with allure.step("4. PaymentRef"):
-        Select(wait.until(EC.element_to_be_clickable((By.NAME, "ctl00$cphMain$ddPaymentRefs"))))\
-            .select_by_value("40")
+    Select(wait.until(EC.element_to_be_clickable((By.NAME, "ctl00$cphMain$ddPaymentRefs")))).select_by_value("40")
+
+    safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtDetail"), "Test Automático")
+
+    Select(wait.until(EC.element_to_be_clickable((By.NAME, "ctl00$cphMain$ddCurrency")))).select_by_value("10")
+    time.sleep(5)
+
+    Select(wait.until(EC.element_to_be_clickable((By.NAME, "ctl00$cphMain$ddCashFlow1")))).select_by_value("8")
+    time.sleep(5)
+
+    safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtAmount1"), "900000")
 
     # ==========================================
-    # 5. DETALLE
-    # ==========================================
-    with allure.step("5. Detalle"):
-        safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtDetail"), "Test Automático")
-
-    # ==========================================
-    # 6. MONEDA
-    # ==========================================
-    with allure.step("6. Moneda"):
-        Select(wait.until(EC.element_to_be_clickable((By.NAME, "ctl00$cphMain$ddCurrency"))))\
-            .select_by_value("10")
-        time.sleep(5)
-
-    # ==========================================
-    # 7. CAJA
-    # ==========================================
-    with allure.step("7. Caja"):
-        Select(wait.until(EC.element_to_be_clickable((By.NAME, "ctl00$cphMain$ddCashFlow1"))))\
-            .select_by_value("8")
-        time.sleep(5)
-
-    # ==========================================
-    # 8. MONTO
-    # ==========================================
-    with allure.step("8. Monto"):
-        safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtAmount1"), "900000")
-
-    # ==========================================
-    # 9. GUARDAR
+    # 9. GUARDAR (FIX REAL)
     # ==========================================
     with allure.step("9. Guardar"):
         safe_click(wait, (By.XPATH, "//input[@type='submit' and @name='ctl00$cphMain$btnSave']"))
-        time.sleep(8)
+
+        # esperar fin de postback / loaders
+        try:
+            WebDriverWait(driver, 60).until_not(
+                EC.presence_of_element_located((By.CSS_SELECTOR, ".loading, .spinner, .overlay"))
+            )
+        except:
+            pass  # por si no hay loader visible
+
+        time.sleep(3)  # pequeño buffer realista
+
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        allure.attach(driver.get_screenshot_as_png(), "9_Guardado", allure.attachment_type.PNG)
 
     # ==========================================
-    # 10. TABLA IMPUTACIÓN
+    # 10. TABLA IMPUTACIÓN (FIX REAL)
     # ==========================================
     with allure.step("10. Tabla imputación"):
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(2)
 
-        tabla = wait.until(EC.presence_of_element_located((
-            By.CSS_SELECTOR,
-            "table[id$='tblAllocationSupplierInvoices'], #tblAllocationSupplierInvoices"
-        )))
+        tabla = WebDriverWait(driver, 60).until(
+            EC.visibility_of_element_located((
+                By.CSS_SELECTOR,
+                "table[id*='tblAllocationSupplierInvoices']"
+            ))
+        )
+
+        # validar que tenga filas
+        WebDriverWait(driver, 60).until(
+            EC.presence_of_element_located((
+                By.CSS_SELECTOR,
+                "table[id*='tblAllocationSupplierInvoices'] tbody tr"
+            ))
+        )
 
         driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", tabla)
-        time.sleep(2)
 
     # ==========================================
     # 11. ASIGNAR TOTAL
@@ -174,7 +164,7 @@ def test_crear_orden_pago(driver):
     with allure.step("11. Asignar total"):
         btn = wait.until(EC.presence_of_element_located((
             By.CSS_SELECTOR,
-            "a[id$='lnkAsignarTotal'], #lnkAsignarTotal"
+            "a[id*='lnkAsignarTotal']"
         )))
         driver.execute_script("arguments[0].click();", btn)
         time.sleep(5)
@@ -185,20 +175,17 @@ def test_crear_orden_pago(driver):
     with allure.step("12. Validar tabla"):
         celda = wait.until(EC.presence_of_element_located((
             By.CSS_SELECTOR,
-            ".table.table-striped.table-bordered.table-hover.table-condensed.text-center.m-b-0 td.text-center"
+            ".table.table-striped td"
         )))
 
         driver.execute_script("arguments[0].scrollIntoView(false);", celda)
-        driver.execute_script("window.scrollBy(0, 150);")
         time.sleep(2)
 
     # ==========================================
     # 13. FECHA
     # ==========================================
-    with allure.step("13. Fecha"):
-        fecha = datetime.now().strftime("%d/%m/%Y")
-        safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtReceiptDate"), fecha)
-        time.sleep(5)
+    fecha = datetime.now().strftime("%d/%m/%Y")
+    safe_send_keys(wait, (By.NAME, "ctl00$cphMain$txtReceiptDate"), fecha)
 
     # ==========================================
     # 14. APROBAR
@@ -206,16 +193,16 @@ def test_crear_orden_pago(driver):
     with allure.step("14. Aprobar"):
         btn = wait.until(EC.presence_of_element_located((
             By.XPATH,
-            "//input[@type='submit' and @name='ctl00$cphMain$btnApprove']"
+            "//input[@name='ctl00$cphMain$btnApprove']"
         )))
         driver.execute_script("arguments[0].click();", btn)
+
         time.sleep(8)
 
     # ==========================================
     # 15. VALIDACIÓN FINAL
     # ==========================================
-    with allure.step("15. Validar fin"):
-        wait.until(EC.invisibility_of_element_located((
-            By.XPATH,
-            "//input[@type='submit' and @name='ctl00$cphMain$btnApprove']"
-        )))
+    wait.until(EC.invisibility_of_element_located((
+        By.XPATH,
+        "//input[@name='ctl00$cphMain$btnApprove']"
+    )))
