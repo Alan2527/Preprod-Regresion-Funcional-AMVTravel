@@ -6,4 +6,4 @@ la fixture `login_webadmin`. Los selectores viven en el Page Object
 `WebAdminHomePage`. Aquí se valida (en un único paso) lo que efectivamente se
 muestra en pantalla: sidebar, menú lateral, perfil de usuario, badge QA y la
 grilla de reservas.
-","590","test_webadmin_login_admin","webadmin","2026-06-05","passed","2026-06-05","","webadmin_login_admin","",""
+","652","test_webadmin_login_admin","webadmin","2026-06-05","passed","2026-06-05","","webadmin_login_admin","",""
