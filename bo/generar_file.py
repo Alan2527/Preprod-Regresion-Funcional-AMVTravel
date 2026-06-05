@@ -1,6 +1,4 @@
-import pytest
 import allure
-import os
 import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
@@ -18,26 +16,9 @@ Este test valida el flujo de creación de un File a partir de un registro en el 
 5. Guardado y validación de persistencia de datos.
 6. Validación de carga de tablas de Destinos y Totales.
 """)
-def test_generar_file_desde_inbox(driver):
+def test_generar_file_desde_inbox(login_bo):
+    driver = login_bo
     wait = WebDriverWait(driver, 15)
-
-    # ==========================================
-    # 1. LOGIN
-    # ==========================================
-    with allure.step("1. Login en el BackOffice"):
-        driver.get("https://preprod.bo.amv.travel/login")
-        
-        usuario = os.environ.get("AMV_USER")
-        password = os.environ.get("BO_PASS")
-
-        if not usuario or not password:
-            pytest.fail("Error de configuración: Faltan las variables de entorno AMV_USER o BO_PASS.")
-
-        wait.until(EC.visibility_of_element_located((By.ID, "txtUser"))).send_keys(usuario)
-        driver.find_element(By.ID, "txtPassword").send_keys(password)
-        driver.find_element(By.ID, "btnLogin").click()
-        
-        wait.until(EC.url_to_be("https://preprod.bo.amv.travel/main"))
 
     # ==========================================
     # 2 y 3. NAVEGACIÓN AL INBOX

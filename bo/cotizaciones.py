@@ -1,6 +1,5 @@
 import pytest
 import allure
-import os
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -15,25 +14,9 @@ Este test valida la navegación y la estructura de la tabla de reservas en el BO
 3. Acceso a la Bandeja de Entrada (Inbox).
 4. Validación estructural de los contenedores de la tabla.
 """)
-def test_validar_tabla_reservas_inbox(driver):
+def test_validar_tabla_reservas_inbox(login_bo):
+    driver = login_bo
     wait = WebDriverWait(driver, 15)
-
-    # 1. Login (Reutilizando la lógica de login_admin.py)
-    with allure.step("1. Login en el BackOffice"):
-        driver.get("https://preprod.bo.amv.travel/login")
-        
-        usuario = os.environ.get("AMV_USER")
-        password = os.environ.get("BO_PASS")
-
-        if not usuario or not password:
-            pytest.fail("Error de configuración: Faltan las variables de entorno AMV_USER o BO_PASS.")
-
-        wait.until(EC.visibility_of_element_located((By.ID, "txtUser"))).send_keys(usuario)
-        driver.find_element(By.ID, "txtPassword").send_keys(password)
-        driver.find_element(By.ID, "btnLogin").click()
-        
-        # Validamos acceso exitoso al Main
-        wait.until(EC.url_to_be("https://preprod.bo.amv.travel/main"))
 
     # 2. Menú Lateral
     with allure.step("2. Clic en 'Cotizaciones' en el menú lateral"):

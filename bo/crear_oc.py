@@ -1,55 +1,12 @@
 import pytest
 import allure
-import os
 import time
+from datetime import datetime
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import StaleElementReferenceException, ElementNotInteractableException
 
-
-# =========================
-# HELPERS ROBUSTOS
-# =========================
-
-def safe_click(wait, locator):
-    for _ in range(5):
-        try:
-            elem = wait.until(EC.element_to_be_clickable(locator))
-            elem.click()
-            return
-        except StaleElementReferenceException:
-            time.sleep(1)
-    raise Exception(f"No se pudo hacer click: {locator}")
-
-
-def safe_send_keys(wait, locator, value):
-    for _ in range(5):
-        try:
-            elem = wait.until(EC.visibility_of_element_located(locator))
-
-            # Scroll al elemento
-            wait._driver.execute_script("arguments[0].scrollIntoView(true);", elem)
-            time.sleep(0.5)
-
-            elem.clear()
-            elem.send_keys(value)
-            return
-
-        except (StaleElementReferenceException, ElementNotInteractableException):
-            try:
-                # 🔥 fallback JS
-                elem = wait.until(EC.presence_of_element_located(locator))
-                wait._driver.execute_script("arguments[0].value = arguments[1];", elem, value)
-                return
-            except:
-                time.sleep(1)
-
-    raise Exception(f"No se pudo escribir en: {locator}")
-
-
-def wait_table_rows(wait, table_id):
-    wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, f"{table_id} tbody tr")))
+from helpers import safe_click, safe_send_keys, wait_table_rows
 
 
 # =========================
@@ -59,28 +16,10 @@ def wait_table_rows(wait, table_id):
 @allure.feature("Tesorería BackOffice")
 @allure.story("Crear Orden de Cobro")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_crear_orden_cobro(driver):
+def test_crear_orden_cobro(login_bo):
+    driver = login_bo
 
     wait = WebDriverWait(driver, 25)
-
-    # ==========================================
-    # 1. LOGIN
-    # ==========================================
-    with allure.step("1. Login"):
-        driver.get("https://preprod.bo.amv.travel/login")
-
-        user = os.environ.get("AMV_USER")
-        password = os.environ.get("BO_PASS")
-
-        if not user or not password:
-            pytest.fail("Faltan variables de entorno")
-
-        safe_send_keys(wait, (By.ID, "txtUser"), user)
-        safe_send_keys(wait, (By.ID, "txtPassword"), password)
-        safe_click(wait, (By.ID, "btnLogin"))
-
-        wait.until(EC.url_contains("/main"))
-        allure.attach(driver.get_screenshot_as_png(), "1_Login", allure.attachment_type.PNG)
 
     # ==========================================
     # 2. NAVEGACIÓN

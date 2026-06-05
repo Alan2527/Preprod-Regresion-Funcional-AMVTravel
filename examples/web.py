@@ -1,3 +1,12 @@
+# ============================================================================
+# ARCHIVO DE EJEMPLO (no se ejecuta en la suite)
+# ----------------------------------------------------------------------------
+# Ejemplo histórico del flujo de login en el front. Se conserva como referencia.
+# La suite real usa la fixture `login_front` de conftest.py y credenciales por
+# variables de entorno (no hardcodeadas). Esta carpeta está excluida del
+# descubrimiento de pytest mediante `norecursedirs` en pytest.ini.
+# ============================================================================
+
 import pytest
 import allure
 import time
@@ -12,7 +21,7 @@ def test_flujo_amv_travel(driver):
 
     with allure.step("1. Ingresar a qa.amv.travel y click en Login"):
         driver.get("https://qa.amv.travel/")
-        
+
         # Esperamos a que el enlace esté clickeable y le hacemos click
         btn_login = wait.until(EC.element_to_be_clickable((By.ID, "lnkLogin")))
         btn_login.click()
@@ -22,11 +31,11 @@ def test_flujo_amv_travel(driver):
         input_user = wait.until(EC.presence_of_element_located((By.ID, "txtUser")))
         input_user.clear()
         input_user.send_keys("Pablo@amv.travel")
-        
+
         input_pass = driver.find_element(By.ID, "txtPassword")
         input_pass.clear()
         input_pass.send_keys("amvtest123")
-        
+
         # Captura opcional antes de enviar
         allure.attach(driver.get_screenshot_as_png(), name="Credenciales_Completas", attachment_type=allure.attachment_type.PNG)
 
@@ -34,9 +43,9 @@ def test_flujo_amv_travel(driver):
         # Usamos XPATH para encontrar cualquier elemento (input o button) con value="Ingresar"
         btn_ingresar = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@value='Ingresar']")))
         btn_ingresar.click()
-        
+
         # Espera breve para dar tiempo a que comience la carga del dashboard/home
-        time.sleep(3) 
+        time.sleep(3)
         allure.attach(driver.get_screenshot_as_png(), name="Post_Click_Ingresar", attachment_type=allure.attachment_type.PNG)
 
     # 5. Hasta acá llegamos por ahora.
