@@ -1,9 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"
-Crea un hotel desde el WebAdmin y valida el flujo completo:
-1. Navegación Menú → Hoteles → Adm. de Hoteles → Nuevo.
-2. Carga de Información General, Configuración, Ubicación y Descripción.
-3. Guardado y validación de la URL de detalle (id dinámico).
-4. Validación de que las pestañas del detalle quedan habilitadas.
-5. Búsqueda del hotel recién creado en la tabla de hoteles.
-","62937","test_crear_hotel","webadmin","2026-06-05","broken","2026-06-05","","crear_hotel","",""

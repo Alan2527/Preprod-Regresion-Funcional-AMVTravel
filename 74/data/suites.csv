@@ -1,0 +1,25 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"
+Valida el acceso al WebAdmin (panel de administración) y el correcto renderizado
+de su pantalla de inicio. El login y la navegación a /administration/ los resuelve
+la fixture `login_webadmin`. Los selectores viven en el Page Object
+`WebAdminHomePage`. Aquí se valida (en un único paso) lo que efectivamente se
+muestra en pantalla: sidebar, menú lateral, perfil de usuario, badge QA y la
+grilla de reservas.
+","599","test_webadmin_login_admin","webadmin","2026-06-05","passed","2026-06-05","","webadmin_login_admin","",""
+"
+Crea un hotel desde el WebAdmin y valida el flujo completo:
+1. Navegación Menú → Hoteles → Adm. de Hoteles → Nuevo.
+2. Carga de Información General, Configuración, Ubicación y Descripción.
+3. Guardado y validación de la URL de detalle (id dinámico).
+4. Validación de que las pestañas del detalle quedan habilitadas.
+5. Búsqueda del hotel recién creado en la tabla de hoteles.
+","17420","test_crear_hotel","webadmin","2026-06-05","passed","2026-06-05","","crear_hotel","",""
+"
+Crea una habitación desde el WebAdmin y valida el flujo completo:
+1. Navegación Menú → Hoteles → Adm. de Habitaciones → Nuevo.
+2. Carga de datos (nombre, hotel, capacidad, tipo, checkboxes).
+3. Guardado y validación de la URL de detalle (id dinámico).
+4. Validación de que las pestañas del detalle quedan habilitadas.
+5. Búsqueda de la habitación recién creada en la tabla.
+","10997","test_crear_habitacion","webadmin","2026-06-05","passed","2026-06-05","","crear_habitacion","",""
