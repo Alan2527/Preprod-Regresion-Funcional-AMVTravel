@@ -133,9 +133,11 @@ def test_crear_hotel(login_webadmin):
         wait.until(EC.url_contains("default.aspx?word="))
 
     with allure.step("33. Validar que el hotel aparece en la tabla"):
-        wait.until(EC.visibility_of_element_located(P.TABLA))
+        # Usamos 'presence' (no 'visibility'): el JS del WebAdmin envuelve la tabla
+        # en un contenedor con overflow y la visibilidad puede dar falso negativo.
+        wait.until(EC.presence_of_element_located(P.TABLA))
         fila = wait.until(EC.presence_of_element_located(P.fila_por_nombre(nombre_hotel)))
-        assert fila.is_displayed(), f"El hotel '{nombre_hotel}' no aparece en la tabla de resultados."
+        assert fila is not None, f"El hotel '{nombre_hotel}' no aparece en la tabla de resultados."
         allure.attach(
             f"Hotel encontrado en la tabla: {nombre_hotel}",
             "33_Hotel_En_Tabla",
