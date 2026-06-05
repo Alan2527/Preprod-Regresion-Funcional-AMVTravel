@@ -35,7 +35,7 @@ jobs:
           BO_PASS: ${{ secrets.BO_PASS }}
           BO_USER: ${{ secrets.BO_USER }}
         run: |
-         pytest bo/crear_op.py --alluredir=allure-results || true
+         pytest webadmin/webadmin_login_admin.py --alluredir=allure-results || true
 
       - name: Generar carpeta con Fecha y Hora
         run: |
