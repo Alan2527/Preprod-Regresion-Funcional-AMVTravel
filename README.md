@@ -84,11 +84,24 @@ allure serve allure-results    # abre el reporte en el navegador
 
 ## 🤖 CI (GitHub Actions)
 
-El workflow `.github/workflows/regresion.yml` corre la suite en cada push a `main`
-(o manualmente con *Run workflow*) y publica el reporte de Allure en **GitHub Pages**.
+El workflow `.github/workflows/regresion.yml` corre tests en cada push a `main`
+y publica el reporte de Allure en **GitHub Pages**. También deja los resultados
+crudos como *artifact* descargable.
 
-> El comando de ejecución dentro del workflow se ajusta según qué se quiera probar
-> (por ejemplo, `pytest -m smoke` o un archivo puntual).
+### Elegir qué correr sin editar el YAML
+
+El workflow es **parametrizable**. Desde GitHub → pestaña **Actions** → *AMV Travel
+Preprod Suite* → botón **"Run workflow"**, completá el campo **target** con:
+
+| Ejemplo de `target`              | Qué corre                          |
+|----------------------------------|------------------------------------|
+| `webadmin/webadmin_login_admin.py` | Un archivo puntual (valor por defecto) |
+| `bo/crear_op.py`                 | Otro archivo puntual               |
+| `-m bo`                          | Todos los tests del BackOffice     |
+| `-m smoke`                       | El subconjunto de humo             |
+| `bo/ web/`                       | Varias carpetas                    |
+
+> En un push normal a `main` se usa el valor por defecto (`webadmin/...`).
 
 ## 🧩 Convenciones
 

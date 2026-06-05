@@ -3,10 +3,15 @@ name: AMV Travel Preprod Suite
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: 
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Qué correr: ruta de archivo o expresión de marker. Ej: bo/crear_op.py  |  -m smoke  |  -m bo'
+        required: false
+        default: 'webadmin/webadmin_login_admin.py'
 
 # ==============================================================================
-# PERMISOS CONCEDIDOS: Autoriza al bot a realizar el Push del reporte a GitHub Pages
+# PERMISOS: autoriza el push del reporte a GitHub Pages
 # ==============================================================================
 permissions:
   contents: write
@@ -22,24 +27,34 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+          cache: 'pip'
 
       - name: Instalar dependencias
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
-      - name: Ejecutar Test Web AMV
+      - name: Ejecutar Tests
         env:
           AMV_USER: ${{ secrets.AMV_USER }}
           AMV_PASS: ${{ secrets.AMV_PASS }}
           AMV_AGENCIA_USER: ${{ secrets.AMV_AGENCIA_USER }}
           BO_PASS: ${{ secrets.BO_PASS }}
           BO_USER: ${{ secrets.BO_USER }}
-        run: |
-         pytest webadmin/webadmin_login_admin.py --alluredir=allure-results || true
+          # En 'Run workflow' se toma el input; en push usa el valor por defecto.
+          TARGET: ${{ github.event.inputs.target || 'webadmin/webadmin_login_admin.py' }}
+        # Sin comillas en $TARGET para permitir expresiones de marker (ej: -m smoke).
+        # '|| true' evita que un test fallido corte la generación del reporte.
+        run: pytest $TARGET || true
+
+      - name: Subir resultados de Allure (artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+          retention-days: 7
 
       - name: Generar carpeta con Fecha y Hora
-        run: |
-          echo "REPORT_DATE=$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_ENV
+        run: echo "REPORT_DATE=$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_ENV
 
       - name: Generar Reporte Allure
         uses: simple-elf/allure-report-action@master
