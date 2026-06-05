@@ -192,8 +192,11 @@ def test_crear_orden_cobro(login_bo):
             allure.attach(driver.get_screenshot_as_png(), "ERROR_IMPUTAR", allure.attachment_type.PNG)
             pytest.fail("No se pudo hacer click en imputar")
 
-        # 🔥 esperar que realmente procese (CLAVE)
-        time.sleep(4)
+        # En vez de un sleep fijo, esperamos a que el postback rinda la grilla interna.
+        wait.until(EC.presence_of_element_located((
+            By.CSS_SELECTOR,
+            ".table.table-striped.table-bordered.table-hover.table-condensed.text-center.m-b-0"
+        )))
 
         allure.attach(driver.get_screenshot_as_png(), "14_Click_Imputar", allure.attachment_type.PNG)
 
@@ -239,8 +242,11 @@ def test_crear_orden_cobro(login_bo):
 
         driver.execute_script("arguments[0].click();", boton_aprobar)
 
-        # esperar proceso
-        time.sleep(4)
+        # En vez de un sleep fijo, esperamos a que el botón desaparezca (fin del proceso).
+        wait.until(EC.invisibility_of_element_located((
+            By.XPATH,
+            "//input[@value='Aprobar & Aplicar Recibo']"
+        )))
 
         allure.attach(driver.get_screenshot_as_png(), "17_Click_Aprobar", allure.attachment_type.PNG)
 

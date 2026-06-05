@@ -167,7 +167,11 @@ def test_crear_orden_pago(login_bo):
         driver.execute_script("arguments[0].scrollIntoView(true);", btn_asignar_total)
         time.sleep(1)
         driver.execute_script("arguments[0].click();", btn_asignar_total)
-        time.sleep(5)
+        # En vez de un sleep fijo, esperamos a que el postback rinda la grilla interna.
+        wait.until(EC.presence_of_element_located((
+            By.CSS_SELECTOR,
+            ".table.table-striped.table-bordered.table-hover.table-condensed.text-center.m-b-0 td.text-center"
+        )))
         allure.attach(driver.get_screenshot_as_png(), "11_Asignar_Total_Clickeado", allure.attachment_type.PNG)
 
     # ==========================================
@@ -206,7 +210,11 @@ def test_crear_orden_pago(login_bo):
         driver.execute_script("arguments[0].scrollIntoView(true);", boton_aprobar)
         time.sleep(0.5)
         driver.execute_script("arguments[0].click();", boton_aprobar)
-        time.sleep(8)  # Espera de 8 segundos solicitada para que procese el backend pesado de aprobación
+        # En vez de un sleep fijo, esperamos a que el botón Aprobar desaparezca (fin del proceso).
+        wait.until(EC.invisibility_of_element_located((
+            By.XPATH,
+            "//input[@type='submit' and @name='ctl00$cphMain$btnApprove']"
+        )))
         allure.attach(driver.get_screenshot_as_png(), "15_Click_Aprobar", allure.attachment_type.PNG)
 
     # ==========================================

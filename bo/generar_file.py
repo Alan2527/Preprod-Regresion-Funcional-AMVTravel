@@ -1,5 +1,4 @@
 import allure
-import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
@@ -70,9 +69,8 @@ def test_generar_file_desde_inbox(login_bo):
         # 8. Guardar
         btn_save = wait.until(EC.element_to_be_clickable((By.NAME, "ctl00$cphMain$btnSave")))
         driver.execute_script("arguments[0].click();", btn_save)
-        
-        # Pequeña espera para que el postback de ASP.NET procese el guardado
-        time.sleep(3) 
+        # El guardado se sincroniza en el paso 9 con una espera explícita del campo
+        # (sin sleep fijo).
 
     # ==========================================
     # 9, 10 y 11. VALIDACIONES FINALES
