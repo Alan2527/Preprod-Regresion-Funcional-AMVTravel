@@ -1,0 +1,9 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"
+Valida el acceso al WebAdmin (panel de administración) y el correcto renderizado
+de su pantalla de inicio. El login y la navegación a /administration/ los resuelve
+la fixture `login_webadmin`. Los selectores viven en el Page Object
+`WebAdminHomePage`. Aquí se valida (en un único paso) lo que efectivamente se
+muestra en pantalla: sidebar, menú lateral, perfil de usuario, badge QA y la
+grilla de reservas.
+","468","test_webadmin_login_admin","webadmin","2026-06-05","passed","2026-06-05","","webadmin_login_admin","",""
