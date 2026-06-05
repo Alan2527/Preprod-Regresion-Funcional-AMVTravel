@@ -8,7 +8,7 @@ on:
       target:
         description: 'Qué correr: ruta de archivo o expresión de marker. Ej: bo/crear_op.py  |  -m smoke  |  -m bo'
         required: false
-        default: 'webadmin/webadmin_login_admin.py'
+        default: 'webadmin/crear_hotel.py'
 
 # ==============================================================================
 # PERMISOS: autoriza el push del reporte a GitHub Pages
@@ -40,7 +40,7 @@ jobs:
           BO_PASS: ${{ secrets.BO_PASS }}
           BO_USER: ${{ secrets.BO_USER }}
           # En 'Run workflow' se toma el input; en push usa el valor por defecto.
-          TARGET: ${{ github.event.inputs.target || 'webadmin/webadmin_login_admin.py' }}
+          TARGET: ${{ github.event.inputs.target || 'webadmin/crear_hotel.py' }}
         # Sin comillas en $TARGET para permitir expresiones de marker (ej: -m smoke).
         # '|| true' evita que un test fallido corte la generación del reporte.
         run: pytest $TARGET || true
