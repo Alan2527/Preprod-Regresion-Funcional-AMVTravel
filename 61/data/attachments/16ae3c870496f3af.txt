@@ -1,0 +1,16 @@
+Ítems de menú detectados:
+Principal
+PRODUCTOS
+Hoteles
+Servicios
+Circuitos
+Cruceros
+GENERAL
+Agencias
+Cotizaciones
+Reservas
+Ubicación
+Incentivos
+SITIO
+Contenidos
+Widget
