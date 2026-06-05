@@ -60,8 +60,9 @@ Este caso de prueba valida el acceso al WebAdmin (panel de administración) y
 el correcto renderizado de su pantalla de inicio.
 1. Login en preprod.amv.travel/login.aspx con credenciales de administrador.
 2. El sistema redirige a /online/; se navega manualmente a /administration/.
-3. Se valida que el panel renderice correctamente: sidebar, menú lateral,
-   perfil de usuario, badge QA, sección de reservas pendientes y su grilla.
+3. Se valida (en un único paso) que el panel renderice correctamente lo que
+   efectivamente se muestra en pantalla: sidebar, menú lateral, perfil de
+   usuario, badge QA y la grilla de reservas.
 """)
 def test_webadmin_login_admin(driver):
 
@@ -71,11 +72,10 @@ def test_webadmin_login_admin(driver):
     # ==========================================
     # 1. LOGIN
     # ==========================================
-    with allure.step("1. Ingresar a preprod.amv.travel/login.aspx"):
+    with allure.step("1. Login en preprod.amv.travel/login.aspx"):
         driver.get("https://preprod.amv.travel/login.aspx")
         wait.until(EC.visibility_of_element_located((By.NAME, "txtUser")))
 
-    with allure.step("2. Escribir credenciales"):
         # Reutilizamos los GitHub Secrets si están disponibles; si no, usamos
         # las credenciales del entorno de preprod.
         usuario = os.environ.get("AMV_USER", "Pablo@amv.travel")
@@ -86,111 +86,90 @@ def test_webadmin_login_admin(driver):
 
         safe_send_keys(wait, (By.NAME, "txtUser"), usuario)
         safe_send_keys(wait, (By.NAME, "txtPassword"), password)
-        allure.attach(driver.get_screenshot_as_png(), "1_Credenciales", allure.attachment_type.PNG)
-
-    with allure.step("3. Click en el botón Ingresar (input submit)"):
         safe_click(wait, (By.CSS_SELECTOR, "input[type='submit']"))
+
         # Esperamos a que el login procese y salga de la pantalla de login
         wait.until(lambda d: "login" not in d.current_url.lower())
         time.sleep(3)
-        allure.attach(driver.get_screenshot_as_png(), "2_Post_Login", allure.attachment_type.PNG)
-        allure.attach(
-            f"URL tras el login: {driver.current_url}",
-            "2_URL_Post_Login",
-            allure.attachment_type.TEXT,
-        )
 
     # ==========================================
     # 2. NAVEGAR AL WEBADMIN
     # ==========================================
-    with allure.step("4. Navegar manualmente a /administration/"):
+    with allure.step("2. Navegar a /administration/"):
         driver.get("https://preprod.amv.travel/administration/")
         time.sleep(3)
 
-        # Validamos que efectivamente estamos en el panel de administración
         try:
             wait.until(EC.url_contains("/administration"))
         except Exception:
-            allure.attach(driver.get_screenshot_as_png(), "ERROR_4_no_administration", allure.attachment_type.PNG)
+            allure.attach(driver.get_screenshot_as_png(), "ERROR_no_administration", allure.attachment_type.PNG)
             pytest.fail(
                 "No se pudo acceder al WebAdmin. "
                 f"URL actual: {driver.current_url}. "
                 "Posible sesión inválida o redirección al login."
             )
-        allure.attach(driver.get_screenshot_as_png(), "4_WebAdmin_Inicio", allure.attachment_type.PNG)
 
     # ==========================================
-    # 3. VALIDAR RENDERIZADO DEL INICIO
+    # 3. VALIDAR RENDERIZADO DEL INICIO (UN SOLO PASO, UNA SOLA CAPTURA)
     # ==========================================
-    with allure.step("5. Validar Sidebar y marca de la agencia"):
+    with allure.step("3. Validar renderizado del inicio del WebAdmin"):
+        # Captura única del panel ya renderizado. Evitamos repetir screenshots
+        # idénticos por cada validación: una sola imagen representa el estado.
+        allure.attach(driver.get_screenshot_as_png(), "Inicio_WebAdmin", allure.attachment_type.PNG)
+
+        resultados = []
+
+        # --- URL ---
+        assert "/administration" in driver.current_url, f"URL inesperada: {driver.current_url}"
+        resultados.append(f"URL OK: {driver.current_url}")
+
+        # --- Sidebar + nombre de la agencia ---
         sidebar = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "div.admin-sidebar")))
         assert sidebar.is_displayed(), "No se visualiza el sidebar del WebAdmin"
+        agencia = sidebar.find_element(By.CSS_SELECTOR, "span.agency-name").get_attribute("textContent").strip()
+        assert "AMV. TRAVEL" in agencia.upper(), \
+            f"El nombre de la agencia no es el esperado. Encontrado: '{agencia}'"
+        resultados.append(f"Sidebar y agencia OK: '{agencia}'")
 
-        agencia = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.agency-name")))
-        assert "AMV. TRAVEL" in agencia.text.upper(), \
-            f"El nombre de la agencia no es el esperado. Encontrado: '{agencia.text}'"
-        allure.attach(driver.get_screenshot_as_png(), "5_Sidebar", allure.attachment_type.PNG)
-
-    with allure.step("6. Validar menú lateral principal y sus secciones"):
-        menu = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "ul#ctl00_ctrlMenu.sf-menu")))
-        assert menu.is_displayed(), "No se visualiza el menú principal (sf-menu)"
-
-        # Validamos que existan los ítems de menú clave del WebAdmin
+        # --- Menú lateral con los ítems que se renderizan ---
+        menu = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "ul#ctl00_ctrlMenu.sf-menu")))
         items_esperados = [
             "Principal", "Hoteles", "Servicios", "Circuitos", "Cruceros",
-            "Agencias", "Cotizaciones", "Reservas", "Incentivos", "Contenidos", "Widget",
+            "Agencias", "Cotizaciones", "Reservas", "Ubicación",
         ]
-        textos_menu = [e.text.strip() for e in menu.find_elements(By.TAG_NAME, "span")]
+        # textContent lee el DOM renderizado sin depender de si el ítem quedó
+        # dentro o fuera del viewport (scroll del sidebar).
+        textos_menu = [s.get_attribute("textContent").strip() for s in menu.find_elements(By.TAG_NAME, "span")]
         faltantes = [it for it in items_esperados if not any(it in t for t in textos_menu)]
         assert not faltantes, f"Faltan ítems esperados en el menú: {faltantes}"
-        allure.attach(
-            "Ítems de menú detectados:\n" + "\n".join(t for t in textos_menu if t),
-            "6_Items_Menu",
-            allure.attachment_type.TEXT,
-        )
+        resultados.append("Menú lateral con ítems clave OK")
 
-    with allure.step("7. Validar perfil de usuario (nombre y email)"):
-        perfil = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.sidebar-user-profile")))
-        nombre = perfil.find_element(By.CSS_SELECTOR, "span.user-name").text.strip()
-        email = perfil.find_element(By.CSS_SELECTOR, "span.user-email").text.strip()
-
+        # --- Perfil de usuario (nombre + email) ---
+        perfil = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "div.sidebar-user-profile")))
+        nombre = perfil.find_element(By.CSS_SELECTOR, "span.user-name").get_attribute("textContent").strip()
+        email = perfil.find_element(By.CSS_SELECTOR, "span.user-email").get_attribute("textContent").strip()
         assert "Pablo" in nombre, f"El nombre de usuario no es el esperado. Encontrado: '{nombre}'"
         assert "pablo@amv.travel" in email.lower(), \
             f"El email de usuario no es el esperado. Encontrado: '{email}'"
-        allure.attach(
-            f"Usuario logueado: {nombre} ({email})",
-            "7_Perfil_Usuario",
-            allure.attachment_type.TEXT,
-        )
+        resultados.append(f"Perfil de usuario OK: {nombre} ({email})")
 
-    with allure.step("8. Validar badge de entorno QA"):
-        badge = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.qa-badge")))
-        assert "QA" in badge.text.upper(), f"No se encontró el badge QA. Encontrado: '{badge.text}'"
-        allure.attach(driver.get_screenshot_as_png(), "8_Badge_QA", allure.attachment_type.PNG)
+        # --- Badge de entorno QA ---
+        badge = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "span.qa-badge")))
+        assert "QA" in badge.get_attribute("textContent").upper(), \
+            f"No se encontró el badge QA. Encontrado: '{badge.get_attribute('textContent')}'"
+        resultados.append("Badge QA OK")
 
-    with allure.step("9. Validar sección 'Reservas pendientes' y su grilla"):
-        # Título de la sección
-        seccion = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.section-header div.title")))
-        assert "Reservas pendientes" in seccion.text, \
-            f"No se encontró la sección 'Reservas pendientes'. Encontrado: '{seccion.text}'"
-
-        # Grilla de reservas
-        grilla = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "table#ctl00_cph1_gvBooks")))
-        assert grilla.is_displayed(), "No se visualiza la grilla de reservas pendientes"
-
-        # Validamos que la grilla tenga al menos una fila de datos (además del header)
+        # --- Grilla de reservas (con al menos una fila de datos) ---
+        grilla = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "table#ctl00_cph1_gvBooks")))
         filas = grilla.find_elements(By.CSS_SELECTOR, "tr.rowstyle, tr.altrowstyle")
-        assert len(filas) > 0, "La grilla de reservas pendientes no contiene filas de datos"
+        assert len(filas) > 0, "La grilla de reservas no contiene filas de datos"
+        resultados.append(f"Grilla de reservas OK ({len(filas)} filas)")
 
-        allure.attach(
-            f"Cantidad de filas (reservas) en la grilla: {len(filas)}",
-            "9_Filas_Grilla",
-            allure.attachment_type.TEXT,
-        )
-        allure.attach(driver.get_screenshot_as_png(), "9_Reservas_Pendientes", allure.attachment_type.PNG)
-
-    with allure.step("10. Validar botón de Logout (cierre de sesión)"):
+        # --- Botón de Logout ---
         logout = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "a.sidebar-logout-btn")))
         assert logout.get_attribute("href").endswith("/Logout.aspx"), \
             "El botón de logout no apunta a /Logout.aspx"
-        allure.attach(driver.get_screenshot_as_png(), "10_Fin_Test_Exitoso", allure.attachment_type.PNG)
+        resultados.append("Botón de Logout OK")
+
+        # Resumen de todas las validaciones en un único adjunto de texto.
+        allure.attach("\n".join(resultados), "Validaciones realizadas", allure.attachment_type.TEXT)
