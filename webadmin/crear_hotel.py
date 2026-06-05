@@ -26,6 +26,10 @@ def test_crear_hotel(login_webadmin):
     # Nombre y descripción dinámicos con fecha/hora de ejecución.
     ahora = datetime.now()
     nombre_hotel = f"Hotel Test Automático {ahora.strftime('%d-%m-%Y %H:%M:%S')}"
+    # Para buscar usamos el nombre SIN la hora: los ':' rompen el buscador del
+    # WebAdmin (devuelve 0 resultados y no renderiza la tabla). Con la fecha
+    # alcanza para que la tabla aparezca; luego validamos la fila exacta.
+    nombre_busqueda = f"Hotel Test Automático {ahora.strftime('%d-%m-%Y')}"
     descripcion = f"Test automático corrido el día {ahora.strftime('%d-%m-%Y')} a las {ahora.strftime('%H:%M:%S')}"
 
     # ==========================================
@@ -128,7 +132,7 @@ def test_crear_hotel(login_webadmin):
         wait.until(EC.url_contains("/administration/hotels/default.aspx"))
 
     with allure.step("30 a 32. Buscar el hotel recién creado"):
-        safe_send_keys(wait, P.TXT_SEARCH, nombre_hotel)
+        safe_send_keys(wait, P.TXT_SEARCH, nombre_busqueda)
         safe_click(wait, P.BTN_SEARCH)
         wait.until(EC.url_contains("default.aspx?word="))
 
