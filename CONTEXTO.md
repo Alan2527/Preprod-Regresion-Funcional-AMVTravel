@@ -54,7 +54,8 @@ Suite de **regresión funcional automatizada** para **AMV Travel** sobre el ento
 │   ├── webadmin_amenities_page.py   # WebAdminAmenitiesPage
 │   ├── webadmin_roomtype_page.py    # WebAdminRoomTypePage
 │   ├── webadmin_category_page.py    # WebAdminCategoryPage
-│   └── webadmin_breakfast_page.py   # WebAdminBreakfastPage
+│   ├── webadmin_breakfast_page.py   # WebAdminBreakfastPage
+│   └── webadmin_salon_page.py       # WebAdminSalonPage
 ├── bo/                    # Tests BackOffice
 │   ├── bo_login_admin.py · login_noadmin.py   (tests de login, NO usan fixture de login)
 │   ├── crear_op.py · crear_oc.py · generar_file.py
@@ -70,7 +71,8 @@ Suite de **regresión funcional automatizada** para **AMV Travel** sobre el ento
     ├── crear_amenities.py
     ├── crear_tipos_de_habitacion.py
     ├── crear_categoria.py
-    └── crear_desayuno.py
+    ├── crear_desayuno.py
+    └── crear_salon.py
 ```
 
 ---
@@ -122,7 +124,7 @@ allure serve allure-results  # ver reporte local (requiere CLI de Allure)
 - Workflow: `.github/workflows/regresion.yml`. Corre en **push a main** y con **Run workflow**.
 - Campo **`target`** en *Run workflow* (o el default en push) define qué corre:
   `webadmin/crear_hotel.py` · `-m bo` · `-m webadmin` · `bo/ web/` · etc.
-- **Default actual del target:** `webadmin/crear_desayuno.py` (el ultimo flujo creado).
+- **Default actual del target:** `webadmin/crear_salon.py` (el ultimo flujo creado).
 - **Regla fija:** cada vez que se crea un flujo nuevo, el workflow se deja apuntando a
   **SOLO ese flujo** (se edita `default` del input `target` y el fallback de `TARGET` en
   `regresion.yml`). Asi el push y el "Run workflow" sin tocar nada corren solo lo nuevo.
@@ -173,6 +175,16 @@ allure serve allure-results  # ver reporte local (requiere CLI de Allure)
   - Page Object: `WebAdminBreakfastPage` (`traduccion(indice)` para ctrl0..ctrl3).
   - Form modelado sobre Amenities (el __VIEWSTATE confirma `lvTranslations`); el HTML del
     form en sí no estaba disponible al crearlo.
+  - Validado estáticamente (`py_compile`, `--collect-only`, `--setup-plan`).
+- `crear_salon.py` → **recién creado**, pendiente primera corrida verde.
+  - Flujo: Menú Hoteles → Salones → Nuevo → **elegir Ciudad (postback que recarga Hoteles)**
+    → nombre dinámico + capacidad 200 + orden → elegir Hotel dependiente → Publicado →
+    Guardar → validar fila en la tabla.
+  - Page Object: `WebAdminSalonPage` (campos bajo `mainTabContainer$pnlDetails`; helper
+    `hotel_option(texto)` para esperar el hotel tras el postback de ciudad).
+  - Datos de prueba: Ciudad `Cachi | Argentina`, Hotel `Hosteria Cachi`.
+  - Gotcha aplicado: el `ddCity` dispara postback full (onchange) → se elige ciudad
+    primero y se espera a que aparezca el hotel dependiente antes de seguir.
   - Validado estáticamente (`py_compile`, `--collect-only`, `--setup-plan`).
   - El YML quedó apuntando a este test (ver sección CI).
 
