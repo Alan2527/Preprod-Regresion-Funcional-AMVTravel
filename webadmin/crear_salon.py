@@ -26,7 +26,8 @@ def test_crear_salon(login_webadmin):
 
     # Nombre dinámico con fecha/hora de ejecución (único por corrida).
     ahora = datetime.now()
-    nombre_salon = f"Salón Test Automático {ahora.strftime('%d/%m/%Y %H:%M:%S')}"
+    sello = ahora.strftime('%d/%m/%Y %H:%M:%S')   # ASCII y único por corrida
+    nombre_salon = f"Salón Test Automático {sello}"
 
     # ==========================================
     # 1-4. NAVEGACIÓN A SALONES -> NUEVO
@@ -85,19 +86,32 @@ def test_crear_salon(login_webadmin):
     # ==========================================
     with allure.step("11. Guardar"):
         safe_click(wait, P.BTN_GUARDAR)
+        time.sleep(1)  # dar tiempo al postback de guardado
 
     # ==========================================
-    # 12. VALIDAR SALÓN EN LA TABLA
+    # 12. VOLVER A LA LISTA DE SALONES
     # ==========================================
-    with allure.step("12. Validar que el salón aparece en la tabla"):
-        # Guardar redirige a la lista (default.aspx): esperar la fila por el nombre
-        # completo cubre la espera de redirect + render de la grilla.
+    with allure.step("12. Volver a la lista de Salones"):
+        # El alta guarda y queda en detail.aspx (no tiene tabla): hay que volver a
+        # la lista para ver la grilla con el salón nuevo. El boton "+ Agregar Nuevo"
+        # (btnAddNew) solo existe en la lista -> confirma que cargo bien.
+        safe_click(wait, P.MENU_HOTELES)
+        wait.until(EC.element_to_be_clickable(P.SUBMENU_SALONES))
+        safe_click(wait, P.SUBMENU_SALONES)
+        wait.until(EC.presence_of_element_located(P.BTN_NUEVO))
+
+    # ==========================================
+    # 13. VALIDAR SALÓN EN LA TABLA
+    # ==========================================
+    with allure.step("13. Validar que el salón aparece en la tabla"):
         wait.until(EC.presence_of_element_located(P.TABLA))
-        fila = wait.until(EC.presence_of_element_located(P.fila_por_nombre(nombre_salon)))
+        # Buscamos por el sello de fecha/hora (ASCII y único por corrida) para evitar
+        # problemas de acentos / normalizacion Unicode al matchear el texto del td.
+        fila = wait.until(EC.presence_of_element_located(P.fila_por_nombre(sello)))
         assert fila is not None, f"El salón '{nombre_salon}' no aparece en la tabla."
         allure.attach(
             f"Salón encontrado en la tabla: {nombre_salon}",
-            "12_Salon_En_Tabla",
+            "13_Salon_En_Tabla",
             allure.attachment_type.TEXT,
         )
-        allure.attach(driver.get_screenshot_as_png(), "12_Validacion_Tabla", allure.attachment_type.PNG)
+        allure.attach(driver.get_screenshot_as_png(), "13_Validacion_Tabla", allure.attachment_type.PNG)

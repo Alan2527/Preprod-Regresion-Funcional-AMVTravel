@@ -187,6 +187,12 @@ allure serve allure-results  # ver reporte local (requiere CLI de Allure)
     primero y se espera a que aparezca el hotel dependiente antes de seguir.
   - Botón Nuevo de la lista: `id="btnAddNew"` (input button que hace location.href a
     detail.aspx). La grilla de la lista es `gvData`.
+  - ⚠️ Salones tiene **lista y detalle separados**: al Guardar queda en `detail.aspx`
+    (sin tabla), NO redirige a la lista. Hay que volver a Salones (menú) para validar
+    la fila. (A diferencia de Amenities/Categoría/etc. que son lista+form en la misma
+    página y la grilla siempre está presente.) Corrida verde confirmada por Alan.
+  - La validación de la fila usa el **sello de fecha/hora (ASCII)** y no el nombre con
+    acentos, para evitar problemas de normalización Unicode en el match del `<td>`.
   - Validado estáticamente (`py_compile`, `--collect-only`, `--setup-plan`).
   - El YML quedó apuntando a este test (ver sección CI).
 
