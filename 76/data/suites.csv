@@ -1,9 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"
-Crea una amenitie desde el WebAdmin y valida el flujo completo:
-1. Navegacion Menu -> Hoteles -> Amenities.
-2. Click en Nuevo.
-3. Carga del nombre (dinamico con fecha/hora) y las 4 traducciones (ES/EN/PT/IT).
-4. Guardado.
-5. Validacion de que la amenitie recien creada aparece en la tabla.
-","5562","test_crear_amenitie","webadmin","2026-06-07","passed","2026-06-07","","crear_amenities","",""

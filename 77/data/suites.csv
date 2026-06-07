@@ -1,0 +1,10 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"
+Crea un tipo de habitación desde el WebAdmin y valida el flujo completo:
+1. Navegación Menú -> Hoteles -> Tipos de habitación.
+2. Click en Nuevo.
+3. Carga del nombre (dinámico con fecha/hora) y el detalle.
+4. Dejar tildado Publicado.
+5. Guardado.
+6. Validación de que el tipo recién creado aparece en la tabla.
+","3966","test_crear_tipo_de_habitacion","webadmin","2026-06-07","passed","2026-06-07","","crear_tipos_de_habitacion","",""
