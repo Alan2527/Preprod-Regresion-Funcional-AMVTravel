@@ -7,4 +7,4 @@ Crea un salón (meeting salon) desde el WebAdmin y valida el flujo completo:
 4. Selección del Hotel dependiente de la ciudad.
 5. Dejar tildado Publicado y Guardar.
 6. Validación de que el salón recién creado aparece en la tabla.
-","46415","test_crear_salon","webadmin","2026-06-07","broken","2026-06-07","","crear_salon","",""
+","50416","test_crear_salon","webadmin","2026-06-07","broken","2026-06-07","","crear_salon","",""
