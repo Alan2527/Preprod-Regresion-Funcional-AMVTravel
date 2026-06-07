@@ -8,6 +8,15 @@ from helpers import safe_click, safe_send_keys
 from pages.webadmin_salon_page import WebAdminSalonPage as P
 
 
+def _escribir_quill(driver, wait, locator, texto):
+    """Escribe en un editor Quill (div.ql-editor contenteditable, no es input).
+    Hace foco con click y tipea; el text-change de Quill sincroniza el hidden."""
+    editor = wait.until(EC.visibility_of_element_located(locator))
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", editor)
+    editor.click()
+    editor.send_keys(texto)
+
+
 @allure.feature("WebAdmin AMV Travel")
 @allure.story("Crear Salón y validar persistencia")
 @allure.severity(allure.severity_level.CRITICAL)
@@ -74,24 +83,37 @@ def test_crear_salon(login_webadmin):
         allure.attach(driver.get_screenshot_as_png(), "9_Formulario_Completo", allure.attachment_type.PNG)
 
     # ==========================================
-    # 10. PUBLICADO (dejar tildado)
+    # 10. DESCRIPCIÓN Y ESPECIFICACIONES (editores Quill, pestaña ES)
     # ==========================================
-    with allure.step("10. Dejar tildado Publicado"):
+    with allure.step("10. Cargar Descripción y Especificaciones (ES)"):
+        # "Nombre" localizado del bloque Descripción (input normal).
+        safe_send_keys(wait, P.DESC_NOMBRE_ES, nombre_salon)
+        # Editores enriquecidos (Quill): se tipea en el div.ql-editor.
+        _escribir_quill(driver, wait, P.DESC_QUILL_ES,
+                        "Nuestro compromiso: servicio especializado y experiencias a medida. Test automatico.")
+        _escribir_quill(driver, wait, P.ESP_QUILL_ES,
+                        "Capacidad para 200 personas. Salon completo 240 m2. Servicio de Coffee Break. Test automatico.")
+        allure.attach(driver.get_screenshot_as_png(), "10_Descripcion_Especificaciones", allure.attachment_type.PNG)
+
+    # ==========================================
+    # 11. PUBLICADO (dejar tildado)
+    # ==========================================
+    with allure.step("11. Dejar tildado Publicado"):
         cb = wait.until(EC.presence_of_element_located(P.CB_PUBLICADO))
         if not cb.is_selected():
             driver.execute_script("arguments[0].click();", cb)
 
     # ==========================================
-    # 11. GUARDAR
+    # 12. GUARDAR
     # ==========================================
-    with allure.step("11. Guardar"):
+    with allure.step("12. Guardar"):
         safe_click(wait, P.BTN_GUARDAR)
         time.sleep(1)  # dar tiempo al postback de guardado
 
     # ==========================================
-    # 12. VOLVER A LA LISTA DE SALONES
+    # 13. VOLVER A LA LISTA DE SALONES
     # ==========================================
-    with allure.step("12. Volver a la lista de Salones"):
+    with allure.step("13. Volver a la lista de Salones"):
         # El alta guarda y queda en detail.aspx (no tiene tabla): hay que volver a
         # la lista para ver la grilla con el salón nuevo. El boton "+ Agregar Nuevo"
         # (btnAddNew) solo existe en la lista -> confirma que cargo bien.
@@ -101,9 +123,9 @@ def test_crear_salon(login_webadmin):
         wait.until(EC.presence_of_element_located(P.BTN_NUEVO))
 
     # ==========================================
-    # 13. VALIDAR SALÓN EN LA TABLA
+    # 14. VALIDAR SALÓN EN LA TABLA
     # ==========================================
-    with allure.step("13. Validar que el salón aparece en la tabla"):
+    with allure.step("14. Validar que el salón aparece en la tabla"):
         wait.until(EC.presence_of_element_located(P.TABLA))
         # Buscamos por el sello de fecha/hora (ASCII y único por corrida) para evitar
         # problemas de acentos / normalizacion Unicode al matchear el texto del td.
@@ -111,7 +133,7 @@ def test_crear_salon(login_webadmin):
         assert fila is not None, f"El salón '{nombre_salon}' no aparece en la tabla."
         allure.attach(
             f"Salón encontrado en la tabla: {nombre_salon}",
-            "13_Salon_En_Tabla",
+            "14_Salon_En_Tabla",
             allure.attachment_type.TEXT,
         )
-        allure.attach(driver.get_screenshot_as_png(), "13_Validacion_Tabla", allure.attachment_type.PNG)
+        allure.attach(driver.get_screenshot_as_png(), "14_Validacion_Tabla", allure.attachment_type.PNG)

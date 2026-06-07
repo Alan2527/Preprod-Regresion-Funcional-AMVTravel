@@ -28,6 +28,14 @@ class WebAdminSalonPage:
     DD_HOTEL = (By.NAME, "ctl00$cph1$mainTabContainer$pnlDetails$ddHotel")
     CB_PUBLICADO = (By.ID, "ctl00_cph1_mainTabContainer_pnlDetails_cbPublicado")
 
+    # --- Editores enriquecidos multi-idioma (pestaña ES = ctl00) ---
+    # "Descripción": tiene un "Nombre" por idioma + un editor Quill.
+    DESC_NOMBRE_ES = (By.NAME, "ctl00$cph1$mainTabContainer$pnlDetails$ctrlDescriptionQuill$rptrLanguages$ctl00$txtName")
+    # El area editable real de Quill es el div.ql-editor dentro del contenedor.
+    DESC_QUILL_ES = (By.CSS_SELECTOR, "#ctl00_cph1_mainTabContainer_pnlDetails_ctrlDescriptionQuill_rptrLanguages_ctl00_txtQuill_editor .ql-editor")
+    # "Especificaciones": solo editor Quill por idioma.
+    ESP_QUILL_ES = (By.CSS_SELECTOR, "#ctl00_cph1_mainTabContainer_pnlDetails_ctrlServicesQuill_rptrLanguages_ctl00_txtQuill_editor .ql-editor")
+
     # --- Guardar ---
     BTN_GUARDAR = (By.NAME, "ctl00$cph1$mainTabContainer$pnlDetails$btnSave")
 

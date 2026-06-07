@@ -193,6 +193,9 @@ allure serve allure-results  # ver reporte local (requiere CLI de Allure)
     página y la grilla siempre está presente.) Corrida verde confirmada por Alan.
   - La validación de la fila usa el **sello de fecha/hora (ASCII)** y no el nombre con
     acentos, para evitar problemas de normalización Unicode en el match del `<td>`.
+  - Completa también los editores **Quill** (Descripción + Especificaciones, pestaña ES)
+    y el "Nombre" localizado de Descripción. Quill es un `div.ql-editor` contenteditable
+    (no input): se escribe con `_escribir_quill` (click + send_keys), no con safe_send_keys.
   - Validado estáticamente (`py_compile`, `--collect-only`, `--setup-plan`).
   - El YML quedó apuntando a este test (ver sección CI).
 
