@@ -8,7 +8,7 @@ on:
       target:
         description: 'Qué correr. Ej: bo/crear_op.py  |  -m bo  |  -m webadmin'
         required: false
-        default: 'webadmin/crear_tipos_de_habitacion.py'
+        default: 'webadmin/crear_categoria.py'
 
 # ==============================================================================
 # PERMISOS: autoriza el push del reporte a GitHub Pages
@@ -40,8 +40,8 @@ jobs:
           BO_PASS: ${{ secrets.BO_PASS }}
           BO_USER: ${{ secrets.BO_USER }}
           # En 'Run workflow' se toma el input; en push (sin input) cae al fallback.
-          # Hoy fijado a SOLO el test nuevo de Tipos de habitacion.
-          TARGET: ${{ github.event.inputs.target || 'webadmin/crear_tipos_de_habitacion.py' }}
+          # Hoy fijado a SOLO el test nuevo de Categorias.
+          TARGET: ${{ github.event.inputs.target || 'webadmin/crear_categoria.py' }}
         # Sin comillas en $TARGET para permitir expresiones de marker (ej: -m smoke).
         # '|| true' evita que un test fallido corte la generación del reporte.
         run: pytest $TARGET || true
