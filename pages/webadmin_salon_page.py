@@ -16,8 +16,9 @@ class WebAdminSalonPage:
     MENU_HOTELES = (By.XPATH, "//ul[@id='ctl00_ctrlMenu']//a[contains(@href,'javascript:void(3)')]//span[normalize-space()='Hoteles']")
     SUBMENU_SALONES = (By.XPATH, "//ul[@id='ctl00_ctrlMenu']//a[contains(@href,'/administration/meetingsalons/')]//span[normalize-space()='Salones']")
 
-    # Boton "Nuevo" en la lista (tolerante: input submit o link con ese texto).
-    BTN_NUEVO = (By.XPATH, "//input[@value='Nuevo'] | //a[normalize-space()='Nuevo']")
+    # Boton "Nuevo" en la lista: <input type="button" value="+ Agregar Nuevo"
+    # onclick="location.href='detail.aspx'"> (navega, no es postback).
+    BTN_NUEVO = (By.ID, "btnAddNew")
 
     # --- Formulario (todo bajo mainTabContainer$pnlDetails) ---
     TXT_NAME = (By.NAME, "ctl00$cph1$mainTabContainer$pnlDetails$txtName$txtValue")

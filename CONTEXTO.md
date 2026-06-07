@@ -185,6 +185,8 @@ allure serve allure-results  # ver reporte local (requiere CLI de Allure)
   - Datos de prueba: Ciudad `Cachi | Argentina`, Hotel `Hosteria Cachi`.
   - Gotcha aplicado: el `ddCity` dispara postback full (onchange) → se elige ciudad
     primero y se espera a que aparezca el hotel dependiente antes de seguir.
+  - Botón Nuevo de la lista: `id="btnAddNew"` (input button que hace location.href a
+    detail.aspx). La grilla de la lista es `gvData`.
   - Validado estáticamente (`py_compile`, `--collect-only`, `--setup-plan`).
   - El YML quedó apuntando a este test (ver sección CI).
 
