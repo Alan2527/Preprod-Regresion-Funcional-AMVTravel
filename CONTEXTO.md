@@ -51,7 +51,8 @@ Suite de **regresión funcional automatizada** para **AMV Travel** sobre el ento
 │   ├── front_servicios_page.py      # FrontServiciosPage
 │   ├── multidestino_page.py         # MultidestinoPage (+ helper esperar_fin_de_carga)
 │   ├── tarifario_page.py            # TarifarioPage (COMPARTIDO por los 7 tests de tarifario)
-│   └── webadmin_amenities_page.py   # WebAdminAmenitiesPage
+│   ├── webadmin_amenities_page.py   # WebAdminAmenitiesPage
+│   └── webadmin_roomtype_page.py    # WebAdminRoomTypePage
 ├── bo/                    # Tests BackOffice
 │   ├── bo_login_admin.py · login_noadmin.py   (tests de login, NO usan fixture de login)
 │   ├── crear_op.py · crear_oc.py · generar_file.py
@@ -64,7 +65,8 @@ Suite de **regresión funcional automatizada** para **AMV Travel** sobre el ento
     ├── webadmin_login_admin.py
     ├── crear_hotel.py
     ├── crear_habitacion.py
-    └── crear_amenities.py
+    ├── crear_amenities.py
+    └── crear_tipos_de_habitacion.py
 ```
 
 ---
@@ -116,7 +118,7 @@ allure serve allure-results  # ver reporte local (requiere CLI de Allure)
 - Workflow: `.github/workflows/regresion.yml`. Corre en **push a main** y con **Run workflow**.
 - Campo **`target`** en *Run workflow* (o el default en push) define qué corre:
   `webadmin/crear_hotel.py` · `-m bo` · `-m webadmin` · `bo/ web/` · etc.
-- **Default actual del target:** `webadmin/crear_amenities.py` (el ultimo flujo creado).
+- **Default actual del target:** `webadmin/crear_tipos_de_habitacion.py` (el ultimo flujo creado).
 - **Regla fija:** cada vez que se crea un flujo nuevo, el workflow se deja apuntando a
   **SOLO ese flujo** (se edita `default` del input `target` y el fallback de `TARGET` en
   `regresion.yml`). Asi el push y el "Run workflow" sin tocar nada corren solo lo nuevo.
@@ -150,6 +152,11 @@ allure serve allure-results  # ver reporte local (requiere CLI de Allure)
   - Flujo: Menú Hoteles → Amenities → Nuevo → nombre dinámico (con fecha/hora) +
     4 traducciones requeridas (ES/EN/PT/IT) → Guardar → validar fila en `gvAmenities`.
   - Page Object: `WebAdminAmenitiesPage` (`traduccion(indice)` para ctrl0..ctrl3).
+  - Validado estáticamente (`py_compile`, `--collect-only`, `--setup-plan`).
+- `crear_tipos_de_habitacion.py` → **recién creado**, pendiente primera corrida verde.
+  - Flujo: Menú Hoteles → Tipos de habitación → Nuevo → nombre dinámico + detalle →
+    dejar Publicado tildado → Guardar → validar fila en la tabla.
+  - Page Object: `WebAdminRoomTypePage`.
   - Validado estáticamente (`py_compile`, `--collect-only`, `--setup-plan`).
   - El YML quedó apuntando a este test (ver sección CI).
 
