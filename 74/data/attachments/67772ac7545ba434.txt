@@ -1,7 +1,0 @@
-Pestaña OK: Proveedores
-Pestaña OK: Imagenes
-Pestaña OK: Video
-Pestaña OK: Habitaciones
-Pestaña OK: Servicios
-Pestaña OK: Puntos de
-Pestaña OK: Politicas

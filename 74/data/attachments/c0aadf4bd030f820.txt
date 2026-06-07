@@ -1,1 +1,0 @@
-URL tras guardar: https://preprod.amv.travel/administration/rooms/detail.aspx?room=18560&TabID=pnlRoomDetails
