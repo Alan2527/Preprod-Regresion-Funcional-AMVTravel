@@ -53,7 +53,8 @@ Suite de **regresión funcional automatizada** para **AMV Travel** sobre el ento
 │   ├── tarifario_page.py            # TarifarioPage (COMPARTIDO por los 7 tests de tarifario)
 │   ├── webadmin_amenities_page.py   # WebAdminAmenitiesPage
 │   ├── webadmin_roomtype_page.py    # WebAdminRoomTypePage
-│   └── webadmin_category_page.py    # WebAdminCategoryPage
+│   ├── webadmin_category_page.py    # WebAdminCategoryPage
+│   └── webadmin_breakfast_page.py   # WebAdminBreakfastPage
 ├── bo/                    # Tests BackOffice
 │   ├── bo_login_admin.py · login_noadmin.py   (tests de login, NO usan fixture de login)
 │   ├── crear_op.py · crear_oc.py · generar_file.py
@@ -68,7 +69,8 @@ Suite de **regresión funcional automatizada** para **AMV Travel** sobre el ento
     ├── crear_habitacion.py
     ├── crear_amenities.py
     ├── crear_tipos_de_habitacion.py
-    └── crear_categoria.py
+    ├── crear_categoria.py
+    └── crear_desayuno.py
 ```
 
 ---
@@ -120,7 +122,7 @@ allure serve allure-results  # ver reporte local (requiere CLI de Allure)
 - Workflow: `.github/workflows/regresion.yml`. Corre en **push a main** y con **Run workflow**.
 - Campo **`target`** en *Run workflow* (o el default en push) define qué corre:
   `webadmin/crear_hotel.py` · `-m bo` · `-m webadmin` · `bo/ web/` · etc.
-- **Default actual del target:** `webadmin/crear_categoria.py` (el ultimo flujo creado).
+- **Default actual del target:** `webadmin/crear_desayuno.py` (el ultimo flujo creado).
 - **Regla fija:** cada vez que se crea un flujo nuevo, el workflow se deja apuntando a
   **SOLO ese flujo** (se edita `default` del input `target` y el fallback de `TARGET` en
   `regresion.yml`). Asi el push y el "Run workflow" sin tocar nada corren solo lo nuevo.
@@ -164,6 +166,13 @@ allure serve allure-results  # ver reporte local (requiere CLI de Allure)
   - Flujo: Menú Hoteles → Categorías → Nuevo → nombre dinámico + orden (1) +
     4 traducciones (ES/EN/PT/IT) → Guardar → validar fila en la tabla.
   - Page Object: `WebAdminCategoryPage` (`traduccion(indice)` para ctrl0..ctrl3).
+  - Validado estáticamente (`py_compile`, `--collect-only`, `--setup-plan`).
+- `crear_desayuno.py` → **recién creado**, pendiente primera corrida verde.
+  - Flujo: Menú Hoteles → Desayuno → Nuevo → nombre dinámico + 4 traducciones (ES/EN/PT/IT) +
+    Publicado tildado → Guardar → validar fila en la tabla `gvTypes`.
+  - Page Object: `WebAdminBreakfastPage` (`traduccion(indice)` para ctrl0..ctrl3).
+  - Form modelado sobre Amenities (el __VIEWSTATE confirma `lvTranslations`); el HTML del
+    form en sí no estaba disponible al crearlo.
   - Validado estáticamente (`py_compile`, `--collect-only`, `--setup-plan`).
   - El YML quedó apuntando a este test (ver sección CI).
 
