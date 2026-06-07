@@ -1,9 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"
-Crea una categoría de hotel desde el WebAdmin y valida el flujo completo:
-1. Navegación Menú -> Hoteles -> Categorías.
-2. Click en Nuevo.
-3. Carga del nombre (dinámico con fecha/hora), el orden y las 4 traducciones (ES/EN/PT/IT).
-4. Guardado.
-5. Validación de que la categoría recién creada aparece en la tabla.
-","6490","test_crear_categoria","webadmin","2026-06-07","passed","2026-06-07","","crear_categoria","",""
