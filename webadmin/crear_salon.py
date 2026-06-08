@@ -114,13 +114,13 @@ def test_crear_salon(login_webadmin):
     # 13. VOLVER A LA LISTA DE SALONES
     # ==========================================
     with allure.step("13. Volver a la lista de Salones"):
-        # El alta guarda y queda en detail.aspx (no tiene tabla): hay que volver a
-        # la lista para ver la grilla con el salón nuevo. El boton "+ Agregar Nuevo"
-        # (btnAddNew) solo existe en la lista -> confirma que cargo bien.
-        safe_click(wait, P.MENU_HOTELES)
-        wait.until(EC.element_to_be_clickable(P.SUBMENU_SALONES))
+        # El alta guarda y queda en detail.aspx (no tiene tabla). En esa pantalla el
+        # menú "Hoteles" ya está ABIERTO, así que clickeamos directo el span "Salones"
+        # (NO el padre, que colapsaría el acordeón y ocultaría el submenú).
         safe_click(wait, P.SUBMENU_SALONES)
-        wait.until(EC.presence_of_element_located(P.BTN_NUEVO))
+        # Esperar a que cargue la lista (meetingsalons/), distinta de detail.aspx.
+        wait.until(lambda d: "/administration/meetingsalons/" in d.current_url
+                   and "detail.aspx" not in d.current_url)
 
     # ==========================================
     # 14. VALIDAR SALÓN EN LA TABLA

@@ -188,9 +188,12 @@ allure serve allure-results  # ver reporte local (requiere CLI de Allure)
   - Botón Nuevo de la lista: `id="btnAddNew"` (input button que hace location.href a
     detail.aspx). La grilla de la lista es `gvData`.
   - ⚠️ Salones tiene **lista y detalle separados**: al Guardar queda en `detail.aspx`
-    (sin tabla), NO redirige a la lista. Hay que volver a Salones (menú) para validar
-    la fila. (A diferencia de Amenities/Categoría/etc. que son lista+form en la misma
-    página y la grilla siempre está presente.) Corrida verde confirmada por Alan.
+    (sin tabla), NO redirige a la lista. Hay que volver a Salones para validar la fila.
+    (A diferencia de Amenities/Categoría/etc. que son lista+form en la misma página.)
+  - ⚠️ Para volver: en `detail.aspx` el menú "Hoteles" ya está ABIERTO, así que se
+    clickea **directo el span "Salones"** (NO el padre `MENU_HOTELES`, que colapsaría el
+    acordeón y ocultaría el submenú). Luego se espera la URL de la lista
+    (`/administration/meetingsalons/` y que NO contenga `detail.aspx`).
   - La validación de la fila usa el **sello de fecha/hora (ASCII)** y no el nombre con
     acentos, para evitar problemas de normalización Unicode en el match del `<td>`.
   - Completa también los editores **Quill** (Descripción + Especificaciones, pestaña ES)
