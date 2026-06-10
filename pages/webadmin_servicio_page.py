@@ -22,8 +22,8 @@ class WebAdminServicioPage:
         "//span[normalize-space()='Servicios']")
     SUBMENU_ADM_SERVICIOS = (By.XPATH,
         "//ul[@id='ctl00_ctrlMenu']"
-        "//a[contains(@href,'/administration/services/default.aspx')]"
-        "//span[contains(normalize-space(),'Adm. de servicios')]")
+        "//a[contains(@href,'/administration/services/')]"
+        "//span")
 
     # ── Botón crear en la lista ───────────────────────────────────────────────
     BTN_CREAR = (By.XPATH,
