@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
     inputs:
       target:
-        description: 'Qué correr. Ej: bo/crear_op.py  |  -m bo  |  -m webadmin'
+        description: 'Qué correr (vacío = TODA la suite). Ej: bo/crear_op.py  |  -m bo  |  -m webadmin'
         required: false
-        default: 'webadmin/crear_salon.py'
+        default: ''
 
 # ==============================================================================
 # PERMISOS: autoriza el push del reporte a GitHub Pages
@@ -39,9 +39,8 @@ jobs:
           AMV_AGENCIA_USER: ${{ secrets.AMV_AGENCIA_USER }}
           BO_PASS: ${{ secrets.BO_PASS }}
           BO_USER: ${{ secrets.BO_USER }}
-          # En 'Run workflow' se toma el input; en push (sin input) cae al fallback.
-          # Hoy fijado a SOLO el test nuevo de Salones.
-          TARGET: ${{ github.event.inputs.target || 'webadmin/crear_salon.py' }}
+          # En 'Run workflow' se toma el input; vacío (o push) = TODA la suite.
+          TARGET: ${{ github.event.inputs.target }}
         # Sin comillas en $TARGET para permitir expresiones de marker (ej: -m smoke).
         # '|| true' evita que un test fallido corte la generación del reporte.
         run: pytest $TARGET || true

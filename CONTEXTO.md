@@ -124,12 +124,12 @@ allure serve allure-results  # ver reporte local (requiere CLI de Allure)
 - Workflow: `.github/workflows/regresion.yml`. Corre en **push a main** y con **Run workflow**.
 - Campo **`target`** en *Run workflow* (o el default en push) define qué corre:
   `webadmin/crear_hotel.py` · `-m bo` · `-m webadmin` · `bo/ web/` · etc.
-- **Default actual del target:** `webadmin/crear_salon.py` (el ultimo flujo creado).
-- **Regla fija:** cada vez que se crea un flujo nuevo, el workflow se deja apuntando a
-  **SOLO ese flujo** (se edita `default` del input `target` y el fallback de `TARGET` en
-  `regresion.yml`). Asi el push y el "Run workflow" sin tocar nada corren solo lo nuevo.
-  - ⚠️ Por eso dejar el campo `target` vacio ya NO corre toda la suite (cae al fallback).
-    Para la suite completa hay que poner explicitamente `bo/ web/ webadmin/`.
+- **Default actual del target:** vacío → **corre TODA la suite** (pedido de Alan).
+- **Regla:** al crear un flujo nuevo se solía dejar el workflow apuntando a SOLO ese
+  flujo (`default` del input + fallback de `TARGET`). **Hoy está en modo suite completa:**
+  `default: ''` y `TARGET: ${{ github.event.inputs.target }}` (sin fallback), así push y
+  "Run workflow" sin input corren todo. Para correr SOLO uno, poner el path en el input
+  `target` del "Run workflow" (o volver a fijar el fallback).
 - Publica el reporte Allure en GitHub Pages y deja `allure-results` como artifact.
 - ⚠️ El que ajusta el `target`/CI es **Alan** (manual cada vez que quiere probar algo),
   salvo que se pida cambiarlo.
