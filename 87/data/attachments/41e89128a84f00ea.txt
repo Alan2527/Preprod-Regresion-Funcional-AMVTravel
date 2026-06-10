@@ -1,0 +1,7 @@
+URL OK: https://preprod.amv.travel/administration/
+Sidebar y agencia OK: 'Climbs'
+Menú lateral con ítems clave OK
+Perfil de usuario OK: Pablo  Ortiz (pablo@amv.travel)
+Badge QA OK
+Grilla de reservas OK (50 filas)
+Botón de Logout OK
