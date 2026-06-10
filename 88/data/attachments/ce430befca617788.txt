@@ -1,1 +1,0 @@
-URL tras guardar: https://preprod.amv.travel/administration/hotels/detail.aspx?hotel=15481&TabID=pnlHotelDetails
