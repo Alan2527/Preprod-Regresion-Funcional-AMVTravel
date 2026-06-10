@@ -66,7 +66,6 @@ def test_crear_hotel(login_webadmin):
             if not el.is_selected():
                 driver.execute_script("arguments[0].click();", el)
 
-        safe_send_keys(wait, P.TXT_EMAIL_NOTI, "notif@gmail.com")
         safe_send_keys(wait, P.TXT_OBSERVATION, "Este es un test automático")
         allure.attach(driver.get_screenshot_as_png(), "11_Configuracion", allure.attachment_type.PNG)
 
@@ -76,8 +75,13 @@ def test_crear_hotel(login_webadmin):
     with allure.step("14 a 20. Ubicación y contacto"):
         safe_send_keys(wait, P.TXT_ADDRESS, "Avenida Test 123")
         Select(wait.until(EC.element_to_be_clickable(P.DD_CITY))).select_by_value("10259")
-        time.sleep(1)  # el distrito suele depender de la ciudad (postback)
-        Select(wait.until(EC.element_to_be_clickable(P.DD_DISTRICT))).select_by_value("1161")
+        time.sleep(1)  # el Barrio depende de la ciudad (postback async que lo recarga)
+        # El Barrio es opcional y depende de la ciudad: si tiene barrios se elige el
+        # primero real; si la ciudad no tiene barrios, se omite (no es requerido).
+        dd_barrio = Select(wait.until(EC.element_to_be_clickable(P.DD_DISTRICT)))
+        barrios = [o for o in dd_barrio.options if (o.get_attribute("value") or "").strip()]
+        if barrios:
+            dd_barrio.select_by_value(barrios[0].get_attribute("value"))
         safe_send_keys(wait, P.TXT_EMAIL, "testauto@gmail.com")
         safe_send_keys(wait, P.TXT_WEB, "https://test.com.ar/")
         safe_send_keys(wait, P.TXT_ADMIN, "Administrator Test")

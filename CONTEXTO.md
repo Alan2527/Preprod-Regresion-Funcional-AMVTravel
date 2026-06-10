@@ -124,12 +124,9 @@ allure serve allure-results  # ver reporte local (requiere CLI de Allure)
 - Workflow: `.github/workflows/regresion.yml`. Corre en **push a main** y con **Run workflow**.
 - Campo **`target`** en *Run workflow* (o el default en push) define qué corre:
   `webadmin/crear_hotel.py` · `-m bo` · `-m webadmin` · `bo/ web/` · etc.
-- **Default actual del target:** vacío → **corre TODA la suite** (pedido de Alan).
-- **Regla:** al crear un flujo nuevo se solía dejar el workflow apuntando a SOLO ese
-  flujo (`default` del input + fallback de `TARGET`). **Hoy está en modo suite completa:**
-  `default: ''` y `TARGET: ${{ github.event.inputs.target }}` (sin fallback), así push y
-  "Run workflow" sin input corren todo. Para correr SOLO uno, poner el path en el input
-  `target` del "Run workflow" (o volver a fijar el fallback).
+- **Default actual del target:** `webadmin/` → **corre solo los tests de webadmin** (pedido de Alan).
+  `default: 'webadmin/'` y `TARGET: ${{ github.event.inputs.target || 'webadmin/' }}`.
+  Para la suite completa, poner `bo/ web/ webadmin/` en el input `target` del "Run workflow".
 - Publica el reporte Allure en GitHub Pages y deja `allure-results` como artifact.
 - ⚠️ El que ajusta el `target`/CI es **Alan** (manual cada vez que quiere probar algo),
   salvo que se pida cambiarlo.
@@ -147,12 +144,32 @@ allure serve allure-results  # ver reporte local (requiere CLI de Allure)
 - Tarifario: `TarifarioPage` compartido por los 7 tests (gran reducción de duplicación).
 - Migración conservadora de algunos `time.sleep` redundantes a esperas explícitas en BO.
 
+### ⚠️ Rediseño del WebAdmin ("Climbs") — junio 2026
+El preprod cambió de branding (la agencia ahora se llama **"Climbs"**, antes "AMV. TRAVEL")
+y rediseñó las pantallas. Impactos en los tests (todos corregidos en local, pendientes de subir):
+- `webadmin_login_admin.py`: la aserción de agencia ahora espera **"CLIMBS"**.
+- Botones "Nuevo" de las listas, ahora con ids variados por pantalla:
+  - Tipos de habitación: `id="btnAddNew"` · Desayuno: `name="ctl00$cphActions$btnNew"` ·
+    Categorías: `name="ctl00$cphActions$btnAddNew"` · Salones: `id="btnAddNew"`.
+- Submenú de Habitaciones: el `<span>` ahora dice **"Habitaciones"** (antes "Adm. de Habitaciones").
+- Campos que pasaron a estar **ocultos** (`display:none`, los maneja el code-behind):
+  - Hotel: `txtEmailNoti` (Emails Notif.) y `cbForResidents`/`cbForNonResidents` →
+    se quitaron del flujo (el `safe_send_keys` sobre un campo oculto hacía Timeout 45s).
+  - Habitación: `cbForResidents`/`cbForNonResidents` ocultos → solo se tilda Publicado.
+- Nombres de pestañas del detalle cambiaron:
+  - Hotel: la pestaña es **"Amenities"** (no "Servicios"); "Videos" (no "Video").
+  - Habitación: pestañas reales **Detalle | Tarifas | Tarifario | Detalle del tarifario | Freesale**
+    (antes el test esperaba "Tarifas & Freesale", que ya no existe).
+- Barrio (distrito) del hotel: depende de la ciudad por postback y es **opcional**; el test
+  ahora elige el primer barrio real si existe, o lo omite (Cachi puede no tener barrios).
+
 ### Tests WebAdmin (foco actual)
-- `webadmin_login_admin.py` → **verde** (login + validación del inicio del panel).
+- `webadmin_login_admin.py` → fix "Climbs" aplicado (pendiente subir + corrida verde).
 - `crear_hotel.py` → crea hotel y valida (info general, config, ubicación, descripción Quill,
   guardado con id dinámico, pestañas habilitadas, aparición en tabla).
-  **Fix aplicado** en la búsqueda (ver Gotchas) — pendiente confirmar corrida verde.
-- `crear_habitacion.py` → **recién creado**, pendiente primera corrida.
+  **Fix rediseño aplicado** (email_noti/checkboxes ocultos, pestaña Amenities, barrio opcional).
+- `crear_habitacion.py` → **fix rediseño aplicado** (submenú "Habitaciones", pestaña "Tarifas",
+  solo Publicado). Pendiente subir + confirmar corrida verde.
   - Pasos 14-15 (edades de menores `dpKidsFrom`/`dpKidsTo`) **comentados**: están rotos en la app.
 - `crear_amenities.py` → **recién creado**, pendiente primera corrida verde.
   - Flujo: Menú Hoteles → Amenities → Nuevo → nombre dinámico (con fecha/hora) +

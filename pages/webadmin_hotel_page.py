@@ -20,16 +20,17 @@ class WebAdminHotelPage:
     TXT_DISPLAY_ORDER = (By.NAME, "ctl00$cph1$HotelTabContainer$pnlHotelDetails$txtDisplayOrder")
     DD_BREAKFAST = (By.NAME, "ctl00$cph1$HotelTabContainer$pnlHotelDetails$ddBreakfastType")
 
-    # --- Configuración y opciones (checkboxes) ---
+    # --- Configuración y opciones (checkboxes visibles del form) ---
+    # cbForResidents / cbForNonResidents existen pero están en un div display:none
+    # (los maneja el code-behind con sus defaults), por eso NO se tocan acá.
     CHECKBOXES = [
         (By.NAME, "ctl00$cph1$HotelTabContainer$pnlHotelDetails$cbPublicado"),
         (By.NAME, "ctl00$cph1$HotelTabContainer$pnlHotelDetails$cbGreat"),
         (By.NAME, "ctl00$cph1$HotelTabContainer$pnlHotelDetails$cbSuggested"),
         (By.NAME, "ctl00$cph1$HotelTabContainer$pnlHotelDetails$cbFamilyPlan"),
-        (By.NAME, "ctl00$cph1$HotelTabContainer$pnlHotelDetails$cbForResidents"),
-        (By.NAME, "ctl00$cph1$HotelTabContainer$pnlHotelDetails$cbForNonResidents"),
     ]
-    TXT_EMAIL_NOTI = (By.NAME, "ctl00$cph1$HotelTabContainer$pnlHotelDetails$txtEmailNoti$txtValue")
+    # "Observaciones" es visible; "Emails Notif." (txtEmailNoti) ahora está oculto
+    # (div display:none) y su validador está deshabilitado -> NO se completa.
     TXT_OBSERVATION = (By.NAME, "ctl00$cph1$HotelTabContainer$pnlHotelDetails$txtObservation")
 
     # --- Ubicación y contacto ---
@@ -47,7 +48,8 @@ class WebAdminHotelPage:
     BTN_GUARDAR = (By.XPATH, "(//input[@value='Guardar'] | //button[@value='Guardar'])[1]")
 
     # --- Pestañas del detalle (deben estar habilitadas) ---
-    TAB_NAMES = ["Proveedores", "Imagenes", "Video", "Habitaciones", "Servicios", "Puntos de", "Politicas"]
+    # Pestañas reales del detalle de hotel (match parcial en tab_locator).
+    TAB_NAMES = ["Proveedores", "Imagenes", "Video", "Habitaciones", "Amenities", "Puntos de", "Politicas"]
 
     @staticmethod
     def tab_locator(nombre_parcial):

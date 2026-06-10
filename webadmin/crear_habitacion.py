@@ -65,11 +65,12 @@ def test_crear_habitacion(login_webadmin):
         Select(wait.until(EC.element_to_be_clickable(P.DD_ROOM_TYPE))).select_by_value("1")
         allure.attach(driver.get_screenshot_as_png(), "8_Capacidad_Tipo", allure.attachment_type.PNG)
 
-    with allure.step("11 a 13. Marcar Publicado / Residentes / No residentes"):
-        for cb in (P.CB_PUBLICADO, P.CB_FOR_RESIDENTS, P.CB_FOR_NON_RESIDENTS):
-            el = wait.until(EC.presence_of_element_located(cb))
-            if not el.is_selected():
-                driver.execute_script("arguments[0].click();", el)
+    with allure.step("11. Marcar Publicado"):
+        # Residentes / No residentes quedaron ocultos (div display:none, los maneja
+        # el code-behind con sus defaults): solo se tilda Publicado, que es visible.
+        cb_pub = wait.until(EC.presence_of_element_located(P.CB_PUBLICADO))
+        if not cb_pub.is_selected():
+            driver.execute_script("arguments[0].click();", cb_pub)
         allure.attach(driver.get_screenshot_as_png(), "11_Checkboxes", allure.attachment_type.PNG)
 
     # ==========================================

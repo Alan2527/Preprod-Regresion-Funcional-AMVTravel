@@ -14,7 +14,7 @@ class WebAdminCategoryPage:
     SUBMENU_CATEGORIAS = (By.XPATH, "//ul[@id='ctl00_ctrlMenu']//a[contains(@href,'/administration/hotels/hotelcategories.aspx')]//span[normalize-space()='Categorías']")
 
     # Boton "Nuevo".
-    BTN_NUEVO = (By.ID, "ctl00_cph1_btnAddNew")
+    BTN_NUEVO = (By.NAME, "ctl00$cphActions$btnAddNew")
 
     # --- Formulario ---
     TXT_NAME = (By.NAME, "ctl00$cph1$txtName$txtValue")

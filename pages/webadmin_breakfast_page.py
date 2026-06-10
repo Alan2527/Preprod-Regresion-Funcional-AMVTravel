@@ -14,7 +14,7 @@ class WebAdminBreakfastPage:
     SUBMENU_DESAYUNO = (By.XPATH, "//ul[@id='ctl00_ctrlMenu']//a[contains(@href,'/administration/hotels/breakfasttypes.aspx')]//span[normalize-space()='Desayuno']")
 
     # Boton "Nuevo".
-    BTN_NUEVO = (By.NAME, "ctl00$cph1$btnNew")
+    BTN_NUEVO = (By.NAME, "ctl00$cphActions$btnNew")
 
     # --- Formulario ---
     TXT_NAME = (By.NAME, "ctl00$cph1$txtName$txtValue")

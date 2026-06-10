@@ -14,7 +14,7 @@ class WebAdminRoomTypePage:
     SUBMENU_TIPOS_HAB = (By.XPATH, "//ul[@id='ctl00_ctrlMenu']//a[contains(@href,'/administration/types/roomtypes.aspx')]//span[normalize-space()='Tipos de habitación']")
 
     # Boton "Nuevo".
-    BTN_NUEVO = (By.NAME, "ctl00$cph1$btnNew")
+    BTN_NUEVO = (By.ID, "btnAddNew")
 
     # --- Formulario ---
     TXT_NAME = (By.NAME, "ctl00$cph1$txtName$txtValue")

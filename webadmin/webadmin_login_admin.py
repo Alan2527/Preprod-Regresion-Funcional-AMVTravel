@@ -30,7 +30,7 @@ def test_webadmin_login_admin(login_webadmin):
         # --- Sidebar + nombre de la agencia ---
         assert page.sidebar().is_displayed(), "No se visualiza el sidebar del WebAdmin"
         agencia = page.agency_name()
-        assert "AMV. TRAVEL" in agencia.upper(), \
+        assert "CLIMBS" in agencia.upper(), \
             f"El nombre de la agencia no es el esperado. Encontrado: '{agencia}'"
         resultados.append(f"Sidebar y agencia OK: '{agencia}'")
 

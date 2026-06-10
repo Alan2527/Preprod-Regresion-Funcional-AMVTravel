@@ -10,7 +10,7 @@ from selenium.webdriver.common.by import By
 class WebAdminRoomPage:
     # --- Navegación (menú lateral) ---
     MENU_HOTELES = (By.XPATH, "//ul[@id='ctl00_ctrlMenu']//a[contains(@href,'javascript:void(3)')]//span[normalize-space()='Hoteles']")
-    SUBMENU_ADM_HAB = (By.XPATH, "//ul[@id='ctl00_ctrlMenu']//a[contains(@href,'/administration/rooms/default.aspx')]//span[normalize-space()='Adm. de Habitaciones']")
+    SUBMENU_ADM_HAB = (By.XPATH, "//ul[@id='ctl00_ctrlMenu']//a[contains(@href,'/administration/rooms/default.aspx')]//span[normalize-space()='Habitaciones']")
     BTN_NUEVO = (By.ID, "btnAddNew")
 
     # --- Formulario ---
@@ -32,8 +32,9 @@ class WebAdminRoomPage:
     # --- Guardar ---
     BTN_GUARDAR = (By.XPATH, "(//input[@value='Guardar'] | //button[@value='Guardar'])[1]")
 
-    # --- Pestañas del detalle (deben estar habilitadas) ---
-    TAB_NAMES = ["Tarifas & Freesale", "Tarifario", "Detalle del tarifario", "Freesale"]
+    # --- Pestañas del detalle (deben estar habilitadas tras guardar) ---
+    # Reales: Detalle | Tarifas | Tarifario | Detalle del tarifario | Freesale
+    TAB_NAMES = ["Tarifas", "Tarifario", "Detalle del tarifario", "Freesale"]
 
     @staticmethod
     def tab_locator(nombre):
