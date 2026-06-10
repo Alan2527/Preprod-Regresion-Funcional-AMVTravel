@@ -13,8 +13,8 @@ class WebAdminRoomTypePage:
     MENU_HOTELES = (By.XPATH, "//ul[@id='ctl00_ctrlMenu']//a[contains(@href,'javascript:void(3)')]//span[normalize-space()='Hoteles']")
     SUBMENU_TIPOS_HAB = (By.XPATH, "//ul[@id='ctl00_ctrlMenu']//a[contains(@href,'/administration/types/roomtypes.aspx')]//span[normalize-space()='Tipos de habitación']")
 
-    # Boton "Nuevo".
-    BTN_NUEVO = (By.ID, "btnAddNew")
+    # Boton "Nuevo" (input submit en el header de acciones).
+    BTN_NUEVO = (By.NAME, "ctl00$cphActions$btnNew")
 
     # --- Formulario ---
     TXT_NAME = (By.NAME, "ctl00$cph1$txtName$txtValue")
