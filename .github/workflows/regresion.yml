@@ -8,7 +8,7 @@ on:
       target:
         description: 'Qué correr. Default: solo webadmin/. Ej: bo/crear_op.py | -m bo | bo/ web/ webadmin/'
         required: false
-        default: 'webadmin/'
+        default: 'webadmin/crear_servicio.py'
 
 # ==============================================================================
 # PERMISOS: autoriza el push del reporte a GitHub Pages

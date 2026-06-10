@@ -260,12 +260,29 @@ y rediseñó las pantallas. Impactos en los tests (todos corregidos en local, pe
 
 ---
 
+- `crear_servicio.py` → **recién creado** (2026-06-10), pendiente primera corrida verde.
+  - Flujo: Menú Servicios → Adm. de servicios → Crear servicio → formulario completo →
+    Guardar → validar pestañas habilitadas → volver a lista → validar fila en tabla.
+  - Datos: Tipo=Excursión, Ciudad=Cachi, Orden=2, Publicado, vidriera, Idioma ES+EN,
+    Tags=Test, Opcional Regular+Privado, Edad 1-17, Gratis hasta 4, Cancelable, Horas 24.
+  - 6 editores Quill rellenados (ES): Intro, Detalle, Nombre y Desc, Política, Encuentro, Destino.
+  - Page Object: `WebAdminServicioPage`. Container `ServiciosTabContainer/pnlServicioDetails`.
+  - Idioma y Tags usan TomSelect → helper `_tomselect_add` (JS API `ts.addItem`).
+  - Validación de pestañas: CSS `.ajax__tab_disabled` dentro del contenedor → debe ser 0.
+  - ⚠ Campos **inferidos** (verificar en corrida real si hay TimeoutException):
+    `txtAgeFrom`, `txtAgeTo`, `txtFreeAge`, `cbCancelable`, `txtHorasAntes`,
+    `ctrlDestinationPointQuill` (el Quill de Punto de Destino),
+    `ctrlNameDescQuill$rptrLanguages$ctl00$txtName` (Nombre dentro de Nombre y Descripción).
+  - Validado estáticamente (`py_compile`, `--collect-only`).
+
+---
+
 ## 7. Pendientes / próximos pasos posibles
 
 - Confirmar corrida **verde** de `crear_hotel.py` y `crear_habitacion.py` (target `-m webadmin`).
   - Verificar valores: hotel `value=15474`, tipo de habitación `value=1`, y los `value` de
     categoría/desayuno/ciudad/barrio del hotel; y el texto exacto de las pestañas.
-- Más flujos de WebAdmin (ej.: editar hotel/habitación, crear servicio, etc.).
+- Más flujos de WebAdmin (ej.: editar hotel/habitación, etc.).
 - Limpieza conservadora de `time.sleep` (después de tener red de seguridad en CI).
 - (Opcional) Marcar un subconjunto `smoke` para corridas rápidas.
 
