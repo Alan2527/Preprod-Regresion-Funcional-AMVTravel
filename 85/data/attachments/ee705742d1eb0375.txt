@@ -1,3 +1,0 @@
-Nombre: Salón Test Automático 08/06/2026 13:03:44
-Capacidad: 200
-Orden: 1
