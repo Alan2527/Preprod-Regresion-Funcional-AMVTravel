@@ -26,10 +26,7 @@ class WebAdminServicioPage:
         "//span")
 
     # ── Botón crear en la lista ───────────────────────────────────────────────
-    BTN_CREAR = (By.XPATH,
-        "(//a[contains(@href,'Detail.aspx')] "
-        "| //input[@id='btnAddNew'] "
-        "| //input[@id='ctl00_cphActions_btnNew'])[1]")
+    BTN_CREAR = (By.ID, "btnAddNew")   # <button id="btnAddNew">Crear Servicio</button>
 
     # ── Información general ───────────────────────────────────────────────────
     TXT_NAME     = (By.NAME, f"{_B}txtName$txtValue")
