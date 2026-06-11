@@ -78,6 +78,11 @@ class WebAdminServicioPage:
     BTN_GUARDAR = (By.XPATH,
         "(//input[@value='Guardar'] | //button[@value='Guardar'])[1]")
 
+    # ── Buscador de la lista ──────────────────────────────────────────────────
+    # La grilla pagina/ordena → hay que buscar para traer el servicio recién creado.
+    TXT_SEARCH = (By.ID, "ctl00_cph1_txtSearch")   # placeholder "Nombre..."
+    BTN_SEARCH = (By.ID, "ctl00_cph1_btnSearch")   # <input value="Buscar"> (postback)
+
     # ── Tabla de la lista ─────────────────────────────────────────────────────
     TABLA = (By.CSS_SELECTOR, "table.tablestyle")
 

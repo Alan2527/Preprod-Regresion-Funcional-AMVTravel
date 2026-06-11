@@ -197,9 +197,16 @@ def test_crear_servicio(login_webadmin):
         wait.until(lambda d: "/administration/services/default.aspx" in d.current_url.lower()
                    and "detail.aspx" not in d.current_url.lower())
 
-    with allure.step("31. Validar que el servicio aparece en la tabla"):
+    with allure.step("31. Buscar y validar que el servicio aparece en la tabla"):
+        # La grilla pagina/ordena → el servicio nuevo no está en la 1ª página.
+        # Gotcha #1: buscar por el nombre SIN la hora (los ':' devuelven 0 resultados).
+        nombre_sin_hora = f"Servicio Test Automático {ahora.strftime('%d/%m/%Y')}"
+        safe_send_keys(wait, P.TXT_SEARCH, nombre_sin_hora)
+        safe_click(wait, P.BTN_SEARCH)
+        time.sleep(1)  # postback de búsqueda
         # Usamos 'presence' (no 'visibility'): el wrapper JS puede ocultar la tabla.
         wait.until(EC.presence_of_element_located(P.TABLA))
+        # La fila exacta se valida por el sello completo (con hora), que sí está en el <td>.
         fila = wait.until(EC.presence_of_element_located(P.fila_por_nombre(sello)))
         assert fila is not None, f"El servicio '{nombre_servicio}' no aparece en la tabla."
         allure.attach(
