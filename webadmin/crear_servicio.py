@@ -62,7 +62,7 @@ def test_crear_servicio(login_webadmin):
 
     with allure.step("2. Click en Crear servicio y esperar formulario"):
         safe_click(wait, P.BTN_CREAR)
-        wait.until(EC.url_contains("/administration/services/detail.aspx"))
+        wait.until(lambda d: "services/detail.aspx" in d.current_url.lower())
         wait.until(EC.visibility_of_element_located(P.TXT_NAME))
 
     # ──────────────────────────────────────────
@@ -155,7 +155,7 @@ def test_crear_servicio(login_webadmin):
     with allure.step("27. Guardar y esperar URL de detalle con id dinámico"):
         safe_click(wait, P.BTN_GUARDAR)
         time.sleep(1)
-        wait.until(EC.url_contains("detail.aspx?service="))
+        wait.until(lambda d: "detail.aspx?service=" in d.current_url.lower())
         allure.attach(
             f"URL tras guardar: {driver.current_url}",
             "27_URL_Detalle",
