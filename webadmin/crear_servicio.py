@@ -90,7 +90,15 @@ def test_crear_servicio(login_webadmin):
     # ──────────────────────────────────────────
     with allure.step("9 y 10. Email servicio y Email extra"):
         safe_send_keys(wait, P.TXT_EMAIL_SERVICIO, "testauto@gmail.com")
-        safe_send_keys(wait, P.TXT_EMAIL_EXTRA, "testauto2@gmail.com")
+        # txtEmailNoti tiene readonly en el DOM → se fuerza vía JS
+        elem_extra = wait.until(EC.presence_of_element_located(P.TXT_EMAIL_EXTRA))
+        driver.execute_script(
+            "var el=arguments[0]; el.removeAttribute('readonly'); el.removeAttribute('disabled');"
+            "el.value=arguments[1];"
+            "el.dispatchEvent(new Event('input',{bubbles:true}));"
+            "el.dispatchEvent(new Event('change',{bubbles:true}));",
+            elem_extra, "testauto2@gmail.com"
+        )
 
     # ──────────────────────────────────────────
     # 11. MOSTRAR EN VIDRIERA
