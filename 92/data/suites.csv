@@ -8,4 +8,4 @@ Crea un servicio (Excursión) desde el WebAdmin y valida el flujo completo:
 3. Guardado y validación de la URL de detalle con id dinámico.
 4. Validación de que las pestañas del detalle estén habilitadas (sin disabled).
 5. Regreso a Adm. de servicios y validación de la fila en la tabla.
-","49253","test_crear_servicio","webadmin","2026-06-11","broken","2026-06-11","","crear_servicio","",""
+","8156","test_crear_servicio","webadmin","2026-06-11","broken","2026-06-11","","crear_servicio","",""
