@@ -190,10 +190,12 @@ def test_crear_servicio(login_webadmin):
     # 29-31. VOLVER A LA LISTA Y VALIDAR
     # ──────────────────────────────────────────
     with allure.step("29 y 30. Volver a Adm. de servicios"):
-        # Desde detail.aspx el menú ya está expandido → clickear directo el submenú.
-        safe_click(wait, P.SUBMENU_ADM_SERVICIOS)
-        wait.until(lambda d: "/administration/services/default.aspx" in d.current_url
-                   and "Detail.aspx" not in d.current_url)
+        # El menú lateral es un acordeón que tras guardar queda colapsado (el submenú
+        # no es clickeable). Navegamos directo a la lista por URL (sesión ya autenticada).
+        base = driver.current_url.split("/administration/")[0]
+        driver.get(f"{base}/administration/services/default.aspx")
+        wait.until(lambda d: "/administration/services/default.aspx" in d.current_url.lower()
+                   and "detail.aspx" not in d.current_url.lower())
 
     with allure.step("31. Validar que el servicio aparece en la tabla"):
         # Usamos 'presence' (no 'visibility'): el wrapper JS puede ocultar la tabla.
