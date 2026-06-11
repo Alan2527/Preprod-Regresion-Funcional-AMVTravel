@@ -44,18 +44,18 @@ class WebAdminServicioPage:
     CB_VIDRIERA      = (By.ID, f"{_ID}cbWindow")
     CB_OPCIONAL_REG  = (By.ID, f"{_ID}cbOptionalRegular")
     CB_OPCIONAL_PRIV = (By.ID, f"{_ID}cbOptionalPrivate")
-    CB_CANCELABLE    = (By.ID, f"{_ID}cbCancelable")
+    CB_CANCELABLE    = (By.ID, f"{_ID}cbCancellable")
 
     # ── Idioma y Tags (TomSelect) — se usan los IDs para el helper JS ─────────
     LB_LANGUAGES_ID = f"{_ID}lbLanguages"
     LB_TAGS_ID      = "lbTags"   # sin prefijo ASP.NET
 
     # ── Edades y cancelación ──────────────────────────────────────────────────
-    # ⚠ Nombres inferidos: verificar en HTML real si alguno falla (TimeoutException)
-    TXT_EDAD_DESDE   = (By.NAME, f"{_B}txtAgeFrom")
-    TXT_EDAD_HASTA   = (By.NAME, f"{_B}txtAgeTo")
-    TXT_GRATIS_HASTA = (By.NAME, f"{_B}txtFreeAge")
-    TXT_HORAS_ANTES  = (By.NAME, f"{_B}txtHorasAntes")
+    # Names confirmados contra el DOM real del detail.aspx (2026-06-11).
+    TXT_EDAD_DESDE   = (By.NAME, f"{_B}txtKidsFrom")
+    TXT_EDAD_HASTA   = (By.NAME, f"{_B}txtKidsTo")
+    TXT_GRATIS_HASTA = (By.NAME, f"{_B}txtKidsFreeTo")
+    TXT_HORAS_ANTES  = (By.NAME, f"{_B}txtCancellableUpTo")
 
     # ── Quill ES (ctl00 = primer idioma = Español) ────────────────────────────
     QUILL_INTRO = (By.CSS_SELECTOR,
@@ -72,7 +72,7 @@ class WebAdminServicioPage:
     QUILL_ENCUENTRO = (By.CSS_SELECTOR,
         f"#{_ID}ctrlMeetingPointQuill_rptrLanguages_ctl00_txtQuill_editor .ql-editor")
     QUILL_DESTINO = (By.CSS_SELECTOR,
-        f"#{_ID}ctrlDestinationPointQuill_rptrLanguages_ctl00_txtQuill_editor .ql-editor")
+        f"#{_ID}ctrlDropOffQuill_rptrLanguages_ctl00_txtQuill_editor .ql-editor")
 
     # ── Guardar ───────────────────────────────────────────────────────────────
     BTN_GUARDAR = (By.XPATH,

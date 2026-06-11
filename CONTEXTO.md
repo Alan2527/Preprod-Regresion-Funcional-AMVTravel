@@ -269,10 +269,18 @@ y rediseñó las pantallas. Impactos en los tests (todos corregidos en local, pe
   - Page Object: `WebAdminServicioPage`. Container `ServiciosTabContainer/pnlServicioDetails`.
   - Idioma y Tags usan TomSelect → helper `_tomselect_add` (JS API `ts.addItem`).
   - Validación de pestañas: CSS `.ajax__tab_disabled` dentro del contenedor → debe ser 0.
-  - ⚠ Campos **inferidos** (verificar en corrida real si hay TimeoutException):
-    `txtAgeFrom`, `txtAgeTo`, `txtFreeAge`, `cbCancelable`, `txtHorasAntes`,
-    `ctrlDestinationPointQuill` (el Quill de Punto de Destino),
-    `ctrlNameDescQuill$rptrLanguages$ctl00$txtName` (Nombre dentro de Nombre y Descripción).
+  - ✅ Campos **confirmados contra el DOM real** (2026-06-11, vía inspección del detail.aspx):
+    los names inferidos estaban mal. Correcciones aplicadas en `WebAdminServicioPage`:
+    | Inferido (rompía) | Real | Campo |
+    |---|---|---|
+    | `txtAgeFrom` | `txtKidsFrom` | Edad desde |
+    | `txtAgeTo` | `txtKidsTo` | Edad hasta |
+    | `txtFreeAge` | `txtKidsFreeTo` | Gratis hasta |
+    | `cbCancelable` | `cbCancellable` | Cancelable (doble L) |
+    | `txtHorasAntes` | `txtCancellableUpTo` | Horas antes |
+    | `ctrlDestinationPointQuill` | `ctrlDropOffQuill` | Quill Punto de Destino |
+    El que tiraba el TimeoutException era `txtAgeFrom` (step 16-20); `ctrlDropOffQuill`
+    habría roto el step 21-26 después. `ctrlNameDescQuill$...$txtName` SÍ existe (OK).
   - Validado estáticamente (`py_compile`, `--collect-only`).
 
 ---
