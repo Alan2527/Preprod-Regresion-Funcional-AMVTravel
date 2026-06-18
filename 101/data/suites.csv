@@ -1,0 +1,9 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"
+Crea un Tipo de servicio desde el WebAdmin (servicetypes.aspx) y valida el flujo:
+1. Navegación Menú → Servicios → Tipos de servicio.
+2. Click en ""Nuevo"" → se despliega el formulario inline.
+3. Carga del nombre dinámico, las 4 traducciones (ES/EN/PT/IT), el orden y Publicado.
+4. Guardar.
+5. Búsqueda y validación de que el tipo de servicio recién creado aparece en la tabla.
+","8664","test_crear_tipo_servicio","webadmin","2026-06-18","passed","2026-06-18","","crear_tipo_servicio","",""
