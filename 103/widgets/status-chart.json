@@ -1,1 +1,0 @@
-[{"uid":"dee33fcad9f388c","name":"test_crear_comodidades","time":{"start":1781814818560,"stop":1781814826079,"duration":7519},"status":"passed","severity":"critical"},{"uid":"62975efa8ca79a5c","name":"test_crear_caracteristicas","time":{"start":1781814757072,"stop":1781814812581,"duration":55509},"status":"broken","severity":"critical"}]
