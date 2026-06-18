@@ -1,9 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"
-Crea un Vehículo desde el WebAdmin (vehicletypes/default.aspx) y valida el flujo:
-1. Navegación Menú → Servicios → Vehículos.
-2. Click en ""Nuevo"" → se despliega el formulario inline.
-3. Carga del nombre dinámico, las 4 traducciones (ES/EN/PT/IT), Capacity From/To y Publicado.
-4. Guardar.
-5. Búsqueda y validación de que el vehículo recién creado aparece en la tabla.
-","8812","test_crear_vehiculo","webadmin","2026-06-18","passed","2026-06-18","","crear_vehiculo","",""
