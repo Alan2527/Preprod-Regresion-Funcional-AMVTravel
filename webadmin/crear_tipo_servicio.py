@@ -24,8 +24,12 @@ def test_crear_tipo_servicio(login_webadmin):
     wait = WebDriverWait(driver, 45)
 
     ahora = datetime.now()
-    sello = ahora.strftime('%d/%m/%Y %H:%M:%S')   # ASCII y único por corrida
-    nombre_tipo = f"Tipo de Servicio Test Automático {sello}"
+    sello = ahora.strftime('%d/%m/%Y %H:%M:%S')   # fecha+hora de la corrida (ASCII, único)
+    # ⚠ El nombre se trunca server-side a ~50 chars. Prefijo corto para que el sello
+    #   COMPLETO (con segundos) persista; así el match por fecha+hora no falla.
+    #   "Tipo Servicio Test " (19) + sello (19) = 38 chars, bien bajo el límite.
+    PREFIJO = "Tipo Servicio Test"
+    nombre_tipo = f"{PREFIJO} {sello}"
 
     # Traducciones por idioma (índice del control → texto).
     traducciones = {
@@ -81,7 +85,7 @@ def test_crear_tipo_servicio(login_webadmin):
     # ──────────────────────────────────────────
     with allure.step("6. Buscar y validar que el tipo de servicio aparece en la tabla"):
         # Gotcha #1: buscar por el nombre SIN la hora (los ':' devuelven 0 resultados).
-        nombre_sin_hora = f"Tipo de Servicio Test Automático {ahora.strftime('%d/%m/%Y')}"
+        nombre_sin_hora = f"{PREFIJO} {ahora.strftime('%d/%m/%Y')}"
         safe_send_keys(wait, P.TXT_SEARCH, nombre_sin_hora)
         safe_click(wait, P.BTN_SEARCH)
         time.sleep(1)  # postback de búsqueda
