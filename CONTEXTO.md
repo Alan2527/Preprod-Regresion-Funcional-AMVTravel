@@ -344,7 +344,22 @@ y rediseñó las pantallas. Impactos en los tests (todos corregidos en local, pe
     `btnSave`. Tabla `gvServiceAmenities`. Sin orden.
   - Nombre: "Comodidad Test" + sello. Lista ordenada alfabéticamente y paginada → la
     búsqueda es necesaria (gotcha #1).
-  - El YML corre ambos tests juntos (caracteristicas + comodidades).
+  - Validado estáticamente (`py_compile`, `--collect-only`).
+  - ⚠ El buscador de esta pantalla daba 0 resultados tras el postback de guardado →
+    la validación re-navega a la lista fresca y busca la fila por sello (orden=1 → 1ª pág).
+  - `crear_comodidades` quedó **verde**; `crear_caracteristicas` pendiente de confirmar el fix.
+
+- `crear_servicio_incentivo.py` → **recién creado** (2026-06-18), pendiente primera corrida verde.
+  - Flujo: Menú Servicios → Servicios de incentivo → "+ Agregar Servicio" (va a
+    servicedetail.aspx, PÁGINA APARTE) → Nombre + Ciudad (Cachi) + Servicio Relacionado
+    (Experiencia Colomé, dep. de ciudad por postback) + Tipo (Excursión) + Destino
+    (Buenos Aires) + Orden + Destacado + Publicado + Detalle ES (Nombre + Quill) →
+    Guardar → validar fila en la lista (re-navegando, la lista NO tiene buscador).
+  - Page Object: `WebAdminServicioIncentivoPage`. Campos bajo
+    `tabsIncentiveService$pnlDetails$`: `txtName`, `ddlCity`, `ddlService`, `ddlServiceType`,
+    `ddlDestination`, `txtDisplayOrder$txtValue`, `chkGreat` (Destacado), `cbPublished`,
+    `ctrlIncentiveDetailQuill$rptrLanguages$ctl00$txtName` + Quill ES, `btnSave`.
+    Lista `gvIncentiveService`, botón "+ Agregar Servicio" (location.href a servicedetail.aspx).
   - Validado estáticamente (`py_compile`, `--collect-only`).
 
 ---
