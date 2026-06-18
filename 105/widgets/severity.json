@@ -1,1 +1,0 @@
-[{"uid":"1dafef3f6df147bc","name":"test_crear_caracteristicas","time":{"start":1781816197229,"stop":1781816206209,"duration":8980},"status":"passed","severity":"critical"},{"uid":"bcca454ece7e680c","name":"test_crear_servicio_incentivo","time":{"start":1781816212415,"stop":1781816222690,"duration":10275},"status":"passed","severity":"critical"}]
