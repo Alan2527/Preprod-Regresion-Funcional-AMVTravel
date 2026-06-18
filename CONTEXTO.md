@@ -296,6 +296,22 @@ y rediseñó las pantallas. Impactos en los tests (todos corregidos en local, pe
   - Validación: gotcha #1 (buscar por nombre SIN la hora) + validar fila por el sello.
   - El YML quedó apuntando a este test (default `webadmin/crear_tag.py`).
   - Validado estáticamente (`py_compile`, `--collect-only`).
+  - ✅ **Corrida verde confirmada** (2026-06-18).
+
+- `crear_tipo_servicio.py` → **recién creado** (2026-06-18), pendiente primera corrida verde.
+  - Flujo: Menú Servicios → Tipos de servicio → "Nuevo" (form INLINE, no modal) →
+    nombre dinámico + 4 traducciones (ES/EN/PT/IT) + orden + Publicado → Guardar →
+    buscar y validar la fila en la tabla.
+  - Page Object: `WebAdminTipoServicioPage` (servicetypes.aspx). Selectores confirmados
+    contra el HTML real.
+  - ⚠ Botón Nuevo = `ctl00$cphActions$btnNew` (es `btnNew`, NO `btnAddNew` como categoría).
+  - Campos: `txtName$txtValue`, `lvTranslations$ctrl0..3$txtLocName$txtValue` (igual que
+    categoría), `txtOrden$txtValue`, `cbPublicado`, `btnSave`. Tabla `gvServiceTypes`.
+  - ⚠ `cbIsAdditional` ("Es servicio adicional") NO se toca: al tildarlo dispara un popup
+    de confirmación (mpeIsAdditional). Se deja OFF.
+  - Validación: gotcha #1 (buscar por nombre SIN la hora) + validar fila por el sello.
+  - El YML quedó apuntando a este test (default `webadmin/crear_tipo_servicio.py`).
+  - Validado estáticamente (`py_compile`, `--collect-only`).
 
 ---
 
