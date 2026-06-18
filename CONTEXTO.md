@@ -283,6 +283,20 @@ y rediseñó las pantallas. Impactos en los tests (todos corregidos en local, pe
     habría roto el step 21-26 después. `ctrlNameDescQuill$...$txtName` SÍ existe (OK).
   - Validado estáticamente (`py_compile`, `--collect-only`).
 
+- `crear_tag.py` → **recién creado** (2026-06-18), pendiente primera corrida verde.
+  - Flujo: Menú Servicios → Tags → "Nuevo" (abre modal) → nombre dinámico → Guardar →
+    buscar y validar la fila en la tabla.
+  - Page Object: `WebAdminTagPage`. Selectores confirmados contra el HTML real (qa.amv.travel,
+    mismos IDs ASP.NET que preprod).
+  - ⚠ El botón "Nuevo" (`id="btnAddNew"`) abre un **modal** (ModalPopupExtender vía
+    `openModalExtension()`); el form está en `#ctl00_cph1_pnlPopup`. Input nombre
+    `ctl00_cph1_txtName`, Guardar `ctl00_cph1_btnNewTag` (submit→postback).
+  - Buscador `ctl00_cph1_txtSearch` + `ctl00_cph1_btnSearch`; tabla `ctl00_cph1_gvData`.
+    La fila muestra el nombre con sufijo " #<id>" (ej: "...15:57:35 #7").
+  - Validación: gotcha #1 (buscar por nombre SIN la hora) + validar fila por el sello.
+  - El YML quedó apuntando a este test (default `webadmin/crear_tag.py`).
+  - Validado estáticamente (`py_compile`, `--collect-only`).
+
 ---
 
 ## 7. Pendientes / próximos pasos posibles
