@@ -327,6 +327,26 @@ y rediseñó las pantallas. Impactos en los tests (todos corregidos en local, pe
   - El YML quedó apuntando a este test (default `webadmin/crear_vehiculo.py`).
   - Validado estáticamente (`py_compile`, `--collect-only`).
 
+- `crear_caracteristicas.py` → **recién creado** (2026-06-18), pendiente primera corrida verde.
+  - Flujo: Menú Servicios → Caracteristicas → "Nuevo" (form INLINE) → Nombre (4 idiomas) +
+    Detalle (4 idiomas) + Orden + Publicado → Guardar → buscar y validar fila.
+  - Page Object: `WebAdminCaracteristicaPage` (charasteristicsadmin.aspx).
+  - ⚠ Nombre y Detalle son MULTI-IDIOMA: `lvNameTranslations$ctrl0..3$txtName$txtValue`
+    (inputs) y `lvDetailTranslations$ctrl0..3$txtDetail$txtValue` (textareas). No hay un
+    txtName único. Orden `txtOrden$txtValue`, `cbPublicado`, `btnSave`. Tabla `gvCharasteristics`.
+  - Nombre ES = "Caract Test" + sello; resto idiomas = "test". Validación por sello.
+
+- `crear_comodidades.py` → **recién creado** (2026-06-18), pendiente primera corrida verde.
+  - Flujo: Menú Servicios → Comodidades → "Nuevo" (form INLINE) → nombre dinámico +
+    4 traducciones (ES/EN/PT/IT) + Publicado → Guardar → buscar y validar fila.
+  - Page Object: `WebAdminComodidadPage` (types/serviceamenities.aspx). Nombre único
+    `txtName$txtValue` + `lvTranslations$ctrl0..3$txtLocName$txtValue` + `cbPublicado` +
+    `btnSave`. Tabla `gvServiceAmenities`. Sin orden.
+  - Nombre: "Comodidad Test" + sello. Lista ordenada alfabéticamente y paginada → la
+    búsqueda es necesaria (gotcha #1).
+  - El YML corre ambos tests juntos (caracteristicas + comodidades).
+  - Validado estáticamente (`py_compile`, `--collect-only`).
+
 ---
 
 ## 7. Pendientes / próximos pasos posibles
