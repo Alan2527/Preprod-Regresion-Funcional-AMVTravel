@@ -77,14 +77,14 @@ def test_crear_caracteristicas(login_webadmin):
         time.sleep(1)  # postback de guardado (recarga la lista)
 
     # ──────────────────────────────────────────
-    # 6. BUSCAR Y VALIDAR EN LA TABLA
+    # 6. VALIDAR EN LA TABLA
     # ──────────────────────────────────────────
-    with allure.step("6. Buscar y validar que la característica aparece en la tabla"):
-        # Gotcha #1: buscar por el nombre SIN la hora (los ':' devuelven 0 resultados).
-        nombre_sin_hora = f"{PREFIJO} {ahora.strftime('%d/%m/%Y')}"
-        safe_send_keys(wait, P.TXT_SEARCH, nombre_sin_hora)
-        safe_click(wait, P.BTN_SEARCH)
-        time.sleep(1)  # postback de búsqueda
+    with allure.step("6. Validar que la característica aparece en la tabla"):
+        # Re-navegamos a la lista fresca (el buscador de esta pantalla daba 0 resultados
+        # justo tras el postback de guardado). El registro nuevo queda con orden=1 → la
+        # lista está ordenada por orden asc, así que aparece en la primera página.
+        base = driver.current_url.split("/administration/")[0]
+        driver.get(f"{base}/administration/services/charasteristicsadmin.aspx")
         wait.until(EC.presence_of_element_located(P.TABLA))
         fila = wait.until(EC.presence_of_element_located(P.fila_por_nombre(sello)))
         assert fila is not None, f"La característica '{nombre_es}' no aparece en la tabla."
