@@ -1,6 +1,7 @@
 import time
 import allure
 from datetime import datetime
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -55,13 +56,15 @@ def test_crear_servicio_incentivo(login_webadmin):
     # ──────────────────────────────────────────
     # 3. DATOS PRINCIPALES
     # ──────────────────────────────────────────
-    with allure.step("3. Nombre, Ciudad, Servicio Relacionado, Tipo, Destino y Orden"):
-        safe_send_keys(wait, P.TXT_NAME, nombre_incentivo)
-        # Ciudad puede disparar postback que recarga "Servicio Relacionado".
+    with allure.step("3. Ciudad (postback), luego Nombre, Servicio Relacionado, Tipo, Destino y Orden"):
+        # ⚠ Ciudad (ddlCity) dispara AutoPostBack que recarga el form → se elige PRIMERO
+        #   para no perder el resto de los campos en el postback.
         Select(wait.until(EC.element_to_be_clickable(P.DD_CITY))).select_by_visible_text("Cachi")
         time.sleep(1)
         # Esperar a que el servicio dependiente aparezca tras el postback de ciudad.
         wait.until(EC.presence_of_element_located(P.opcion_service("Experiencia Colomé")))
+        # Ahora sí cargamos el resto (ya pasó el postback).
+        safe_send_keys(wait, P.TXT_NAME, nombre_incentivo)
         Select(driver.find_element(*P.DD_SERVICE)).select_by_visible_text("Experiencia Colomé")
         Select(wait.until(EC.element_to_be_clickable(P.DD_TYPE))).select_by_visible_text("Excursión")
         Select(wait.until(EC.element_to_be_clickable(P.DD_DESTINATION))).select_by_visible_text("Buenos Aires")
@@ -90,7 +93,9 @@ def test_crear_servicio_incentivo(login_webadmin):
     # ──────────────────────────────────────────
     with allure.step("6. Guardar"):
         safe_click(wait, P.BTN_GUARDAR)
-        time.sleep(1)  # postback de guardado
+        time.sleep(2)  # postback de guardado
+        allure.attach(f"URL tras guardar: {driver.current_url}", "6_URL_PostGuardado",
+                      allure.attachment_type.TEXT)
 
     # ──────────────────────────────────────────
     # 7. VALIDAR EN LA TABLA
@@ -102,6 +107,12 @@ def test_crear_servicio_incentivo(login_webadmin):
         wait.until(EC.presence_of_element_located(P.TABLA))
         fila = wait.until(EC.presence_of_element_located(P.fila_por_nombre(sello)))
         assert fila is not None, f"El servicio de incentivo '{nombre_incentivo}' no aparece en la tabla."
+        # Diagnóstico: adjuntar la fila COMPLETA (incluye el ID real) para verificar en preprod.
+        try:
+            row = fila.find_element(By.XPATH, "./ancestor::tr[1]")
+            allure.attach(row.text, "7_Fila_Encontrada (ID + datos)", allure.attachment_type.TEXT)
+        except Exception:
+            pass
         allure.attach(
             f"Servicio de incentivo encontrado en la tabla: {nombre_incentivo}",
             "7_Incentivo_En_Tabla",
