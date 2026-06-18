@@ -1,0 +1,17 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"
+Crea un Servicio de incentivo desde el WebAdmin (incentives/servicedetail.aspx) y valida:
+1. Navegación Menú → Servicios → Servicios de incentivo → ""+ Agregar Servicio"".
+2. Carga del nombre dinámico, Ciudad, Servicio Relacionado, Tipo, Destino, Orden,
+   Destacado, Publicado y el Detalle de Incentivos (Nombre ES + Quill ES).
+3. Guardar.
+4. Validación de que el servicio recién creado aparece en la tabla.
+","10275","test_crear_servicio_incentivo","webadmin","2026-06-18","passed","2026-06-18","","crear_servicio_incentivo","",""
+"
+Crea una Característica desde el WebAdmin (charasteristicsadmin.aspx) y valida el flujo:
+1. Navegación Menú → Servicios → Caracteristicas.
+2. Click en ""Nuevo"" → se despliega el formulario inline.
+3. Carga del Nombre (4 idiomas), Detalle (4 idiomas), Orden y Publicado.
+4. Guardar.
+5. Búsqueda y validación de que la característica recién creada aparece en la tabla.
+","8980","test_crear_caracteristicas","webadmin","2026-06-18","passed","2026-06-18","","crear_caracteristicas","",""
