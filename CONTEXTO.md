@@ -311,6 +311,20 @@ y rediseñó las pantallas. Impactos en los tests (todos corregidos en local, pe
     de confirmación (mpeIsAdditional). Se deja OFF.
   - Validación: gotcha #1 (buscar por nombre SIN la hora) + validar fila por el sello.
   - El YML quedó apuntando a este test (default `webadmin/crear_tipo_servicio.py`).
+  - ⚠ El nombre se trunca server-side a ~50 chars → prefijo CORTO ("Tipo Servicio Test")
+    + sello completo (fecha+hora de corrida). Total <50 o se comen los segundos.
+  - Validado estáticamente (`py_compile`, `--collect-only`).
+
+- `crear_vehiculo.py` → **recién creado** (2026-06-18), pendiente primera corrida verde.
+  - Flujo: Menú Servicios → Vehículos → "Nuevo" (form INLINE) → nombre dinámico +
+    4 traducciones (ES/EN/PT/IT) + Capacity From/To + Publicado → Guardar →
+    buscar y validar la fila en la tabla.
+  - Page Object: `WebAdminVehiculoPage` (vehicletypes/default.aspx). Idéntico a Tipos de
+    servicio pero con `txtCapacityFrom$txtValue` / `txtCapacityTo$txtValue` en vez de orden.
+  - Nuevo `cphActions$btnNew`, `txtName$txtValue`, `lvTranslations$ctrl0..3`, `cbPublicado`,
+    `btnSave`. Tabla `gvTypes`. Selectores confirmados contra HTML real.
+  - Nombre: prefijo corto "Vehiculo Test" + sello (regla del truncado a ~50).
+  - El YML quedó apuntando a este test (default `webadmin/crear_vehiculo.py`).
   - Validado estáticamente (`py_compile`, `--collect-only`).
 
 ---
