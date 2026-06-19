@@ -35,11 +35,12 @@ class WebAdminUsuarioPage:
     CB_SHOWMARKUP = (By.ID,   f"{_ID}cbShowMarkup")
     CB_ISVENDOR   = (By.ID,   f"{_ID}cbIsVendor")
 
-    # Guardado vía modal
+    # Guardado vía modal "Datos del email"
     BTN_GUARDAR_EMAIL    = (By.NAME, f"{_B}btnShowPopUp")     # "Guardar y enviar email"
     BTN_CONFIRM_PASS     = (By.NAME, f"{_B}btnConfirmPass")   # popup password (si aparece)
-    TXT_MODAL_EMAIL      = (By.NAME, f"{_B}txtModalEmail$txtValue")
-    TXT_MODAL_VENDOR_EML = (By.NAME, f"{_B}txtModalVendorEmail$txtValue")
+    TXT_MODAL_EMAIL      = (By.NAME, f"{_B}txtModalEmail$txtValue")        # Cliente (disabled, prefilled)
+    TXT_MODAL_VENDOR_EML = (By.NAME, f"{_B}txtModalVendorEmail$txtValue")  # Vendedor (prefilled)
+    DD_SALES_MANAGER     = (By.NAME, f"{_B}ddlSalesManager")  # Responsable comercial (requerido en el modal)
     BTN_MODAL_CONFIRM    = (By.NAME, f"{_B}btnModalConfirm")  # "Confirmar"
 
     TXT_SEARCH = (By.NAME, "ctl00$cph1$txtSearch")

@@ -10,14 +10,19 @@ from pages.webadmin_usuario_page import WebAdminUsuarioPage as P
 
 
 def _sel_primera(driver, locator):
+    """Selecciona la primera opción REAL de un <select>, salteando placeholders
+    ('' / '-5' / '0' como 'Seleccione...')."""
     els = driver.find_elements(*locator)
     if not els:
         return None
     sel = Select(els[0])
     for o in sel.options:
-        if o.get_attribute("value"):
-            sel.select_by_value(o.get_attribute("value"))
-            return o.text
+        v = o.get_attribute("value")
+        if v and v not in ("-5", "0"):
+            sel.select_by_value(v)
+            o2 = sel.first_selected_option
+            driver.execute_script("arguments[0].dispatchEvent(new Event('change',{bubbles:true}));", els[0])
+            return o2.text
     return None
 
 
@@ -118,20 +123,14 @@ def test_crear_usuario(login_webadmin):
         _check(driver, wait, P.CB_SHOWMARKUP, on=True)
         allure.attach(driver.get_screenshot_as_png(), "3_Formulario", allure.attachment_type.PNG)
 
-    with allure.step("4. Guardar y enviar email → modal de confirmación"):
+    with allure.step("4. Guardar y enviar email → modal 'Datos del email'"):
         safe_click(wait, P.BTN_GUARDAR_EMAIL)
-        time.sleep(1)
-        # Modal: confirmar emails (notificación + vendedor).
-        try:
-            wait.until(EC.visibility_of_element_located(P.TXT_MODAL_EMAIL))
-            safe_send_keys(wait, P.TXT_MODAL_EMAIL, email)
-            ve = driver.find_elements(*P.TXT_MODAL_VENDOR_EML)
-            if ve:
-                safe_send_keys(wait, P.TXT_MODAL_VENDOR_EML, email)
-            safe_click(wait, P.BTN_MODAL_CONFIRM)
-        except Exception:
-            allure.attach("No apareció el modal de email o ya se guardó directo.",
-                          "4_Modal", allure.attachment_type.TEXT)
+        # Modal: Cliente/Vendedor vienen prefilled; sólo hay que elegir el Responsable
+        # comercial (requerido) y Confirmar.
+        wait.until(EC.visibility_of_element_located(P.DD_SALES_MANAGER))
+        _sel_primera(driver, P.DD_SALES_MANAGER)
+        allure.attach(driver.get_screenshot_as_png(), "4_Modal", allure.attachment_type.PNG)
+        safe_click(wait, P.BTN_MODAL_CONFIRM)
         time.sleep(2)
         allure.attach(driver.get_screenshot_as_png(), "4_PostGuardado", allure.attachment_type.PNG)
 
