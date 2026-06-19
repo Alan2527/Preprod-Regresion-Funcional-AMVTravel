@@ -1,1 +1,0 @@
-URL tras guardar: https://preprod.amv.travel/administration/cruisecabs/detail.aspx?cab=100&TabID=pnlDetails
