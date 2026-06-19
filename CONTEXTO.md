@@ -386,6 +386,23 @@ y rediseñó las pantallas. Impactos en los tests (todos corregidos en local, pe
 - Nombres con prefijo corto + sello (regla del truncado ~50). Validación de fila por sello.
 - El YML quedó corriendo los 5 juntos. Validados estáticamente (`py_compile`, `--collect-only`).
 
+## 6.ter Tests de Cruceros (2026-06-19, recién creados)
+
+- `crear_crucero.py` → `WebAdminCruceroPage` (cruises/detail.aspx, `CruiseTabContainer`).
+  Detalle: nombre, Moneda=Dollar, Min/Max rate=0, Flota=Antartida, Ciudad salida=Ushuaia,
+  Ciudad llegada=Buenos Aires, orden, Publicado, Quill ES. Solapas validadas: Detalle,
+  Imagenes, Destinos, Salidas, Cabinas, Politicas. Grid `gvCruises`, buscador txtSearch.
+- `crear_cabina.py` → `WebAdminCabinaPage` (cruisecabs/detail.aspx, `tabContainer` minúscula).
+  Detalle: nombre, Cruise=Crucero Antarpply, Moneda=Dollar, Min rate=0, Capacidad=4,
+  Tipo=A Stella, Publicado, Quill ES. Solapas: Detalle, Imagenes, Tarifas (pnlCabRates).
+  Grid `gvCabs`.
+- `crear_flota.py` y `crear_tipo_cabina.py` → `WebAdminCruceroSimplePage` (compartido).
+  INLINE (lista+form misma página, grid `gvTypes`, botón `cphActions$btnNew`). Form mínimo:
+  Nombre + Publicado. Flotas=cruises/cruisenavies.aspx, Tipos de Cabinas=cruisecabs/
+  cruisecabtypes.aspx. Validan la fila en la MISMA pantalla (buscador + sello).
+- Reutilizan `escribir_quill` y `validar_solapas` de `webadmin_tour_page`.
+- El YML quedó corriendo los 4 juntos. Validados (`py_compile`, `--collect-only`).
+
 ## 7. Pendientes / próximos pasos posibles
 
 - Confirmar corrida **verde** de `crear_hotel.py` y `crear_habitacion.py` (target `-m webadmin`).

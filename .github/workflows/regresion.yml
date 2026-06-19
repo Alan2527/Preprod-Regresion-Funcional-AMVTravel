@@ -8,7 +8,7 @@ on:
       target:
         description: 'Qué correr. Default: solo webadmin/. Ej: bo/crear_op.py | -m bo | bo/ web/ webadmin/'
         required: false
-        default: 'webadmin/crear_paquete.py webadmin/crear_oportunidad.py webadmin/crear_travel_sale.py webadmin/crear_serie.py webadmin/reporte_circuitos.py'
+        default: 'webadmin/crear_crucero.py webadmin/crear_cabina.py webadmin/crear_flota.py webadmin/crear_tipo_cabina.py'
 
 # ==============================================================================
 # PERMISOS: autoriza el push del reporte a GitHub Pages
@@ -39,8 +39,8 @@ jobs:
           AMV_AGENCIA_USER: ${{ secrets.AMV_AGENCIA_USER }}
           BO_PASS: ${{ secrets.BO_PASS }}
           BO_USER: ${{ secrets.BO_USER }}
-          # En 'Run workflow' se toma el input; en push (sin input) corre los 5 tests de Circuitos.
-          TARGET: ${{ github.event.inputs.target || 'webadmin/crear_paquete.py webadmin/crear_oportunidad.py webadmin/crear_travel_sale.py webadmin/crear_serie.py webadmin/reporte_circuitos.py' }}
+          # En 'Run workflow' se toma el input; en push (sin input) corre los 4 tests de Cruceros.
+          TARGET: ${{ github.event.inputs.target || 'webadmin/crear_crucero.py webadmin/crear_cabina.py webadmin/crear_flota.py webadmin/crear_tipo_cabina.py' }}
         # Sin comillas en $TARGET para permitir expresiones de marker (ej: -m smoke).
         # '|| true' evita que un test fallido corte la generación del reporte.
         run: pytest $TARGET || true
