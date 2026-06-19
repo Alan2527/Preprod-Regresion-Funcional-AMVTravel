@@ -37,10 +37,13 @@ def _sel_agencia(driver, wait, locator):
     (si no, el guardado tira 'DEBE SELECCIONAR AGENCIA')."""
     wait.until(lambda d: len(d.find_element(*locator).find_elements(By.TAG_NAME, "option")) > 1)
     el = driver.find_element(*locator)
+    # ⚠ El placeholder "Seleccione..." tiene value="-5" (no vacío): hay que saltearlo y
+    #   elegir la primera AGENCIA real (value entero positivo).
     return driver.execute_script("""
         var s=arguments[0];
         for(var i=0;i<s.options.length;i++){
-            if(s.options[i].value){
+            var v=s.options[i].value;
+            if(v && v!=="-5" && v!=="0" && parseInt(v,10)>0){
                 s.selectedIndex=i;
                 s.dispatchEvent(new Event('change',{bubbles:true}));
                 if(typeof ddlAgenciesChange==='function'){try{ddlAgenciesChange();}catch(e){}}
