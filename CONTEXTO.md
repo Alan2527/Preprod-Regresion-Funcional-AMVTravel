@@ -403,6 +403,26 @@ y rediseñó las pantallas. Impactos en los tests (todos corregidos en local, pe
 - Reutilizan `escribir_quill` y `validar_solapas` de `webadmin_tour_page`.
 - El YML quedó corriendo los 4 juntos. Validados (`py_compile`, `--collect-only`).
 
+## 6.quater Tests de Agencias (2026-06-19, recién creados)
+
+- `crear_tipo_usuario.py` → usertypes.aspx INLINE (gvUserTypes). Nombre+Detalle+Publicado.
+- `crear_galeria_pax.py` → passengergallerydetail.aspx (mainTabContainer). txtDetail+agencia+
+  fecha+publicado. Vuelve a passengergalleries.aspx (gvData) y valida fila.
+- `crear_corporativo.py` → corpdetail.aspx (CorpTabContainer). Solapas Detalle / Config. de
+  productos (pnlProductSetting). Requeridos: name/address/comment/email/phone/rewardPointTotal.
+- `crear_cliente_corporativo.py` → corpcustomerdetail.aspx (CustomerTabContainer). name/lastname/
+  email/username/pass + ddlCorps/ddlWebUserType/ddlCurrency. Guarda directo (sin modal email).
+- `crear_usuario.py` → customers/detail.aspx (CustomerTabContainer). ⚠ COMPLEJO: "Guardar" está
+  deshabilitado; se usa "Guardar y enviar email" (btnShowPopUp) → MODAL (txtModalEmail/
+  txtModalVendorEmail) → "Confirmar" (btnModalConfirm). Password manual (chkEnablePassword + txtPass,
+  posible popup btnConfirmPass). Tipo=Cliente, País=España, Moneda=Dollar, Agencia=primera.
+- `crear_agencia.py` → ⚠ COMPLEJO 2 pasos: form Agencia (AgencyTabContainer, btnSavePopUp) →
+  modal "Sí" (ubicado por TEXTO, best-effort) → form Usuario admin (mismo CustomerTabContainer,
+  reusa WebAdminUsuarioPage) → guardar con modal → validar agencia en gvAgencies.
+- Helper `_sel_primera` (primera opción real) y `_sel_texto` en los tests; reusan escribir_quill/
+  validar_solapas de webadmin_tour_page. Emails únicos por timestamp.
+- ⚠ usuario y agencia son best-effort (modales no estaban 100% en el HTML); probable iteración.
+
 ## 7. Pendientes / próximos pasos posibles
 
 - Confirmar corrida **verde** de `crear_hotel.py` y `crear_habitacion.py` (target `-m webadmin`).
