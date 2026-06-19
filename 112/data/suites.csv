@@ -1,8 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"
-Crea un Usuario (Agencias → Usuarios → Nuevo) con los datos de la captura:
-nombre de usuario, password manual, Tipo=Cliente, Nombre/Apellido/Email, Agencia, País=España,
-Moneda=Dollar, Mostrar Markup. Guarda vía ""Guardar y enviar email"" → modal de confirmación,
-y valida la fila tras volver a la lista.
-⚠ Flujo con modales (best-effort): puede requerir ajustes según comportamiento real.
-","59329","test_crear_usuario","webadmin","2026-06-19","broken","2026-06-19","","crear_usuario","",""
