@@ -43,7 +43,7 @@ class WebAdminUsuarioPage:
     BTN_MODAL_CONFIRM    = (By.NAME, f"{_B}btnModalConfirm")  # "Confirmar"
 
     TXT_SEARCH = (By.NAME, "ctl00$cph1$txtSearch")
-    BTN_SEARCH = (By.NAME, "ctl00$cph1$btnSearch")
+    BTN_SEARCH = (By.NAME, "ctl00$cph1$btnFilter")   # la lista usa btnFilter (no btnSearch)
     TABLA = (By.ID, "ctl00_cph1_gvAgencyCustomers")
 
     @staticmethod

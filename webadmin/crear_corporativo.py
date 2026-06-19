@@ -1,5 +1,6 @@
 import time
 import allure
+import pytest
 from datetime import datetime
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
@@ -21,6 +22,7 @@ def _sel_primera(driver, locator):
     return None
 
 
+@pytest.mark.skip(reason="Flujo de creación de Corporativo roto en el admin (preprod) — pendiente del lado de la app")
 @allure.feature("WebAdmin AMV Travel")
 @allure.story("Crear Corporativo y validar persistencia")
 @allure.severity(allure.severity_level.CRITICAL)

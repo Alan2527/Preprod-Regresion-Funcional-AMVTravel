@@ -1,6 +1,7 @@
 import time
 import allure
 from datetime import datetime
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -28,6 +29,25 @@ def _sel_texto(driver, locator, texto):
             return
         except Exception:
             _sel_primera(driver, locator)
+
+
+def _sel_agencia(driver, wait, locator):
+    """ddlAgencies es un <select> nativo con OnChange='ddlAgenciesChange()'. Selecciona la
+    primera opción real por JS y dispara el change para que la app registre la agencia
+    (si no, el guardado tira 'DEBE SELECCIONAR AGENCIA')."""
+    wait.until(lambda d: len(d.find_element(*locator).find_elements(By.TAG_NAME, "option")) > 1)
+    el = driver.find_element(*locator)
+    return driver.execute_script("""
+        var s=arguments[0];
+        for(var i=0;i<s.options.length;i++){
+            if(s.options[i].value){
+                s.selectedIndex=i;
+                s.dispatchEvent(new Event('change',{bubbles:true}));
+                if(typeof ddlAgenciesChange==='function'){try{ddlAgenciesChange();}catch(e){}}
+                return s.options[i].text;
+            }
+        }
+        return null;""", el)
 
 
 def _check(driver, wait, locator, on=True):
@@ -89,7 +109,7 @@ def test_crear_usuario(login_webadmin):
         safe_send_keys(wait, P.TXT_NAME, nombre)
         safe_send_keys(wait, P.TXT_LASTNAME, apellido)
         safe_send_keys(wait, P.TXT_EMAIL, email)
-        _sel_primera(driver, P.DD_AGENCIES)
+        _sel_agencia(driver, wait, P.DD_AGENCIES)
         _sel_texto(driver, P.DD_COUNTRY, "España")
         _sel_texto(driver, P.DD_CURRENCY, "Dollar")
         _check(driver, wait, P.CB_SHOWMARKUP, on=True)

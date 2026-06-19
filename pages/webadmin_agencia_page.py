@@ -38,7 +38,7 @@ class WebAdminAgenciaPage:
         "[normalize-space(.)='Sí' or normalize-space(.)='Si' or @value='Sí' or @value='Si']")
 
     TXT_SEARCH = (By.NAME, "ctl00$cph1$txtSearch")
-    BTN_SEARCH = (By.NAME, "ctl00$cph1$btnSearch")
+    BTN_SEARCH = (By.NAME, "ctl00$cph1$btnFilter")   # la lista usa btnFilter (no btnSearch)
     TABLA = (By.ID, "ctl00_cph1_gvAgencies")
 
     @staticmethod
