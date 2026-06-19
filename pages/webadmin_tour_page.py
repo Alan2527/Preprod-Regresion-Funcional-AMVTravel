@@ -95,33 +95,54 @@ def _set_fecha(driver, wait, locator, valor):
         el, valor)
 
 
+def _presente(driver, locator):
+    """Devuelve el primer elemento del locator si existe en el DOM, o None."""
+    els = driver.find_elements(*locator)
+    return els[0] if els else None
+
+
 def llenar_tour(driver, wait, nombre, texto_quill, fecha_desde, fecha_hasta):
-    """Llena el form Detalle del Tour (campos requeridos + Nombre y Descripción ES)."""
+    """Llena el form Detalle del Tour. Es ADAPTABLE: Paquete/Oportunidad/TravelSale
+    comparten TourTabContainer pero NO tienen los mismos campos (ej.: TravelSale no
+    tiene tarifas ni Tipo; Oportunidad no tiene Tipo). Sólo se llena lo que existe."""
     P = WebAdminTourPage
     safe_send_keys(wait, P.TXT_NAME, nombre)
-    _set_fecha(driver, wait, P.FECHA_DESDE, fecha_desde)
-    _set_fecha(driver, wait, P.FECHA_HASTA, fecha_hasta)
-    Select(wait.until(EC.element_to_be_clickable(P.DD_CURRENCY))).select_by_visible_text("Dollar")
-    safe_send_keys(wait, P.TXT_MARKUP, "100")
-    safe_send_keys(wait, P.TXT_TOTAL_RATE, "100")
-    safe_send_keys(wait, P.TXT_EXTRA_RATE, "0")
-    safe_send_keys(wait, P.TXT_RATE_MIN, "0")
-    safe_send_keys(wait, P.TXT_NIGHTS, "3")
-    Select(wait.until(EC.element_to_be_clickable(P.DD_TYPE))).select_by_visible_text("VIP")
-    safe_send_keys(wait, P.TXT_ORDEN, "1")
+    if _presente(driver, P.FECHA_DESDE):
+        _set_fecha(driver, wait, P.FECHA_DESDE, fecha_desde)
+    if _presente(driver, P.FECHA_HASTA):
+        _set_fecha(driver, wait, P.FECHA_HASTA, fecha_hasta)
+    if _presente(driver, P.DD_CURRENCY):
+        Select(driver.find_element(*P.DD_CURRENCY)).select_by_visible_text("Dollar")
+    # Tarifas (sólo Paquete/Oportunidad).
+    for loc, val in ((P.TXT_MARKUP, "100"), (P.TXT_TOTAL_RATE, "100"),
+                     (P.TXT_EXTRA_RATE, "0"), (P.TXT_RATE_MIN, "0")):
+        if _presente(driver, loc):
+            safe_send_keys(wait, loc, val)
+    safe_send_keys(wait, P.TXT_NIGHTS, "3")   # presente en los 3
+    if _presente(driver, P.DD_TYPE):          # sólo Paquete
+        Select(driver.find_element(*P.DD_TYPE)).select_by_visible_text("VIP")
+    safe_send_keys(wait, P.TXT_ORDEN, "1")    # presente en los 3
     for loc in (P.CB_PUBLICADO, P.CB_DESTACADO):
-        cb = wait.until(EC.presence_of_element_located(loc))
-        if not cb.is_selected():
+        cb = _presente(driver, loc)
+        if cb and not cb.is_selected():
             driver.execute_script("arguments[0].click();", cb)
     safe_send_keys(wait, P.NOMBRE_DESC_ES, nombre)
     escribir_quill(driver, wait, P.QUILL_ES, texto_quill)
 
 
 def validar_solapas(driver, container_id, nombres, solapas_map):
-    """Valida que cada solapa esperada exista y que NINGUNA esté deshabilitada."""
+    """Valida que cada solapa ESPERADA exista y NO esté deshabilitada.
+    (No exige 0 deshabilitadas en todo el contenedor: otras solapas como Hoteles/
+    Servicios quedan deshabilitadas legítimamente hasta cargar más datos.)"""
     for nombre in nombres:
         tab_id = solapas_map[nombre]
-        assert driver.find_elements(By.ID, tab_id), f"No existe la solapa '{nombre}' ({tab_id})"
-    disabled = driver.find_elements(
-        By.CSS_SELECTOR, f"[id*='{container_id}'] .ajax__tab_disabled")
-    assert not disabled, f"Hay {len(disabled)} solapa(s) deshabilitada(s) en {container_id}"
+        el = driver.find_elements(By.ID, tab_id)
+        assert el, f"No existe la solapa '{nombre}' ({tab_id})"
+        # La clase 'ajax__tab_disabled' la pone ACT en algún ancestro del <span> de la solapa.
+        deshabilitada = driver.execute_script(
+            "var e=arguments[0];"
+            "while(e && e!==document.body){"
+            "  if(e.classList && e.classList.contains('ajax__tab_disabled')) return true;"
+            "  e=e.parentElement;"
+            "} return false;", el[0])
+        assert not deshabilitada, f"La solapa '{nombre}' está deshabilitada"
