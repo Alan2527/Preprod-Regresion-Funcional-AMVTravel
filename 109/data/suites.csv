@@ -1,0 +1,27 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"
+Crea una Flota desde el WebAdmin (Cruceros → Flotas → Nuevo) y valida:
+1. Click en Nuevo → form inline (Nombre + Publicado).
+2. Guardar.
+3. En la MISMA pantalla, la flota recién creada aparece en la tabla.
+","5587","test_crear_flota","webadmin","2026-06-19","passed","2026-06-19","","crear_flota","",""
+"
+Crea un Tipo de Cabina desde el WebAdmin (Cruceros → Tipos de Cabinas → Nuevo) y valida:
+1. Click en Nuevo → form inline (Nombre + Publicado).
+2. Guardar.
+3. En la MISMA pantalla, el tipo de cabina recién creado aparece en la tabla.
+","5651","test_crear_tipo_cabina","webadmin","2026-06-19","passed","2026-06-19","","crear_tipo_cabina","",""
+"
+Crea una Cabina desde el WebAdmin (Cruceros → Cabinas → Nuevo) y valida:
+1. Apertura del formulario (detail.aspx).
+2. Carga del Detalle (nombre, crucero, moneda, min rate, capacidad, tipo, publicado, Quill).
+3. Guardar y validar solapas habilitadas: Detalle/Imagenes/Tarifas.
+4. Volver a la lista de Cabinas y validar la fila.
+","9788","test_crear_cabina","webadmin","2026-06-19","passed","2026-06-19","","crear_cabina","",""
+"
+Crea un Crucero desde el WebAdmin (Cruceros → Adm. de Cruceros → Nuevo) y valida:
+1. Apertura del formulario (detail.aspx).
+2. Carga del Detalle (nombre, moneda, tarifas, flota, ciudades, orden, publicado, Quill).
+3. Guardar y validar solapas habilitadas: Detalle/Imagenes/Destinos/Salidas/Cabinas/Politicas.
+4. Volver a la lista de Cruceros y validar la fila.
+","11834","test_crear_crucero","webadmin","2026-06-19","passed","2026-06-19","","crear_crucero","",""
