@@ -1,0 +1,15 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"
+Crea una Agencia (Agencias → Adm. de Agencias → Crear agencia): llena el form de agencia,
+guarda, confirma el modal con ""Sí"", llena el form del usuario admin, guarda, y valida la
+agencia en la tabla.
+⚠ Flujo de 2 pasos con modales (best-effort): el modal ""Sí"" se ubica por texto y puede
+requerir ajustes según el comportamiento real.
+","22620","test_crear_agencia","webadmin","2026-06-19","passed","2026-06-19","","crear_agencia","",""
+"
+Crea un Usuario (Agencias → Usuarios → Nuevo) con los datos de la captura:
+nombre de usuario, password manual, Tipo=Cliente, Nombre/Apellido/Email, Agencia, País=España,
+Moneda=Dollar, Mostrar Markup. Guarda vía ""Guardar y enviar email"" → modal de confirmación,
+y valida la fila tras volver a la lista.
+⚠ Flujo con modales (best-effort): puede requerir ajustes según comportamiento real.
+","103370","test_crear_usuario","webadmin","2026-06-19","broken","2026-06-19","","crear_usuario","",""

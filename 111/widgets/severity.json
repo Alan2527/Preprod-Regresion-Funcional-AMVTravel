@@ -1,0 +1,1 @@
+[{"uid":"b740d8f8c667b51f","name":"test_crear_agencia","time":{"start":1781876693756,"stop":1781876716376,"duration":22620},"status":"passed","severity":"critical"},{"uid":"d32920752b164dde","name":"test_crear_usuario","time":{"start":1781876584252,"stop":1781876687622,"duration":103370},"status":"broken","severity":"critical"}]
