@@ -1,0 +1,35 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"
+Valida el Reporte de Circuitos (Circuitos → Reporte Circuitos):
+1. Navegación al reporte.
+2. La tabla principal existe y NO viene vacía (tiene al menos una fila de datos).
+","5782","test_reporte_circuitos","webadmin","2026-06-19","passed","2026-06-19","","reporte_circuitos","",""
+"
+Crea una Serie desde el WebAdmin (Circuitos → Series) y valida:
+1. Navegación y apertura del formulario (Detail.aspx).
+2. Carga del Detalle (nombre dinámico, orden, publicado, Nombre y Descripción ES).
+3. Guardar y validar que las solapas Detalle/Paquetes/Salidas/Tarifas/Cupos estén habilitadas.
+4. Volver a la lista de Series y validar que la serie recién creada aparece.
+","7592","test_crear_serie","webadmin","2026-06-19","passed","2026-06-19","","crear_serie","",""
+"
+Crea una Oportunidad desde el WebAdmin (Circuitos → Oportunidades) y valida:
+1. Navegación y apertura del formulario (detail.aspx).
+2. Carga de los campos del Detalle (nombre dinámico, vigencia, tarifas, etc.).
+3. Guardar y validar solapas habilitadas: Detalle/Imagenes/Destinos + Agencias.
+   (Oportunidades NO tiene solapa Videos; en su lugar tiene Agencias.)
+4. Volver a la lista y validar que la oportunidad recién creada aparece.
+","51004","test_crear_oportunidad","webadmin","2026-06-19","broken","2026-06-19","","crear_oportunidad","",""
+"
+Crea un Paquete desde el WebAdmin (Circuitos → Paquetes → Crear Paquete) y valida:
+1. Navegación y apertura del formulario (detail.aspx).
+2. Carga de los campos del Detalle (nombre dinámico, vigencia, tarifas, etc.).
+3. Guardar y validar que las solapas Detalle/Imagenes/Videos/Destinos estén habilitadas.
+4. Volver a la lista de Paquetes y validar que el paquete recién creado aparece.
+","9037","test_crear_paquete","webadmin","2026-06-19","failed","2026-06-19","","crear_paquete","",""
+"
+Crea un Travel Sale desde el WebAdmin (Circuitos → Travel Sale) y valida:
+1. Navegación y apertura del formulario (detail.aspx).
+2. Carga de los campos del Detalle (nombre dinámico, vigencia, tarifas, etc.).
+3. Guardar y validar que las solapas Detalle/Imagenes/Videos/Destinos estén habilitadas.
+4. Volver a la lista y validar que el registro recién creado aparece.
+","47612","test_crear_travel_sale","webadmin","2026-06-19","broken","2026-06-19","","crear_travel_sale","",""

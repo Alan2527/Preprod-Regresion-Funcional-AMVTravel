@@ -1,1 +1,0 @@
-URL tras guardar: https://preprod.amv.travel/administration/incentives/ServiceDetail.aspx?Service=193&TabID=pnlDetails

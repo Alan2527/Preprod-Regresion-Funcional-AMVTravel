@@ -1,9 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"
-Crea un Servicio de incentivo desde el WebAdmin (incentives/servicedetail.aspx) y valida:
-1. Navegación Menú → Servicios → Servicios de incentivo → ""+ Agregar Servicio"".
-2. Carga del nombre dinámico, Ciudad, Servicio Relacionado, Tipo, Destino, Orden,
-   Destacado, Publicado y el Detalle de Incentivos (Nombre ES + Quill ES).
-3. Guardar.
-4. Validación de que el servicio recién creado aparece en la tabla.
-","11100","test_crear_servicio_incentivo","webadmin","2026-06-18","passed","2026-06-18","","crear_servicio_incentivo","",""
