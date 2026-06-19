@@ -364,6 +364,28 @@ y rediseñó las pantallas. Impactos en los tests (todos corregidos en local, pe
 
 ---
 
+## 6.bis Tests de Circuitos (2026-06-18, recién creados)
+
+- **Paquete / Oportunidad / Travel Sale** comparten estructura (grid `gvReceptiveTours`,
+  form `TourTabContainer/pnlDetails`). Page Object compartido `WebAdminTourPage` con
+  helpers `llenar_tour`, `escribir_quill`, `validar_solapas`. Listas:
+  receptivetours/ · opportunities/ · travelsale/. Buscador `txtSearch`/`btnSearch`.
+  - `crear_paquete.py` → solapas validadas: Detalle, Imagenes, Videos, Destinos.
+  - `crear_oportunidad.py` → Detalle, Imagenes, Destinos, **Agencias** (⚠ NO tiene Videos).
+  - `crear_travel_sale.py` → Detalle, Imagenes, Videos, Destinos.
+  - Campos requeridos del form: txtName, txtMarkup, txtTotalRate, txtExtraRate,
+    txtRateMin, txtNights, txtOrden (todos `$txtValue`). Vigencia = flatpickr (`js-datepicker`,
+    se setea por JS). Moneda=Dollar, Tipo=VIP. Quill "Nombre y Descripción" ES.
+- `crear_serie.py` → form `SerieTabContainer` (más simple: Nombre+Orden+Publicado+Quill;
+  solo Nombre requerido). Solapas: Detalle, Paquetes, Salidas, Tarifas, Cupos.
+  Grid `gvSeries`, buscador `txtSearchName`/`btnSearch`. `txtOrden` SIN `$txtValue`.
+- `reporte_circuitos.py` → customtours/. Solo valida que `gvData` exista y tenga filas
+  (rowstyle/altrowstyle) > 0. No crea nada.
+- Validación de solapas: cada solapa esperada existe (`id=..._pnlX_tab`) + 0 elementos
+  con `.ajax__tab_disabled` en el contenedor (mismo enfoque que crear_servicio).
+- Nombres con prefijo corto + sello (regla del truncado ~50). Validación de fila por sello.
+- El YML quedó corriendo los 5 juntos. Validados estáticamente (`py_compile`, `--collect-only`).
+
 ## 7. Pendientes / próximos pasos posibles
 
 - Confirmar corrida **verde** de `crear_hotel.py` y `crear_habitacion.py` (target `-m webadmin`).
