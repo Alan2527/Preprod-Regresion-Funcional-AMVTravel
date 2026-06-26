@@ -61,7 +61,11 @@ def test_individuales(login_webadmin):
     with allure.step("5. Preview: abre pestaña nueva y validar contenido"):
         ventana_orig = driver.current_window_handle
         handles_antes = set(driver.window_handles)
-        safe_click(wait, P.BTN_PREVIEW)
+        # El botón Preview (<a target=_blank>) a veces no pasa element_to_be_clickable;
+        # lo clickeamos por JS sobre su presencia.
+        prev = wait.until(EC.presence_of_element_located(P.BTN_PREVIEW))
+        driver.execute_script("arguments[0].scrollIntoView({block:'center'});", prev)
+        driver.execute_script("arguments[0].click();", prev)
         # Esperar la nueva pestaña.
         wait.until(lambda d: len(d.window_handles) > len(handles_antes))
         nueva = [h for h in driver.window_handles if h not in handles_antes][0]

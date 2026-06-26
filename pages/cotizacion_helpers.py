@@ -6,7 +6,8 @@ from selenium.webdriver.support import expected_conditions as EC
 
 def sel_primera(driver, locator):
     """Selecciona la primera opción real de un <select>, salteando placeholders
-    ('' / -1 / -5 / 0). Dispara change."""
+    ('' / -1 / -5 / 0). Captura el texto ANTES de seleccionar (el onchange puede
+    disparar un postback que deja stale la opción). Selenium ya dispara el change."""
     els = driver.find_elements(*locator)
     if not els:
         return None
@@ -14,10 +15,9 @@ def sel_primera(driver, locator):
     for o in sel.options:
         v = o.get_attribute("value")
         if v and v not in ("-1", "-5", "0"):
+            txt = o.text
             sel.select_by_value(v)
-            driver.execute_script(
-                "arguments[0].dispatchEvent(new Event('change',{bubbles:true}));", els[0])
-            return o.text
+            return txt
     return None
 
 
@@ -28,11 +28,11 @@ def sel_texto(driver, locator, texto):
         return None
     sel = Select(els[0])
     for o in sel.options:
-        if texto.lower() in (o.text or "").lower() and o.get_attribute("value") not in ("", "-1", "-5", "0"):
-            sel.select_by_value(o.get_attribute("value"))
-            driver.execute_script(
-                "arguments[0].dispatchEvent(new Event('change',{bubbles:true}));", els[0])
-            return o.text
+        v = o.get_attribute("value")
+        if texto.lower() in (o.text or "").lower() and v not in ("", "-1", "-5", "0"):
+            txt = o.text
+            sel.select_by_value(v)
+            return txt
     return sel_primera(driver, locator)
 
 

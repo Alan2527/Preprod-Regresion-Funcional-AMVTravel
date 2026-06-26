@@ -26,7 +26,7 @@ class WebAdminCotizacionIndividualPage:
     BTN_GUARDAR   = (By.NAME, f"{_B}btnSave")
 
     # Botón Preview (abre una pestaña nueva con previewmailingsingle.aspx)
-    BTN_PREVIEW = (By.XPATH, "//a[@title='Preview' and contains(@href,'previewmailing')]")
+    BTN_PREVIEW = (By.XPATH, "//a[contains(@href,'previewmailing')]")
 
     TAB_CONTAINER = "ctl00_cph1_mainTabContainer"
     SOLAPAS = ["Detalle", "Destinos", "Hoteles", "Restaurantes", "Cruceros"]
