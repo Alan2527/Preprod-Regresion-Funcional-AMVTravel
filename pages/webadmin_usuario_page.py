@@ -45,6 +45,9 @@ class WebAdminUsuarioPage:
 
     TXT_SEARCH = (By.NAME, "ctl00$cph1$txtSearch")
     BTN_SEARCH = (By.NAME, "ctl00$cph1$btnFilter")   # la lista usa btnFilter (no btnSearch)
+    # ⚠ La lista viene filtrada por Estado="Pendiente Validación" (value=10) por defecto;
+    #   hay que ponerlo en TODOS (value="") para ver el usuario recién creado.
+    DD_STATUS = (By.NAME, "ctl00$cph1$ddStatus")
     TABLA = (By.ID, "ctl00_cph1_gvAgencyCustomers")
 
     @staticmethod

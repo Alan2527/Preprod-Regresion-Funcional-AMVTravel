@@ -134,11 +134,14 @@ def test_crear_usuario(login_webadmin):
         time.sleep(2)
         allure.attach(driver.get_screenshot_as_png(), "4_PostGuardado", allure.attachment_type.PNG)
 
-    with allure.step("5. Volver a la lista de Usuarios y validar la fila"):
-        # El usuario recién creado aparece arriba de todo en la lista (orden por más reciente),
-        # así que validamos la fila directo, sin usar el buscador (que filtra distinto).
+    with allure.step("5. Volver a la lista, poner Estado=TODOS y validar la fila"):
+        # ⚠ La lista viene filtrada por Estado="Pendiente Validación"; hay que ponerlo en
+        #   TODOS para que aparezca el usuario recién creado (Cliente/Activo).
         base = driver.current_url.split("/administration/")[0]
         driver.get(f"{base}/administration/customers/")
+        Select(wait.until(EC.element_to_be_clickable(P.DD_STATUS))).select_by_value("")
+        safe_click(wait, P.BTN_SEARCH)
+        time.sleep(1)
         wait.until(EC.presence_of_element_located(P.TABLA))
         fila = wait.until(EC.presence_of_element_located(P.fila_por_nombre(sello)))
         assert fila is not None, f"El usuario '{nombre}' no aparece en la tabla."
