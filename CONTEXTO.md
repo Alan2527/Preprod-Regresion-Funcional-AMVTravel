@@ -423,6 +423,23 @@ y rediseñó las pantallas. Impactos en los tests (todos corregidos en local, pe
   validar_solapas de webadmin_tour_page. Emails únicos por timestamp.
 - ⚠ usuario y agencia son best-effort (modales no estaban 100% en el HTML); probable iteración.
 
+## 6.quinto Tests de Cotizaciones (2026-06-26, recién creados)
+
+- `grupos.py` → budgets/budgetdetail.aspx (mainTabContainer). Requeridos: ddBranch, título,
+  referencia, markup, exchangeRate, paxCount, budgets SGL/DBL/TPL. Itinerario="Argentina de
+  Sur a Norte". Tras guardar valida solapas (por TEXTO del header, contains): Detalle de la
+  cotización, Configuración, Destinos, Hoteles, Servicios/Restaurantes, Salones, Gifts, Archivos.
+  Vuelve a la lista (gvData, txtSearch/btnSearch) y valida la fila por sello.
+- `individuales.py` → budgets/budgetsingle.aspx. Requeridos: título + referencia (simple).
+  Solapas: Detalle, Destinos, Hoteles, Servicios/Restaurantes, Cruceros. Botón **Preview**
+  (`a[title='Preview']`) abre pestaña nueva (previewmailingsingle.aspx); se valida que el HTML
+  contenga landmarks del esperado (individuales3): "glaciar Perito Moreno", "Multiviajes
+  Argentina SRL", "Precio neto del paquete por persona". Luego vuelve y valida la fila.
+- ⚠ Las solapas de cotización aparecen/se habilitan DESPUÉS de guardar (en el form nuevo solo
+  está "Detalle de la cotización"). Se validan por texto (sólo pnlDetails tiene id en el DOM).
+- Helper `pages/cotizacion_helpers.py`: sel_primera/sel_texto/set_fecha/validar_solapas.
+- Botón crear de las listas: `btnCreate`. El YML corre los 2 juntos.
+
 ## 7. Pendientes / próximos pasos posibles
 
 - Confirmar corrida **verde** de `crear_hotel.py` y `crear_habitacion.py` (target `-m webadmin`).
