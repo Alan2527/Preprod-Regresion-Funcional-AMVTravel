@@ -1,0 +1,1 @@
+[{"uid":"87a888702c918132","name":"test_grupos","time":{"start":1782504941069,"stop":1782504946003,"duration":4934},"status":"broken","severity":"critical"},{"uid":"961833a9d291491c","name":"test_individuales","time":{"start":1782504951929,"stop":1782505003495,"duration":51566},"status":"broken","severity":"critical"}]
