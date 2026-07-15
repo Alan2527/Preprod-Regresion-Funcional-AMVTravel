@@ -1,0 +1,2 @@
+Nombre: Tipo De Habitación Test 15/07/2026 12:23:11
+Detalle: Este es un test automático

@@ -1,0 +1,1 @@
+Moneda | Cotización | Cotización Travel Sale | Cotización Oportunidades | Aplica | Editar | Borrar
