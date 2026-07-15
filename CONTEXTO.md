@@ -116,7 +116,7 @@ pytest                       # toda la suite
 pytest -m bo                 # solo BackOffice
 pytest -m front              # solo Front
 pytest -m webadmin           # solo WebAdmin
-pytest webadmin/crear_hotel.py::test_crear_hotel   # un test puntual
+pytest webadmin/hoteles_hotel.py::test_crear_hotel   # un test puntual
 
 allure serve allure-results  # ver reporte local (requiere CLI de Allure)
 ```
@@ -124,7 +124,7 @@ allure serve allure-results  # ver reporte local (requiere CLI de Allure)
 ### CI (GitHub Actions) — parametrizable
 - Workflow: `.github/workflows/regresion.yml`. Corre en **push a main** y con **Run workflow**.
 - Campo **`target`** en *Run workflow* (o el default en push) define qué corre:
-  `webadmin/crear_hotel.py` · `-m bo` · `-m webadmin` · `bo/ web/` · etc.
+  `webadmin/hoteles_hotel.py` · `-m bo` · `-m webadmin` · `bo/ web/` · etc.
 - **Default actual del target:** `webadmin/` → **corre solo los tests de webadmin** (pedido de Alan).
   `default: 'webadmin/'` y `TARGET: ${{ github.event.inputs.target || 'webadmin/' }}`.
   Para la suite completa, poner `bo/ web/ webadmin/` en el input `target` del "Run workflow".
@@ -295,7 +295,7 @@ y rediseñó las pantallas. Impactos en los tests (todos corregidos en local, pe
   - Buscador `ctl00_cph1_txtSearch` + `ctl00_cph1_btnSearch`; tabla `ctl00_cph1_gvData`.
     La fila muestra el nombre con sufijo " #<id>" (ej: "...15:57:35 #7").
   - Validación: gotcha #1 (buscar por nombre SIN la hora) + validar fila por el sello.
-  - El YML quedó apuntando a este test (default `webadmin/crear_tag.py`).
+  - El YML quedó apuntando a este test (default `webadmin/servicios_tag.py`).
   - Validado estáticamente (`py_compile`, `--collect-only`).
   - ✅ **Corrida verde confirmada** (2026-06-18).
 
@@ -311,7 +311,7 @@ y rediseñó las pantallas. Impactos en los tests (todos corregidos en local, pe
   - ⚠ `cbIsAdditional` ("Es servicio adicional") NO se toca: al tildarlo dispara un popup
     de confirmación (mpeIsAdditional). Se deja OFF.
   - Validación: gotcha #1 (buscar por nombre SIN la hora) + validar fila por el sello.
-  - El YML quedó apuntando a este test (default `webadmin/crear_tipo_servicio.py`).
+  - El YML quedó apuntando a este test (default `webadmin/servicios_tiposervicio.py`).
   - ⚠ El nombre se trunca server-side a ~50 chars → prefijo CORTO ("Tipo Servicio Test")
     + sello completo (fecha+hora de corrida). Total <50 o se comen los segundos.
   - Validado estáticamente (`py_compile`, `--collect-only`).
@@ -325,7 +325,7 @@ y rediseñó las pantallas. Impactos en los tests (todos corregidos en local, pe
   - Nuevo `cphActions$btnNew`, `txtName$txtValue`, `lvTranslations$ctrl0..3`, `cbPublicado`,
     `btnSave`. Tabla `gvTypes`. Selectores confirmados contra HTML real.
   - Nombre: prefijo corto "Vehiculo Test" + sello (regla del truncado a ~50).
-  - El YML quedó apuntando a este test (default `webadmin/crear_vehiculo.py`).
+  - El YML quedó apuntando a este test (default `webadmin/servicios_vehiculo.py`).
   - Validado estáticamente (`py_compile`, `--collect-only`).
 
 - `crear_caracteristicas.py` → **recién creado** (2026-06-18), pendiente primera corrida verde.
@@ -446,8 +446,8 @@ y rediseñó las pantallas. Impactos en los tests (todos corregidos en local, pe
 - Sección **Reservas** del WebAdmin: 2 pantallas de **solo lectura** (no hay nada que
   crear) → el criterio es validar que **las grillas traigan todo lo que deben traer**
   (columnas completas + no vacías), mismo enfoque que `reporte_circuitos`.
-- `webadmin/webadmin_reservas.py` (⚠ el archivo NO se llama `reservas.py` porque
-  choca con `bo/reservas.py`: sin `__init__.py`, pytest colisiona módulos de igual
+- `webadmin/reservas_bandejas.py` (⚠ el archivo NO se llama `reservas.py` porque
+  choca con `bo/bo_reservas.py`: sin `__init__.py`, pytest colisiona módulos de igual
   basename). Dos tests:
   - `test_reservas_admin` → Adm. de Reservas (`booking/default.aspx`): navegación,
     grilla `ctl00_cph1_gvBooks` con las 8 columnas esperadas, filas > 0, y presencia
@@ -474,13 +474,13 @@ Categorización: **Países = solo lectura** (no tiene botón crear). El resto so
 con "crear". Todos los "crear" abren un **detail APARTE** (no inline/modal).
 
 Hecho en este lote:
-- `webadmin/paises.py` (`test_paises`) → read-only, valida grid `gvCountries`,
+- `webadmin/ubicacion_paises.py` (`test_paises`) → read-only, valida grid `gvCountries`,
   columnas [Nombre, Continente, Publicado, Mostrar en el sitio, Editar], filas > 0 y
   buscador presente. PO `WebAdminPaisPage`.
-- `webadmin/crear_tipo_comida.py` (`test_crear_tipo_comida`) → foodtypesdetail.aspx.
+- `webadmin/ubicacion_tipocomida.py` (`test_crear_tipo_comida`) → foodtypesdetail.aspx.
   Nombre + Nombre localizado ES + Quill ES + Publicado → Guardar → validar fila en
   `gvData` por sello. PO `WebAdminFoodTypePage` (control Quill `ctrlNameDescQuill`).
-- `webadmin/crear_tipo_punto_interes.py` (`test_crear_tipo_punto_interes`) →
+- `webadmin/ubicacion_tipopuntointeres.py` (`test_crear_tipo_punto_interes`) →
   benchmarktypesdetail.aspx. Idéntico a Tipos de Comida salvo el control Quill
   (`ctrlNameQuill`) y las URLs. PO `WebAdminBenchmarkTypePage`.
 
@@ -501,19 +501,19 @@ Helper compartido `pages/ubicacion_helpers.py` → `seleccionar(driver, wait, lo
 texto=None, postback=False)`: elige por texto (contains, case-insensitive) o la primera
 opción REAL; con `postback=True` espera el postback del dependiente.
 
-- `webadmin/crear_region.py` → regions/detail.aspx (RegionTabContainer). Nombre + País
+- `webadmin/ubicacion_region.py` → regions/detail.aspx (RegionTabContainer). Nombre + País
   (`ddlCountries`, postback recarga `lstCities`) + Publicado. Lista `gvRegions` con
   buscador. PO `WebAdminRegionPage`.
-- `webadmin/crear_ciudad.py` → cities/detail.aspx (CityTabContainer). Nombre + País +
+- `webadmin/ubicacion_ciudad.py` → cities/detail.aspx (CityTabContainer). Nombre + País +
   Orden + Publicado (IATA/Markup/Quill opcionales, no se tocan). Lista `gvCities` con
   buscador. PO `WebAdminCityPage`.
-- `webadmin/crear_barrio.py` → ⚠ MODAL en types/districts.aspx (NO navega). Botón
+- `webadmin/ubicacion_barrio.py` → ⚠ MODAL en types/districts.aspx (NO navega). Botón
   `ctl00_cphActions_btnNew` abre modal: Nombre + Ciudad (`ddlCities`) + Guardar
   (`ctl00$cph1$btnSave`). Lista `gvDistricts` con buscador. PO `WebAdminDistrictPage`.
-- `webadmin/crear_destino.py` → destinations/detail.aspx (tabContainer). Nombre +
+- `webadmin/ubicacion_destino.py` → destinations/detail.aspx (tabContainer). Nombre +
   Nombre SEO (slug sin espacios) + País + Publicado. Lista `gvObjects` corta → valida
   por sello sin buscador. PO `WebAdminDestinationPage`.
-- `webadmin/crear_restaurante.py` → ⚠ BEST-EFFORT. restaurants/detail.aspx
+- `webadmin/ubicacion_restaurante.py` → ⚠ BEST-EFFORT. restaurants/detail.aspx
   (mainTabContainer). Nombre + Ciudad (`ddCity`, ~700 opts, postback a Hotel/Barrio) +
   Orden + Nombre/Desc ES (Quill `ctrlDescriptionQuill`) + Publicado. Imagen/precios
   opcionales. Lista `gvData` con buscador. PO `WebAdminRestaurantPage`. Probable
@@ -542,16 +542,16 @@ Mapa de menús (URLs reales de qa):
 - **Widget**: Clientes Mayoristas `widget/default.aspx` · Reservas `widget/booking/default.aspx`.
 
 ### Creación (4)
-- `webadmin/crear_mercado.py` (`WebAdminMarketPage`) → markets/detail.aspx: Nombre +
+- `webadmin/finanzas_mercado.py` (`WebAdminMarketPage`) → markets/detail.aspx: Nombre +
   Markup + Travel Sale + Idioma + Publicado. Lista `gvObjects` con buscador.
-- `webadmin/crear_impuesto.py` (`WebAdminTaxPage`) → Taxes.aspx, impuesto GENERAL en
+- `webadmin/finanzas_impuesto.py` (`WebAdminTaxPage`) → Taxes.aspx, impuesto GENERAL en
   MODAL (BenchmarkTabContainer bajo pnlGeneral): Nombre + Orden + Valor. Grid
   `gvTaxes` (id anidado `..._tabMain_pnlGeneral_gvTaxes`); valida por sello sin buscador.
-- `webadmin/crear_colaborador.py` (`WebAdminCollaboratorPage`) → collaborators/detail.aspx
+- `webadmin/contenidos_colaborador.py` (`WebAdminCollaboratorPage`) → collaborators/detail.aspx
   (TourTabContainer): Nombre+Apellido+Puesto+Área+Email(único)+Tel+Sucursal+Publicado.
   ⚠ Los inputs NO llevan `$txtValue`. Guardar = `SaveButton`. Imagen (firma) opcional.
   ⚠ Best-effort: lista sin buscador y paginada.
-- `webadmin/crear_gift.py` (`WebAdminGiftPage`) → gifts/detail.aspx (mainTabContainer):
+- `webadmin/contenidos_gift.py` (`WebAdminGiftPage`) → gifts/detail.aspx (mainTabContainer):
   Nombre + Orden + Nombre/Desc ES (Quill `ctrlNameDescQuill`) + Publicado (`cbPublished`).
   Imagen opcional. Lista `gvData` con buscador.
 
@@ -578,7 +578,7 @@ Reusan escribir_quill / seleccionar donde aplica. Validado estáticamente
 
 Contenidos → Adm. de puntos (loyaltypoints/default.aspx) = TabContainer
 `CustomerTabContainer` con 3 solapas. PO `WebAdminLoyaltyPointsPage`, tests en
-`webadmin/adm_puntos.py`. Headers de solapa = `__tab_<panelid>` (AjaxControlToolkit).
+`webadmin/contenidos_admpuntos.py`. Headers de solapa = `__tab_<panelid>` (AjaxControlToolkit).
 
 - `test_puntos_agencias` → solapa **Agencias** (pnlAgencySetting): elige una agencia
   random del `ddlAgency` que NO esté ya en `gvAgencySetting`, la agrega
