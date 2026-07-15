@@ -1,1 +1,0 @@
-URL tras guardar: https://preprod.amv.travel/administration/cruises/detail.aspx?cruise=27&TabID=pnlDetails

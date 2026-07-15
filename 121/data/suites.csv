@@ -1,0 +1,330 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"
+Valida la pantalla Reservas → Canceladas (booking/defaultcancel.aspx):
+1. Navegación desde el menú lateral.
+2. La grilla `gvBooks` trae TODAS las columnas esperadas.
+3. La grilla NO viene vacía (al menos una fila de datos).
+","4024","test_reservas_canceladas","webadmin","2026-07-15","passed","2026-07-15","","reservas_bandejas","",""
+"
+Crea un Tipo de Puntos de Interés desde el WebAdmin (benchmarktypesdetail.aspx):
+1. Navegación Menú → Ubicación → Tipo de Puntos Int.
+2. ""+ Agregar Nuevo"" → detail aparte.
+3. Carga de Nombre dinámico + Nombre localizado ES + Quill ES + Publicado.
+4. Guardar.
+5. Vuelta a la lista y validación de la fila por el sello (la lista no tiene buscador).
+","48103","test_crear_tipo_punto_interes","webadmin","2026-07-15","broken","2026-07-15","","ubicacion_tipopuntointeres","",""
+"","2476","test_grid_readonly[Finanzas \xb7 Tipos de Tarifa]","webadmin","2026-07-15","passed","2026-07-15","","readonly_grids","",""
+"
+Valida la pantalla Reservas → Adm. de Reservas (booking/default.aspx):
+1. Navegación desde el menú lateral.
+2. La grilla `gvBooks` trae TODAS las columnas esperadas.
+3. La grilla NO viene vacía (al menos una fila de datos).
+4. Los controles de filtro por rango de fechas están presentes.
+","2311","test_reservas_admin","webadmin","2026-07-15","failed","2026-07-15","","reservas_bandejas","",""
+"
+Crea una amenitie desde el WebAdmin y valida el flujo completo:
+1. Navegacion Menu -> Hoteles -> Amenities.
+2. Click en Nuevo.
+3. Carga del nombre (dinamico con fecha/hora) y las 4 traducciones (ES/EN/PT/IT).
+4. Guardado.
+5. Validacion de que la amenitie recien creada aparece en la tabla.
+","5921","test_crear_amenitie","webadmin","2026-07-15","passed","2026-07-15","","hoteles_amenities","",""
+"
+Crea un Destino (destinations/detail.aspx): Nombre dinámico + Nombre SEO + País +
+Publicado → Guardar → validar la fila por el sello (la lista no tiene buscador).
+","6820","test_crear_destino","webadmin","2026-07-15","passed","2026-07-15","","ubicacion_destino","",""
+"
+Agrega una agencia random (que no esté ya en la grilla) al programa de puntos, valida
+que se guardó (aparece en gvAgencySetting) y luego la elimina para dejar todo como estaba.
+","49966","test_puntos_agencias","webadmin","2026-07-15","broken","2026-07-15","","contenidos_admpuntos","",""
+"","2537","test_grid_readonly[Finanzas \xb7 Monedas]","webadmin","2026-07-15","passed","2026-07-15","","readonly_grids","",""
+"
+Crea una habitación desde el WebAdmin y valida el flujo completo:
+1. Navegación Menú → Hoteles → Adm. de Habitaciones → Nuevo.
+2. Carga de datos (nombre, hotel, capacidad, tipo, checkboxes).
+3. Guardado y validación de la URL de detalle (id dinámico).
+4. Validación de que las pestañas del detalle quedan habilitadas.
+5. Búsqueda de la habitación recién creada en la tabla.
+","53625","test_crear_habitacion","webadmin","2026-07-15","broken","2026-07-15","","hoteles_habitacion","",""
+"
+Crea una Cotización de Grupo (Cotizaciones → Grupos → Crear), guarda, valida que las
+solapas (Detalle de la cotización, Configuración, Destinos, Hoteles, Servicios/Restaurantes,
+Salones, Gifts, Archivos) estén activas y disponibles, y valida la fila en la lista.
+","15106","test_grupos","webadmin","2026-07-15","passed","2026-07-15","","cotizaciones_grupos","",""
+"
+Crea un Tipo de Usuario (Agencias → Tipos de Usuario → Nuevo, form inline) y valida la
+fila en la misma pantalla.
+","51318","test_crear_tipo_usuario","webadmin","2026-07-15","broken","2026-07-15","","agencias_tipousuario","",""
+"
+Valida el acceso al WebAdmin (panel de administración) y el correcto renderizado
+de su pantalla de inicio. El login y la navegación a /administration/ los resuelve
+la fixture `login_webadmin`. Los selectores viven en el Page Object
+`WebAdminHomePage`. Aquí se valida (en un único paso) lo que efectivamente se
+muestra en pantalla: sidebar, menú lateral, perfil de usuario, badge QA y la
+grilla de reservas.
+","549","test_webadmin_login_admin","webadmin","2026-07-15","failed","2026-07-15","","principal_login","",""
+"
+Crea un Colaborador (collaborators/detail.aspx): Nombre dinámico + Apellido + Puesto +
+Área + Email único + Teléfono + Sucursal + Publicado → Guardar → validar la fila por
+el sello.
+⚠ Best-effort: la lista no tiene buscador y pagina; probable ajuste tras la 1ª corrida.
+","53703","test_crear_colaborador","webadmin","2026-07-15","broken","2026-07-15","","contenidos_colaborador","",""
+"
+Crea una Comodidad desde el WebAdmin (types/serviceamenities.aspx) y valida el flujo:
+1. Navegación Menú → Servicios → Comodidades.
+2. Click en ""Nuevo"" → se despliega el formulario inline.
+3. Carga del nombre dinámico, las 4 traducciones (ES/EN/PT/IT) y Publicado.
+4. Guardar.
+5. Búsqueda y validación de que la comodidad recién creada aparece en la tabla.
+","7773","test_crear_comodidades","webadmin","2026-07-15","passed","2026-07-15","","servicios_comodidades","",""
+"
+Crea un Cliente Corporativo (Agencias → Clientes Corporativos → Nuevo), guarda y valida
+la fila tras volver a la lista.
+","0","test_crear_cliente_corporativo","webadmin","2026-07-15","skipped","2026-07-15","","agencias_clientecorporativo","",""
+"
+Crea un Tipo de servicio desde el WebAdmin (servicetypes.aspx) y valida el flujo:
+1. Navegación Menú → Servicios → Tipos de servicio.
+2. Click en ""Nuevo"" → se despliega el formulario inline.
+3. Carga del nombre dinámico, las 4 traducciones (ES/EN/PT/IT), el orden y Publicado.
+4. Guardar.
+5. Búsqueda y validación de que el tipo de servicio recién creado aparece en la tabla.
+","8594","test_crear_tipo_servicio","webadmin","2026-07-15","passed","2026-07-15","","servicios_tiposervicio","",""
+"
+Agrega una regla de producto por una ciudad random (que no esté ya en la grilla),
+valida que se guardó (aparece en gvProductsSetting) y luego la elimina.
+⚠ Best-effort: la semántica del combo 'wildcard' y las dependencias de ciudad pueden
+requerir ajuste tras la primera corrida.
+","52552","test_puntos_productos","webadmin","2026-07-15","broken","2026-07-15","","contenidos_admpuntos","",""
+"
+Valida (sin modificar) que la solapa Configuración expone: multiplicador de puntos,
+toggle de habilitación del sistema, puntos a usuarios (toggle + %), puntos a files
+no-online (toggle + %) y la grilla de Categorías de puntos con sus columnas y filas.
+","2487","test_puntos_configuracion","webadmin","2026-07-15","failed","2026-07-15","","contenidos_admpuntos","",""
+"
+Crea un Mercado (markets/detail.aspx): Nombre dinámico + Markup + Travel Sale +
+Idioma + Publicado → Guardar → buscar y validar la fila por el sello.
+","7047","test_crear_mercado","webadmin","2026-07-15","passed","2026-07-15","","finanzas_mercado","",""
+"
+Crea una Galería de Pax (Agencias → Galerías de Pax → Agregar Nueva) y valida la fila
+en la tabla tras volver a la lista.
+","7784","test_crear_galeria_pax","webadmin","2026-07-15","passed","2026-07-15","","agencias_galeriapax","",""
+"","2622","test_grid_readonly[Finanzas \xb7 Cotizaciones]","webadmin","2026-07-15","passed","2026-07-15","","readonly_grids","",""
+"
+Crea un Tag de Servicios desde el WebAdmin y valida el flujo completo:
+1. Navegación Menú → Servicios → Tags.
+2. Click en ""Nuevo"" → se abre el modal ""Agregar nuevo tag"".
+3. Carga del nombre dinámico (con fecha/hora) y Guardar.
+4. Búsqueda en la lista y validación de que el tag recién creado aparece en la tabla.
+","5146","test_crear_tag","webadmin","2026-07-15","passed","2026-07-15","","servicios_tag","",""
+"","3366","test_grid_readonly[Widget \xb7 Reservas]","webadmin","2026-07-15","passed","2026-07-15","","readonly_grids","",""
+"
+Crea un Corporativo (Agencias → Corporativo → Nuevo), guarda, valida las solapas
+Detalle / Config. de productos, y valida la fila tras volver a la lista.
+","0","test_crear_corporativo","webadmin","2026-07-15","skipped","2026-07-15","","agencias_corporativo","",""
+"
+Crea una Agencia (Agencias → Adm. de Agencias → Crear agencia): llena el form de agencia,
+guarda, confirma el modal con ""Sí"", llena el form del usuario admin, guarda, y valida la
+agencia en la tabla.
+⚠ Flujo de 2 pasos con modales (best-effort): el modal ""Sí"" se ubica por texto y puede
+requerir ajustes según el comportamiento real.
+","22575","test_crear_agencia","webadmin","2026-07-15","passed","2026-07-15","","agencias_agencia","",""
+"
+Crea un Restaurante (restaurants/detail.aspx): Nombre dinámico + Ciudad (postback) +
+Orden + Nombre/Descripción ES (Quill) + Publicado → Guardar → buscar y validar la
+fila por el sello.
+⚠ Best-effort: ddCity tiene ~700 opciones y dispara postback; probable iteración.
+","46394","test_crear_restaurante","webadmin","2026-07-15","broken","2026-07-15","","ubicacion_restaurante","",""
+"
+Crea un servicio (Excursión) desde el WebAdmin y valida el flujo completo:
+1. Navegación Menú → Servicios → Adm. de servicios → Crear servicio.
+2. Carga de todos los campos: nombre dinámico, tipo Excursión, ciudad Cachi,
+   orden, observaciones, publicado, emails, vidriera, idiomas, tags,
+   opcionales, edades, cancelable, horas antes, y 6 editores Quill (ES).
+3. Guardado y validación de la URL de detalle con id dinámico.
+4. Validación de que las pestañas del detalle estén habilitadas (sin disabled).
+5. Regreso a Adm. de servicios y validación de la fila en la tabla.
+","17125","test_crear_servicio","webadmin","2026-07-15","passed","2026-07-15","","servicios_servicio","",""
+"
+Crea una Cotización Individual (Cotizaciones → Individuales → Crear), guarda, valida que
+las solapas (Detalle, Destinos, Hoteles, Servicios/Restaurantes, Cruceros) estén habilitadas
+y no bloqueadas, abre el Preview en una pestaña nueva y valida que su contenido coincida con
+el esperado (landmarks del itinerario), y valida la fila en la lista.
+","10721","test_individuales","webadmin","2026-07-15","passed","2026-07-15","","cotizaciones_individuales","",""
+"
+Crea un Usuario (Agencias → Usuarios → Nuevo) con los datos de la captura:
+nombre de usuario, password manual, Tipo=Cliente, Nombre/Apellido/Email, Agencia, País=España,
+Moneda=Dollar, Mostrar Markup. Guarda vía ""Guardar y enviar email"" → modal de confirmación,
+y valida la fila tras volver a la lista.
+⚠ Flujo con modales (best-effort): puede requerir ajustes según comportamiento real.
+","11907","test_crear_usuario","webadmin","2026-07-15","passed","2026-07-15","","agencias_usuario","",""
+"
+Crea una Región (regions/detail.aspx): Nombre dinámico + País (dispara postback que
+recarga las Ciudades) + Publicado → Guardar → validar la fila por el sello.
+","46365","test_crear_region","webadmin","2026-07-15","broken","2026-07-15","","ubicacion_region","",""
+"
+Crea un Tipo de Comida desde el WebAdmin (foodtypesdetail.aspx) y valida el flujo:
+1. Navegación Menú → Ubicación → Tipos de Comida.
+2. ""+ Agregar Nuevo"" → detail aparte.
+3. Carga de Nombre dinámico + Nombre localizado ES + Quill ES + Publicado.
+4. Guardar.
+5. Vuelta a la lista y validación de la fila por el sello (la lista no tiene buscador).
+","5452","test_crear_tipo_comida","webadmin","2026-07-15","passed","2026-07-15","","ubicacion_tipocomida","",""
+"
+Crea un Servicio de incentivo desde el WebAdmin (incentives/servicedetail.aspx) y valida:
+1. Navegación Menú → Servicios → Servicios de incentivo → ""+ Agregar Servicio"".
+2. Carga del nombre dinámico, Ciudad, Servicio Relacionado, Tipo, Destino, Orden,
+   Destacado, Publicado y el Detalle de Incentivos (Nombre ES + Quill ES).
+3. Guardar.
+4. Validación de que el servicio recién creado aparece en la tabla.
+","10894","test_crear_servicio_incentivo","webadmin","2026-07-15","passed","2026-07-15","","servicios_incentivo","",""
+"
+Crea un salón (meeting salon) desde el WebAdmin y valida el flujo completo:
+1. Navegación Menú -> Hoteles -> Salones -> Nuevo.
+2. Selección de Ciudad (dispara postback que recarga los Hoteles).
+3. Carga de nombre dinámico, capacidad (200) y orden.
+4. Selección del Hotel dependiente de la ciudad.
+5. Dejar tildado Publicado y Guardar.
+6. Validación de que el salón recién creado aparece en la tabla.
+","7343","test_crear_salon","webadmin","2026-07-15","passed","2026-07-15","","hoteles_salon","",""
+"
+Crea un Gift (gifts/detail.aspx): Nombre dinámico + Orden + Nombre/Descripción ES
+(Quill) + Publicado → Guardar → buscar y validar la fila por el sello.
+","6964","test_crear_gift","webadmin","2026-07-15","passed","2026-07-15","","contenidos_gift","",""
+"
+Tipos de Cambio (ChangeRate) no tiene grilla ni un identificador único creable
+(rango de fechas + valor) → smoke: la pantalla carga y expone sus controles clave
+(botón 'Nuevo' y el 'Guardar' de valores por defecto).
+","1455","test_tipos_de_cambio_smoke","webadmin","2026-07-15","passed","2026-07-15","","readonly_grids","",""
+"
+Crea un hotel desde el WebAdmin y valida el flujo completo:
+1. Navegación Menú → Hoteles → Adm. de Hoteles → Nuevo.
+2. Carga de Información General, Configuración, Ubicación y Descripción.
+3. Guardado y validación de la URL de detalle (id dinámico).
+4. Validación de que las pestañas del detalle quedan habilitadas.
+5. Búsqueda del hotel recién creado en la tabla de hoteles.
+","54137","test_crear_hotel","webadmin","2026-07-15","broken","2026-07-15","","hoteles_hotel","",""
+"
+Crea una Ciudad (cities/detail.aspx): Nombre dinámico + País + Orden + Publicado →
+Guardar → buscar y validar la fila por el sello.
+","46382","test_crear_ciudad","webadmin","2026-07-15","broken","2026-07-15","","ubicacion_ciudad","",""
+"
+Crea una Característica desde el WebAdmin (charasteristicsadmin.aspx) y valida el flujo:
+1. Navegación Menú → Servicios → Caracteristicas.
+2. Click en ""Nuevo"" → se despliega el formulario inline.
+3. Carga del Nombre (4 idiomas), Detalle (4 idiomas), Orden y Publicado.
+4. Guardar.
+5. Búsqueda y validación de que la característica recién creada aparece en la tabla.
+","8448","test_crear_caracteristicas","webadmin","2026-07-15","passed","2026-07-15","","servicios_caracteristicas","",""
+"
+Crea un Travel Sale desde el WebAdmin (Circuitos → Travel Sale) y valida:
+1. Navegación y apertura del formulario (detail.aspx).
+2. Carga de los campos del Detalle (nombre dinámico, vigencia, tarifas, etc.).
+3. Guardar y validar que las solapas Detalle/Imagenes/Videos/Destinos estén habilitadas.
+4. Volver a la lista y validar que el registro recién creado aparece.
+","9030","test_crear_travel_sale","webadmin","2026-07-15","passed","2026-07-15","","circuitos_travelsale","",""
+"","2575","test_grid_readonly[Widget \xb7 Clientes Mayoristas]","webadmin","2026-07-15","passed","2026-07-15","","readonly_grids","",""
+"
+Crea un Paquete desde el WebAdmin (Circuitos → Paquetes → Crear Paquete) y valida:
+1. Navegación y apertura del formulario (detail.aspx).
+2. Carga de los campos del Detalle (nombre dinámico, vigencia, tarifas, etc.).
+3. Guardar y validar que las solapas Detalle/Imagenes/Videos/Destinos estén habilitadas.
+4. Volver a la lista de Paquetes y validar que el paquete recién creado aparece.
+","12474","test_crear_paquete","webadmin","2026-07-15","passed","2026-07-15","","circuitos_paquete","",""
+"
+Crea una Oportunidad desde el WebAdmin (Circuitos → Oportunidades) y valida:
+1. Navegación y apertura del formulario (detail.aspx).
+2. Carga de los campos del Detalle (nombre dinámico, vigencia, tarifas, etc.).
+3. Guardar y validar solapas habilitadas: Detalle/Imagenes/Destinos + Agencias.
+   (Oportunidades NO tiene solapa Videos; en su lugar tiene Agencias.)
+4. Volver a la lista y validar que la oportunidad recién creada aparece.
+","13398","test_crear_oportunidad","webadmin","2026-07-15","passed","2026-07-15","","circuitos_oportunidad","",""
+"
+Crea un Impuesto general (Taxes.aspx): ""Nuevo"" abre un MODAL → Nombre dinámico +
+Orden + Valor → Guardar → volver y validar la fila en gvTaxes por el sello.
+","46457","test_crear_impuesto","webadmin","2026-07-15","broken","2026-07-15","","finanzas_impuesto","",""
+"","46550","test_grid_readonly[Contenidos \xb7 Avisos Web]","webadmin","2026-07-15","broken","2026-07-15","","readonly_grids","",""
+"
+Crea un Vehículo desde el WebAdmin (vehicletypes/default.aspx) y valida el flujo:
+1. Navegación Menú → Servicios → Vehículos.
+2. Click en ""Nuevo"" → se despliega el formulario inline.
+3. Carga del nombre dinámico, las 4 traducciones (ES/EN/PT/IT), Capacity From/To y Publicado.
+4. Guardar.
+5. Búsqueda y validación de que el vehículo recién creado aparece en la tabla.
+","9368","test_crear_vehiculo","webadmin","2026-07-15","passed","2026-07-15","","servicios_vehiculo","",""
+"","46401","test_grid_readonly[Contenidos \xb7 Configuraci\xf3n]","webadmin","2026-07-15","broken","2026-07-15","","readonly_grids","",""
+"
+Crea una Serie desde el WebAdmin (Circuitos → Series) y valida:
+1. Navegación y apertura del formulario (Detail.aspx).
+2. Carga del Detalle (nombre dinámico, orden, publicado, Nombre y Descripción ES).
+3. Guardar y validar que las solapas Detalle/Paquetes/Salidas/Tarifas/Cupos estén habilitadas.
+4. Volver a la lista de Series y validar que la serie recién creada aparece.
+","8412","test_crear_serie","webadmin","2026-07-15","passed","2026-07-15","","circuitos_serie","",""
+"
+Crea un Crucero desde el WebAdmin (Cruceros → Adm. de Cruceros → Nuevo) y valida:
+1. Apertura del formulario (detail.aspx).
+2. Carga del Detalle (nombre, moneda, tarifas, flota, ciudades, orden, publicado, Quill).
+3. Guardar y validar solapas habilitadas: Detalle/Imagenes/Destinos/Salidas/Cabinas/Politicas.
+4. Volver a la lista de Cruceros y validar la fila.
+","11845","test_crear_crucero","webadmin","2026-07-15","passed","2026-07-15","","cruceros_crucero","",""
+"
+Crea un Barrio desde el WebAdmin (types/districts.aspx): ""Crear Barrio"" abre un MODAL
+→ Nombre dinámico + Ciudad → Guardar → buscar y validar la fila por el sello.
+","5633","test_crear_barrio","webadmin","2026-07-15","passed","2026-07-15","","ubicacion_barrio","",""
+"
+Crea una Cabina desde el WebAdmin (Cruceros → Cabinas → Nuevo) y valida:
+1. Apertura del formulario (detail.aspx).
+2. Carga del Detalle (nombre, crucero, moneda, min rate, capacidad, tipo, publicado, Quill).
+3. Guardar y validar solapas habilitadas: Detalle/Imagenes/Tarifas.
+4. Volver a la lista de Cabinas y validar la fila.
+","9445","test_crear_cabina","webadmin","2026-07-15","passed","2026-07-15","","cruceros_cabina","",""
+"
+Crea un tipo de desayuno desde el WebAdmin y valida el flujo completo:
+1. Navegación Menú -> Hoteles -> Desayuno.
+2. Click en Nuevo.
+3. Carga del nombre (dinámico con fecha/hora) y las 4 traducciones (ES/EN/PT/IT).
+4. Dejar tildado Publicado.
+5. Guardado.
+6. Validación de que el desayuno recién creado aparece en la tabla.
+","5458","test_crear_desayuno","webadmin","2026-07-15","passed","2026-07-15","","hoteles_desayuno","",""
+"
+Crea una categoría de hotel desde el WebAdmin y valida el flujo completo:
+1. Navegación Menú -> Hoteles -> Categorías.
+2. Click en Nuevo.
+3. Carga del nombre (dinámico con fecha/hora), el orden y las 4 traducciones (ES/EN/PT/IT).
+4. Guardado.
+5. Validación de que la categoría recién creada aparece en la tabla.
+","5670","test_crear_categoria","webadmin","2026-07-15","passed","2026-07-15","","hoteles_categoria","",""
+"
+Valida la pantalla Ubicación → Paises (types/country.aspx), de solo lectura:
+1. Navegación desde el menú lateral.
+2. La grilla `gvCountries` trae TODAS las columnas esperadas.
+3. La grilla NO viene vacía (al menos una fila de datos).
+4. El buscador está presente.
+","2539","test_paises","webadmin","2026-07-15","passed","2026-07-15","","ubicacion_paises","",""
+"","46394","test_grid_readonly[Ubicaci\xf3n \xb7 Puntos de Inter\xe9s]","webadmin","2026-07-15","broken","2026-07-15","","readonly_grids","",""
+"
+Crea un tipo de habitación desde el WebAdmin y valida el flujo completo:
+1. Navegación Menú -> Hoteles -> Tipos de habitación.
+2. Click en Nuevo.
+3. Carga del nombre (dinámico con fecha/hora) y el detalle.
+4. Dejar tildado Publicado.
+5. Guardado.
+6. Validación de que el tipo recién creado aparece en la tabla.
+","3191","test_crear_tipo_de_habitacion","webadmin","2026-07-15","passed","2026-07-15","","hoteles_tipohabitacion","",""
+"
+Valida el Reporte de Circuitos (Circuitos → Reporte Circuitos):
+1. Navegación al reporte.
+2. La tabla principal existe y NO viene vacía (tiene al menos una fila de datos).
+","6374","test_reporte_circuitos","webadmin","2026-07-15","passed","2026-07-15","","circuitos_reporte","",""
+"
+Crea una Flota desde el WebAdmin (Cruceros → Flotas → Nuevo) y valida:
+1. Click en Nuevo → form inline (Nombre + Publicado).
+2. Guardar.
+3. En la MISMA pantalla, la flota recién creada aparece en la tabla.
+","5196","test_crear_flota","webadmin","2026-07-15","passed","2026-07-15","","cruceros_flota","",""
+"
+Crea un Tipo de Cabina desde el WebAdmin (Cruceros → Tipos de Cabinas → Nuevo) y valida:
+1. Click en Nuevo → form inline (Nombre + Publicado).
+2. Guardar.
+3. En la MISMA pantalla, el tipo de cabina recién creado aparece en la tabla.
+","5732","test_crear_tipo_cabina","webadmin","2026-07-15","passed","2026-07-15","","cruceros_tipocabina","",""
