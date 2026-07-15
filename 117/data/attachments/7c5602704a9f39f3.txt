@@ -1,1 +1,0 @@
-URL tras guardar: https://preprod.amv.travel/administration/budgets/budgetsingle.aspx?budget=8369&TabID=pnlDetails
